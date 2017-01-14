@@ -1,0 +1,4 @@
+celerybeat-schedule
+*~
+*.pyc
+.idea/

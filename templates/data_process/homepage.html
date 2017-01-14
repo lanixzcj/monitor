@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block files %}
+<script type="text/javascript">
+$(document).ready(function () {
+    $('#myModal').on('show.bs.modal', function(e) {
+        var hostname = $(e.relatedTarget).data('hostname');
+        var ip = $(e.relatedTarget).data('ip');
+        var boottime = $(e.relatedTarget).data('boottime');
+        console.log(hostname, ip, boottime);
+        $(e.currentTarget).find('[name="hostname"]').html(hostname);
+        $(e.currentTarget).find('[name="ip"]').html(ip);
+        $(e.currentTarget).find('[name="boottime"]').html(boottime);
+    })
+});
+</script>
+<style type="text/css">
+    .table th, .table td {
+        text-align: center;
+        vertical-align: middle!important;
+    }
+</style>
+
+{% endblock %}
+{% block main_content %}
+<form action="/?h=22" role="form" name = "monitor_form">
+<div class="btn-group" id="color" data-toggle="buttons">
+    {% for time_value, time in time_range %}
+       <label class="btn btn-default">
+         <input type="radio" OnChange="monitor_form.submit();" name="r" class="toggle" value="{{ time_value }}">
+           {{ time }}
+       </label>
+    {% endfor %}
+</div>
+</form>
+{% for hostname, host in hosts.items %}
+<div class="panel panel-success">
+    <div class="panel-heading clearfix">
+        <h5 class="pannel-title pull-left">{{ hostname }}资源列表</h5>
+        <button type="button" class="btn btn-default pull-right" data-hostname="{{ hostname }}" data-ip="{{ host.ip }}"
+                data-boottime="{{ host.boottime }}" data-toggle="modal" data-target="#myModal">
+            信息
+        </button>
+    </div>
+
+    <ul class="list-group">
+    <li class="list-group-item text-center">
+        <img src="image/?h={{ hostname }}&m=net&r={{ range }}"/>
+        <!--<div class="row">-->
+        <!--<img class="col-md-6" src="image/?h={{ hostname }}&m=net&r={{ range }}"/>-->
+        <!--<img class="col-md-6" src="image/?h={{ hostname }}&m=cpu&r={{ range }}"/>-->
+        <!--</div>-->
+    </li>
+    <li class="list-group-item text-center">
+        <img src="image/?h={{ hostname }}&m=cpu&r={{ range }}"/>
+    </li>
+        <li class="list-group-item text-center">
+        <img src="image/?h={{ hostname }}&m=mem&r={{ range }}"/>
+    </li>
+    </ul>
+</div>
+{% endfor %}
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+                        class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="myModalLabel">资源信息</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped">
+                    <tbody>
+                    <tr>
+                        <td>主机名称</td>
+                        <td name="hostname"></td>
+                    </tr>
+                    <tr>
+                        <td>ip地址</td>
+                        <td name="ip"></td>
+                    </tr>
+                    <tr>
+                        <td>启动时间</td>
+                        <td name="boottime"></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <td>时间</td>
+                            <td>应用名称</td>
+                            <td>发送端口</td>
+                            <td>接收ip</td>
+                            <td>接收端口</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for ip_packet in ip_packets %}
+                    <tr>
+                        <td>{{ ip_packet.time }}</td>
+                        <td>{{ ip_packet.app_name }}</td>
+                        <td>{{ ip_packet.send_port }}</td>
+                        <td>{{ ip_packet.recv_ip }}</td>
+                        <td>{{ ip_packet.recv_port }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

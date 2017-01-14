@@ -33,8 +33,8 @@ def get_net_graph_command(host, time_range):
         '--title', str(host + ' Network last ' + time_range),
         '--vertical-label', 'Bytes/sec',
         '--lower-limit', '0', '--slope-mode',
-        str('DEF:a0=%s%s/bytes_in.rrd:sum:AVERAGE' % (rrd_dir, host)),
-        str('DEF:a1=%s%s/bytes_out.rrd:sum:AVERAGE' % (rrd_dir, host)),
+        str('DEF:a0=%s/%s/bytes_in.rrd:sum:AVERAGE' % (rrd_dir, host)),
+        str('DEF:a1=%s/%s/bytes_out.rrd:sum:AVERAGE' % (rrd_dir, host)),
     ]
     command.extend(get_grapn_command('LINE2', 'In', '33cc33', 4, 'a0'))
     command.extend(get_grapn_command('LINE2', 'Out', '5555cc', 4, 'a1'))
@@ -44,18 +44,19 @@ def get_net_graph_command(host, time_range):
 
 def get_cpu_graph_command(host, time_range):
     rrd_dir = settings.RRD_DIR
+
     command = [
         '--title', str(host + ' cpu last ' + time_range),
         '--vertical-label', 'Percent',
         '--lower-limit', '0', '--upper-limit', '100',
         '--slope-mode', '--font', 'LEGEND:7', '--rigid',
-        str('DEF:cpu_user=%s%s/cpu_user.rrd:sum:AVERAGE' % (rrd_dir, host)),
-        str('DEF:cpu_system=%s%s/cpu_system.rrd:sum:AVERAGE' % (rrd_dir, host)),
-        str('DEF:cpu_idle=%s%s/cpu_idle.rrd:sum:AVERAGE' % (rrd_dir, host)),
-        str('DEF:cpu_wio=%s%s/cpu_wio.rrd:sum:AVERAGE' % (rrd_dir, host)),
-        str('DEF:cpu_nice=%s%s/cpu_nice.rrd:sum:AVERAGE' % (rrd_dir, host)),
-        str('DEF:cpu_steal=%s%s/cpu_steal.rrd:sum:AVERAGE' % (rrd_dir, host)),
-        str('DEF:cpu_sintr=%s%s/cpu_sintr.rrd:sum:AVERAGE' % (rrd_dir, host)),
+        str('DEF:cpu_user=%s/%s/cpu_user.rrd:sum:AVERAGE' % (rrd_dir, host)),
+        str('DEF:cpu_system=%s/%s/cpu_system.rrd:sum:AVERAGE' % (rrd_dir, host)),
+        str('DEF:cpu_idle=%s/%s/cpu_idle.rrd:sum:AVERAGE' % (rrd_dir, host)),
+        str('DEF:cpu_wio=%s/%s/cpu_wio.rrd:sum:AVERAGE' % (rrd_dir, host)),
+        str('DEF:cpu_nice=%s/%s/cpu_nice.rrd:sum:AVERAGE' % (rrd_dir, host)),
+        str('DEF:cpu_steal=%s/%s/cpu_steal.rrd:sum:AVERAGE' % (rrd_dir, host)),
+        str('DEF:cpu_sintr=%s/%s/cpu_sintr.rrd:sum:AVERAGE' % (rrd_dir, host)),
     ]
 
     command.extend(get_grapn_command('AREA', 'User', '3333bb', 6, 'cpu_user'))
@@ -65,8 +66,6 @@ def get_cpu_graph_command(host, time_range):
     command.extend(get_grapn_command('STACK', 'Steal', '990099', 6, 'cpu_steal'))
     command.extend(get_grapn_command('STACK', 'Sintr', '009933', 6, 'cpu_sintr'))
     command.extend(get_grapn_command('STACK', 'Idle', 'e2e2f2', 6, 'cpu_idle'))
-
-
 
     return command
 
@@ -78,15 +77,15 @@ def get_mem_graph_command(host, time_range):
         '--vertical-label', 'Bytes',
         '--lower-limit', '0', '--base', '1024',
         '--slope-mode', '--font', 'LEGEND:7',
-        str('DEF:mem_shared=%s%s/mem_shared.rrd:sum:AVERAGE' % (rrd_dir, host)),
+        str('DEF:mem_shared=%s/%s/mem_shared.rrd:sum:AVERAGE' % (rrd_dir, host)),
         'CDEF:bmem_shared=mem_shared,1024,*',
-        str('DEF:mem_buffers=%s%s/mem_buffers.rrd:sum:AVERAGE' % (rrd_dir, host)),
+        str('DEF:mem_buffers=%s/%s/mem_buffers.rrd:sum:AVERAGE' % (rrd_dir, host)),
         'CDEF:bmem_buffers=mem_buffers,1024,*',
-        str('DEF:mem_total=%s%s/mem_total.rrd:sum:AVERAGE' % (rrd_dir, host)),
+        str('DEF:mem_total=%s/%s/mem_total.rrd:sum:AVERAGE' % (rrd_dir, host)),
         'CDEF:bmem_total=mem_total,1024,*',
-        str('DEF:mem_free=%s%s/mem_free.rrd:sum:AVERAGE' % (rrd_dir, host)),
+        str('DEF:mem_free=%s/%s/mem_free.rrd:sum:AVERAGE' % (rrd_dir, host)),
         'CDEF:bmem_free=mem_free,1024,*',
-        str('DEF:mem_cached=%s%s/mem_cached.rrd:sum:AVERAGE' % (rrd_dir, host)),
+        str('DEF:mem_cached=%s/%s/mem_cached.rrd:sum:AVERAGE' % (rrd_dir, host)),
         'CDEF:bmem_cached=mem_cached,1024,*',
         'CDEF:mem_used=bmem_total,bmem_free,-,bmem_cached,-,bmem_buffers,-,bmem_shared,-',
     ]
@@ -135,6 +134,7 @@ def graph_rrd(host, metric_name, time_range, size):
             lock.release()
             return graph['image']
         except rrdtool.OperationalError, e:
+            lock.release()
             print str(e)
 
 

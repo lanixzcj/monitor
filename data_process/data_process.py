@@ -13,7 +13,6 @@ def process_json(data, client_address):
     json_dict = demjson.decode(data)
 
     host = json_dict['host'] if 'host' in json_dict else None
-    print host
     if host:
         hostinfo_save_into_cache(host, client_address[0])
         hostinfo_save_into_db(host, client_address[0])
@@ -45,13 +44,16 @@ def hostinfo_save_into_cache(host, ip):
 
 def hostinfo_save_into_db(host, ip):
     hostname = host['hostname'] if 'hostname' in host else None
+    mac_address = host['mac_address'] if 'mac_address' in host else None
     boottime = host['boottime'] if 'boottime' in host else None
     boottime = string.atof(boottime)
     db_host = Host.objects.get_or_create(hostname=hostname, defaults={
         'ip': ip,
+        'mac_address': mac_address,
         'last_boottime': datetime.datetime.fromtimestamp(boottime)
     })
     db_host[0].ip = ip
+    db_host[0].mac_address = mac_address
     db_host[0].last_boottime = datetime.datetime.fromtimestamp(boottime)
     db_host[0].save()
 

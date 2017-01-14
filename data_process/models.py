@@ -9,6 +9,7 @@ from django.utils import timezone
 class Host(models.Model):
     hostname = models.CharField(max_length=30, unique=True)
     ip = models.GenericIPAddressField(default='0.0.0.0')
+    mac_address = models.CharField(max_length=30, unique=True)
     last_boottime = models.DateTimeField()
 
 

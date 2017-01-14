@@ -20,6 +20,7 @@ def home(request):
     for e in Host.objects.all():
         hosts[e.hostname] = {}
         hosts[e.hostname]['ip'] = e.ip
+        hosts[e.hostname]['mac_address'] = e.mac_address
         hosts[e.hostname]['boottime'] = e.last_boottime.strftime("%Y-%m-%d %H:%M:%S")
     # hosts = Host.objects.all().values()
     # print hosts
@@ -28,7 +29,7 @@ def home(request):
 
     # TODO:测试，还没有区分host
     ip_packets = []
-    for e in IpPacket.objects.all():
+    for e in IpPacket.objects.order_by("-time")[:5]:
         ip_packet = {}
         ip_packet['app_name'] = e.app_name
         ip_packet['send_port'] = e.send_port
@@ -76,11 +77,13 @@ def image(request):
 def login(request):
     username = request.POST.get('username')
     password = request.POST.get('password')
+    mac_address = request.POST.get('mac_address')
 
     user = auth.authenticate(username=username, password=password)
     if user is None:
         data = {'result': False}
     else:
+
         data = {'result': True, 'permissions': list(user.get_all_permissions())}
 
     body = demjson.encode(data)

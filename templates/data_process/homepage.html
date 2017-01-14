@@ -6,10 +6,12 @@ $(document).ready(function () {
     $('#myModal').on('show.bs.modal', function(e) {
         var hostname = $(e.relatedTarget).data('hostname');
         var ip = $(e.relatedTarget).data('ip');
+        var mac_address = $(e.relatedTarget).data('mac_address');
         var boottime = $(e.relatedTarget).data('boottime');
         console.log(hostname, ip, boottime);
         $(e.currentTarget).find('[name="hostname"]').html(hostname);
         $(e.currentTarget).find('[name="ip"]').html(ip);
+        $(e.currentTarget).find('[name="mac_address"]').html(mac_address);
         $(e.currentTarget).find('[name="boottime"]').html(boottime);
     })
 });
@@ -38,7 +40,8 @@ $(document).ready(function () {
     <div class="panel-heading clearfix">
         <h5 class="pannel-title pull-left">{{ hostname }}资源列表</h5>
         <button type="button" class="btn btn-default pull-right" data-hostname="{{ hostname }}" data-ip="{{ host.ip }}"
-                data-boottime="{{ host.boottime }}" data-toggle="modal" data-target="#myModal">
+                data-boottime="{{ host.boottime }}" data-mac_address="{{ host.mac_address }}"
+                        data-toggle="modal" data-target="#myModal">
             信息
         </button>
     </div>
@@ -78,6 +81,10 @@ $(document).ready(function () {
                     <tr>
                         <td>ip地址</td>
                         <td name="ip"></td>
+                    </tr>
+                    <tr>
+                        <td>mac地址</td>
+                        <td name="mac_address"></td>
                     </tr>
                     <tr>
                         <td>启动时间</td>

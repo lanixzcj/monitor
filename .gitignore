@@ -1,4 +1,7 @@
 celerybeat-schedule
 *~
 *.pyc
+migrations/
 .idea/
+/rrd/
+

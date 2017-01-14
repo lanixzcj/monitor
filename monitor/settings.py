@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 import os
 # rrd root path
-RRD_DIR = '/home/lan/PycharmProjects/server/rrd/'
 
 # time_range: seconds in some range
 TIME_ORDER = ['hour', '2hr', '4hr', 'week', 'month', 'year']
@@ -40,7 +39,7 @@ GRAPH_SIZE = {
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
+RRD_DIR = os.path.join(BASE_DIR, 'rrd')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 

@@ -137,6 +137,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = 'data_process.MyUser'
+
 CACHES = {
     'default': {
         'BACKEND': 'redis_cache.RedisCache',

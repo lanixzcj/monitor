@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 import rrd_helper
 import time
+import datetime
 from django.core.cache import cache
 from models import Host
 from models import IpPacket
@@ -10,6 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib import auth
 import demjson
 from tasks import send_safe_strategy
+
 
 # Create your views here.
 
@@ -44,6 +46,7 @@ def home(request):
         'range': time_range,
         'ip_packets': ip_packets
     }
+
     send_safe_strategy.delay("127.0.0.1", 8649, net='192.168.1.120', cpu=60)
     return render(request, 'data_process/homepage.html', context)
 
@@ -77,14 +80,19 @@ def image(request):
 def login(request):
     username = request.POST.get('username')
     password = request.POST.get('password')
-    mac_address = request.POST.get('mac_address')
+    mac_address = request.POST.get('mac_address').strip()
 
     user = auth.authenticate(username=username, password=password)
+
     if user is None:
         data = {'result': False}
     else:
-
-        data = {'result': True, 'permissions': list(user.get_all_permissions())}
+        data = {'result': True}
+        if user.mac_address == mac_address:
+            data['mac_address_match'] = True
+            data['permissions'] = list(user.get_all_permissions())
+        else:
+            data['mac_address_match'] = False
 
     body = demjson.encode(data)
 

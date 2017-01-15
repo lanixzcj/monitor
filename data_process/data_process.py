@@ -7,6 +7,7 @@ import datetime
 from django.core.cache import cache
 from models import Host
 from models import IpPacket
+from pytz import timezone
 
 
 def process_json(data, client_address):
@@ -50,11 +51,11 @@ def hostinfo_save_into_db(host, ip):
     db_host = Host.objects.get_or_create(hostname=hostname, defaults={
         'ip': ip,
         'mac_address': mac_address,
-        'last_boottime': datetime.datetime.fromtimestamp(boottime)
+        'last_boottime': datetime.datetime.fromtimestamp(boottime, tz=timezone('Asia/Shanghai'))
     })
     db_host[0].ip = ip
     db_host[0].mac_address = mac_address
-    db_host[0].last_boottime = datetime.datetime.fromtimestamp(boottime)
+    db_host[0].last_boottime = datetime.datetime.fromtimestamp(boottime, tz=timezone('Asia/Shanghai'))
     db_host[0].save()
 
 
@@ -75,9 +76,10 @@ def save_ip_packet(host, metric):
     for value in value_list:
         ip_time = value['time'] if 'time' in value else None
         ip_time = string.atof(ip_time)
+        ip_time = datetime.datetime.fromtimestamp(ip_time, tz=timezone('Asia/Shanghai'))
 
         ip_packet = IpPacket.objects.create(host=db_host,
-                                            time=datetime.datetime.fromtimestamp(ip_time),
+                                            time=ip_time,
                                             app_name=value['app_name'],
                                             send_port=value['port'],
                                             recv_ip=value['recv_ip'],

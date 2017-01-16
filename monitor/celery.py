@@ -23,6 +23,11 @@ app.conf.beat_schedule = {
         'schedule': 20.0,
         'args': ()
     },
+    'scan_thread': {
+        'task': 'data_process.tasks.scanning_host',
+        'schedule': 20.0,
+        'args': ()
+    },
 }
 
 
@@ -31,11 +36,6 @@ def on_celery_start(sender, **kwargs):
     app.send_task(name='data_process.tasks.server_thread')
     cache.delete('hosts')
     pass
-
-
-@app.on_after_finalize.connect()
-def on_celery_finalize(sender, **kwargs):
-    cache.delete('hosts')
 
 
 @app.task(bind=True)

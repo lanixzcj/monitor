@@ -8,6 +8,8 @@ from django.core.cache import cache
 import traceback
 import time
 import demjson
+from scapy.layers.l2 import *
+import arp_poison
 
 
 class MyStreamRequestHandler(StreamRequestHandler):
@@ -36,14 +38,62 @@ def server_thread():
 
 @shared_task
 def clean_up():
-    hosts = cache.get('hosts', dict())
+    hosts = cache.get('alive_host', dict())
 
     print hosts
-    for hostname, host in hosts.items():
+    for mac_address, host in hosts.items():
         if (time.time() - host['last']) > 40:
-            del hosts[hostname]
+            del hosts[mac_address]
 
-    cache.set('hosts', hosts, 300)
+    cache.set('alive_host', hosts, 300)
+
+
+@shared_task
+def scanning_host():
+    start = time.time()
+
+    ipscan = '192.168.1.0/24'
+    try:
+        ans, unans = srp(Ether(dst="FF:FF:FF:FF:FF:FF") / ARP(pdst=ipscan), timeout=2, verbose=False)
+    except Exception, e:
+        print str(e)
+    else:
+        gateway_mac = arp_poison.get_mac(arp_poison.gateway_ip)
+        if gateway_mac is None:
+            print "Can't get gateway mac address."
+            return
+        while True:
+            if time.time() - start > 15:
+                break
+
+            last_unsafe_hosts = cache.get('last_unsafe_host', dict())
+            alive_hosts = cache.get('alive_host', dict())
+            unsafe_hosts = {}
+            for snd, rcv in ans:
+                mac_address = rcv.sprintf("%Ether.src%");
+                if mac_address not in alive_hosts:
+                    unsafe_hosts[mac_address] = rcv.sprintf('%ARP.psrc%')
+                    # arp poison
+                    # TODO:用一个用例测试
+                    if unsafe_hosts[mac_address] == '192.168.1.105':
+                        arp_poison.poison_target(arp_poison.gateway_ip, gateway_mac,
+                                             unsafe_hosts[mac_address], mac_address)
+
+            time.sleep(5)
+
+            print unsafe_hosts
+
+            for mac_address in last_unsafe_hosts:
+                if mac_address not in unsafe_hosts:
+                    #restore
+
+                    if unsafe_hosts[mac_address] == '192.168.1.105':
+                        print mac_address
+                        arp_poison.restore_target(arp_poison.gateway_ip, gateway_mac,
+                                                 unsafe_hosts[mac_address], mac_address)
+
+            cache.set('last_unsafe_host', unsafe_hosts)
+            break
 
 
 @shared_task

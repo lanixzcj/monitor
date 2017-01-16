@@ -31,12 +31,12 @@ def process_json(data, client_address):
 def hostinfo_save_into_cache(host, ip):
     hostname = host['hostname'] if 'hostname' in host else None
     # ip = host['ip'] if 'ip' in host else None
-    mac_address = host['mac_address'] if 'mac_address' in host else None
+    mac_address = host['mac_address'].strip() if 'mac_address' in host else None
     localtime = host['localtime'] if 'localtime' in host else None
 
     hosts = cache.get('alive_hosts', dict())
     if hostname and (hostname not in hosts):
-        hosts[hostname] = {}
+        hosts[mac_address] = {}
 
     hosts[mac_address]['last'] = localtime
     hosts[mac_address]['ip'] = ip
@@ -47,7 +47,7 @@ def hostinfo_save_into_cache(host, ip):
 
 def hostinfo_save_into_db(host, ip):
     hostname = host['hostname'] if 'hostname' in host else None
-    mac_address = host['mac_address'] if 'mac_address' in host else None
+    mac_address = host['mac_address'].strip() if 'mac_address' in host else None
     boottime = host['boottime'] if 'boottime' in host else None
     boottime = string.atof(boottime)
     db_host = Host.objects.get_or_create(hostname=hostname, defaults={

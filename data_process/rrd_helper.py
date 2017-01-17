@@ -138,6 +138,29 @@ def graph_rrd(host, metric_name, time_range, size):
             print str(e)
 
 
+def fetch_rrd(host, metric_name, time_range, end=None, resolution=1):
+    rrd_dir = settings.RRD_DIR
+    time_dict = settings.TIME_RANGE
+    if time_range in time_dict:
+        start = time_dict[time_range]
+
+        if end is None:
+            end = int(time.time())
+
+        end -= end % resolution
+
+        time_span, ds, values = rrdtool.fetch(str('%s/%s/%s.rrd' % (rrd_dir, host, metric_name)), 'AVERAGE',
+                                             '-s', '-' + str(start[0]) + 's', '-e', str(end), '-r', str(resolution))
+
+        ts_start, ts_end, ts_res = time_span
+        times = range(ts_start, ts_end, ts_res)
+
+        index = ds.index('sum')
+
+        values = zip(*values)[index]
+        return zip(times, values)
+
+
 def create_rrd(rrd_name, ds_type, is_summary, step, process_time):
     argv = [rrd_name, '--step', step, '--start', process_time]
 

@@ -19,7 +19,7 @@
             {% for time_value, time in time_range %}
                <label class="btn btn-default">
                  <input type="radio" OnChange="monitor_form.submit();" name="r" class="toggle" value="{{ time_value }}">
-                   {{ time }}
+                   {{ time.1 }}
                </label>
             {% endfor %}
         </div>

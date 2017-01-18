@@ -11,31 +11,41 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib import auth
 import demjson
 from tasks import send_safe_strategy
+from django.conf import settings
 
 
 # Create your views here.
 
 
 def home(request):
-    # hosts = cache.get('hosts', dict())
+    alive_hosts = cache.get('alive_hosts', dict())
+    unsafe_hosts = cache.get('last_unsafe_hosts', dict())
     hosts = {}
     for e in Host.objects.all():
-        hosts[e.hostname] = {}
-        hosts[e.hostname]['ip'] = e.ip
-        hosts[e.hostname]['mac_address'] = e.mac_address
-        hosts[e.hostname]['boottime'] = e.last_boottime.strftime("%Y-%m-%d %H:%M:%S")
+        hosts[e.mac_address] = {}
+        hosts[e.mac_address]['ip'] = e.ip
+        hosts[e.mac_address]['hostname'] = e.hostname
+        hosts[e.mac_address]['boottime'] = e.last_boottime.strftime("%Y-%m-%d %H:%M:%S")
+        hosts[e.mac_address]['stat'] = '2offline'
+
+        if e.mac_address in alive_hosts:
+            hosts[e.mac_address]['stat'] = '1online'
+
+    for mac_address, ip in unsafe_hosts.items():
+        if mac_address not in hosts:
+            hosts[mac_address] = {}
+            hosts[mac_address]['ip'] = ip
+            hosts[mac_address]['stat'] = '0unsafe'
     # hosts = Host.objects.all().values()
-    # print hosts
+    sorted_host = sorted(hosts.iteritems(), key=lambda item: item[1]['stat'])
     time_range = request.GET.get('r', '')
-    user = {'is_authenticated': True, 'username': 'lan'}
 
     context = {
-        # 'user': user
-        'hosts': hosts,
+        'hosts': sorted_host,
         'range': time_range,
     }
 
-    send_safe_strategy.delay("127.0.0.1", 8649, net='192.168.1.120', cpu=60)
+    # send_safe_strategy.delay("127.0.0.1", 8649, net='192.168.1.120', cpu=60)
     return render(request, 'data_process/homepage.html', context)
 
 

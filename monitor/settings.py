@@ -14,7 +14,7 @@ import os
 # rrd root path
 
 # time_range: seconds in some range
-TIME_ORDER = ['hour', '2hr', '4hr', 'week', 'month', 'year']
+
 TIME_RANGE = {
     'hour': (3600, u'小时'),
     '2hr': (7200, u'2小时'),

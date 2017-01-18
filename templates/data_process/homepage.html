@@ -67,16 +67,37 @@ $(document).ready(function () {
     </tr>
 </thead>
     <tbody>
-{% for hostname, host in hosts.items %}
+{% for mac_address, host in hosts %}
     <tr>
-        <td>{{ hostname }}</td>
-        <td><a href="#docDrawer" data-show="drawer" href="#docDrawer" data-hostname="{{ hostname }}" aria-foldedopen="false"
-            aria-controls="docDrawer">
-            <img src="{% static 'images/figure.png' %}" width="20px" height="20px"></a></td>
-        <td>运行中</td>
+        <td>{{ host.hostname }}</td>
+        <td>
+            {% if host.hostname %}
+                <a href="#docDrawer" data-show="drawer" href="#docDrawer" data-hostname="{{ host.hostname }}" aria-foldedopen="false"
+                aria-controls="docDrawer">
+                <img src="{% static 'images/figure.png' %}" width="20px" height="20px"></a></td>
+            {% endif %}
+
+        {% if host.stat == '1online' %}
+            <td class="text-success">在线中</td>
+        {% elif host.stat == '2offline' %}
+            <td class="text-warning">离线</td>
+        {% elif host.stat == '0unsafe' %}
+            <td class="text-danger">危险</td>
+        {% endif %}
         <td>{{ host.ip }}</td>
-        <td>{{ host.mac_address }}</td>
-        <td>操作</td>
+        <td>{{ mac_address }}</td>
+        <td>
+            <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                更多 <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="#">配置安全策略</a></li>
+                    <li><a href="#">加入信任列表</a></li>
+                </ul>
+            </div>
+
+        </td>
     </tr>
 {% endfor %}
     </tbody>

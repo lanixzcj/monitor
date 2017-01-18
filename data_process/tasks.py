@@ -66,18 +66,18 @@ def scanning_host():
             if time.time() - start > 15:
                 break
 
-            last_unsafe_hosts = cache.get('last_unsafe_host', dict())
+            last_unsafe_hosts = cache.get('last_unsafe_hosts', dict())
             alive_hosts = cache.get('alive_host', dict())
             unsafe_hosts = {}
             for snd, rcv in ans:
-                mac_address = rcv.sprintf("%Ether.src%");
+                mac_address = rcv.sprintf("%Ether.src%").strip()
                 if mac_address not in alive_hosts:
-                    unsafe_hosts[mac_address] = rcv.sprintf('%ARP.psrc%')
+                    unsafe_hosts[mac_address] = rcv.sprintf('%ARP.psrc%').strip()
                     # arp poison
                     # TODO:用一个用例测试
-                    if unsafe_hosts[mac_address] == '192.168.1.105':
-                        arp_poison.poison_target(arp_poison.gateway_ip, gateway_mac,
-                                             unsafe_hosts[mac_address], mac_address)
+                    # if unsafe_hosts[mac_address] == '192.168.1.105':
+                    #     arp_poison.poison_target(arp_poison.gateway_ip, gateway_mac,
+                    #                          unsafe_hosts[mac_address], mac_address)
 
             time.sleep(5)
 
@@ -87,12 +87,11 @@ def scanning_host():
                 if mac_address not in unsafe_hosts:
                     #restore
 
-                    if unsafe_hosts[mac_address] == '192.168.1.105':
                         print mac_address
-                        arp_poison.restore_target(arp_poison.gateway_ip, gateway_mac,
-                                                 unsafe_hosts[mac_address], mac_address)
+                        # arp_poison.restore_target(arp_poison.gateway_ip, gateway_mac,
+                        #                          unsafe_hosts[mac_address], mac_address)
 
-            cache.set('last_unsafe_host', unsafe_hosts)
+            cache.set('last_unsafe_hosts', unsafe_hosts)
             break
 
 

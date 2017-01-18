@@ -29,26 +29,26 @@ def home(request):
     time_range = request.GET.get('r', '')
     user = {'is_authenticated': True, 'username': 'lan'}
 
-    # TODO:测试，还没有区分host
-    ip_packets = []
-    for e in IpPacket.objects.order_by("-time")[:5]:
-        ip_packet = {}
-        ip_packet['app_name'] = e.app_name
-        ip_packet['send_port'] = e.send_port
-        ip_packet['time'] = e.time.strftime("%Y-%m-%d %H:%M:%S")
-        ip_packet['recv_ip'] = e.recv_ip
-        ip_packet['recv_port'] = e.recv_port
-        ip_packets.append(ip_packet)
-
     context = {
         # 'user': user
         'hosts': hosts,
         'range': time_range,
-        'ip_packets': ip_packets
     }
 
     send_safe_strategy.delay("127.0.0.1", 8649, net='192.168.1.120', cpu=60)
     return render(request, 'data_process/homepage.html', context)
+
+
+def host_graphs(request):
+    host = request.GET.get('h')
+    time_range = request.GET.get('r', '')
+
+    context = {
+        'host': host,
+        'range': time_range,
+    }
+
+    return render(request, 'data_process/host.html', context)
 
 
 def image(request):

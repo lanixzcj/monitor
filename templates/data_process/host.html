@@ -1,0 +1,39 @@
+<!--{% load staticfiles %}-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}{% endblock %}</title>
+        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-drawer.css' %}">
+        <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/drawer.js' %}"></script>
+    </head>
+    <body>
+        <form action="" role="form" name = "monitor_form">
+        <input type="hidden" name="h" value="{{ host }}">
+        <div class="btn-group" id="color" data-toggle="buttons">
+            {% for time_value, time in time_range %}
+               <label class="btn btn-default">
+                 <input type="radio" OnChange="monitor_form.submit();" name="r" class="toggle" value="{{ time_value }}">
+                   {{ time }}
+               </label>
+            {% endfor %}
+        </div>
+        </form>
+        <ul class="list-group">
+        <li class="list-group-item text-center">
+            <img src="image/?h={{ host }}&m=net&r={{ range }}"/>
+        </li>
+        <li class="list-group-item text-center">
+            <img src="image/?h={{ host }}&m=cpu&r={{ range }}"/>
+        </li>
+            <li class="list-group-item text-center">
+            <img src="image/?h={{ host }}&m=mem&r={{ range }}"/>
+        </li>
+        </ul>
+    </body>
+</html>

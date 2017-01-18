@@ -14,7 +14,25 @@ $(document).ready(function () {
         $(e.currentTarget).find('[name="mac_address"]').html(mac_address);
         $(e.currentTarget).find('[name="boottime"]').html(boottime);
     })
+
+    $("#graphIframe").on("load", function(){
+        var bHeight = $("#graphIframe")[0].contentWindow.document.body.scrollHeight;
+        $("#graphIframe").attr('height', bHeight);
+    })
+
+    $('#docDrawer').on('show.bs.drawer', function(e) {
+        var hostname = $(e.relatedTarget).data('hostname');
+
+        src = 'hostgraph/?h=' + hostname
+        $(e.currentTarget).find('[name="hostname"]').html(hostname);
+        $(e.currentTarget).find('iframe#graphIframe').attr('src', src);
+    })
+
+
 });
+
+
+
 </script>
 <style type="text/css">
     .table th, .table td {
@@ -25,100 +43,43 @@ $(document).ready(function () {
 
 {% endblock %}
 {% block main_content %}
-<form action="/?h=22" role="form" name = "monitor_form">
-<div class="btn-group" id="color" data-toggle="buttons">
-    {% for time_value, time in time_range %}
-       <label class="btn btn-default">
-         <input type="radio" OnChange="monitor_form.submit();" name="r" class="toggle" value="{{ time_value }}">
-           {{ time }}
-       </label>
-    {% endfor %}
-</div>
-</form>
-{% for hostname, host in hosts.items %}
-<div class="panel panel-success">
-    <div class="panel-heading clearfix">
-        <h5 class="pannel-title pull-left">{{ hostname }}资源列表</h5>
-        <button type="button" class="btn btn-default pull-right" data-hostname="{{ hostname }}" data-ip="{{ host.ip }}"
-                data-boottime="{{ host.boottime }}" data-mac_address="{{ host.mac_address }}"
-                        data-toggle="modal" data-target="#myModal">
-            信息
-        </button>
-    </div>
-
-    <ul class="list-group">
-    <li class="list-group-item text-center">
-        <img src="image/?h={{ hostname }}&m=net&r={{ range }}"/>
-        <!--<div class="row">-->
-        <!--<img class="col-md-6" src="image/?h={{ hostname }}&m=net&r={{ range }}"/>-->
-        <!--<img class="col-md-6" src="image/?h={{ hostname }}&m=cpu&r={{ range }}"/>-->
-        <!--</div>-->
-    </li>
-    <li class="list-group-item text-center">
-        <img src="image/?h={{ hostname }}&m=cpu&r={{ range }}"/>
-    </li>
-        <li class="list-group-item text-center">
-        <img src="image/?h={{ hostname }}&m=mem&r={{ range }}"/>
-    </li>
-    </ul>
-</div>
-{% endfor %}
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+<div id="docDrawer" class="drawer drawer-right dw-xs-10 dw-sm-6 dw-md-5 fold in" aria-labelledby="docDrawer">
+        <div class="drawer-contents">
+            <div class="drawer-heading">
+                <button type="button" class="close" data-dismiss="drawer"><span aria-hidden="true">&times;</span><span
                         class="sr-only">Close</span></button>
-                <h4 class="modal-title" id="myModalLabel">资源信息</h4>
+                <h2 class="drawer-title" name="hostname"><strong>bootstrap-drawer</strong></h2>
             </div>
-            <div class="modal-body">
-                <table class="table table-striped">
-                    <tbody>
-                    <tr>
-                        <td>主机名称</td>
-                        <td name="hostname"></td>
-                    </tr>
-                    <tr>
-                        <td>ip地址</td>
-                        <td name="ip"></td>
-                    </tr>
-                    <tr>
-                        <td>mac地址</td>
-                        <td name="mac_address"></td>
-                    </tr>
-                    <tr>
-                        <td>启动时间</td>
-                        <td name="boottime"></td>
-                    </tr>
-                    </tbody>
-                </table>
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <td>时间</td>
-                            <td>应用名称</td>
-                            <td>发送端口</td>
-                            <td>接收ip</td>
-                            <td>接收端口</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {% for ip_packet in ip_packets %}
-                    <tr>
-                        <td>{{ ip_packet.time }}</td>
-                        <td>{{ ip_packet.app_name }}</td>
-                        <td>{{ ip_packet.send_port }}</td>
-                        <td>{{ ip_packet.recv_ip }}</td>
-                        <td>{{ ip_packet.recv_port }}</td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            <div class="modal-footer">
-                <!--<button type="button" class="btn btn-primary">Save changes</button>-->
-            </div>
+
+            <iframe name="host-graph" id="graphIframe"
+                    src="" frameborder="0" scrolling="no" width="100%" height=""></iframe>
         </div>
     </div>
-</div>
+<table class="table table-striped">
+<thead>
+    <tr>
+        <td>ID/主机名</td>
+        <td>监控</td>
+        <td>状态</td>
+        <td>IP地址</td>
+        <td>MAC地址</td>
+        <td>操作</td>
+    </tr>
+</thead>
+    <tbody>
+{% for hostname, host in hosts.items %}
+    <tr>
+        <td>{{ hostname }}</td>
+        <td><a href="#docDrawer" data-show="drawer" href="#docDrawer" data-hostname="{{ hostname }}" aria-foldedopen="false"
+            aria-controls="docDrawer">
+            <img src="{% static 'images/figure.png' %}" width="20px" height="20px"></a></td>
+        <td>运行中</td>
+        <td>{{ host.ip }}</td>
+        <td>{{ host.mac_address }}</td>
+        <td>操作</td>
+    </tr>
+{% endfor %}
+    </tbody>
+</table>
+
 {% endblock %}

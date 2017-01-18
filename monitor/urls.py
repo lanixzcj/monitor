@@ -19,7 +19,8 @@ from data_process import views as server_view
 
 urlpatterns = [
     url(r'^$', server_view.home),
-    url(r'^image/$', server_view.image),
+    url(r'^hostgraph/$', server_view.host_graphs),
+    url(r'^(?:hostgraph/)?image/$', server_view.image),
     url(r'^admin/', admin.site.urls),
     url(r'^login/$', server_view.login),
 ]

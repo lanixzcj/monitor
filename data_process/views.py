@@ -5,8 +5,8 @@ import rrd_helper
 import time
 import datetime
 from django.core.cache import cache
-from models import Host
-from models import IpPacket
+from django.core.exceptions import ObjectDoesNotExist
+from models import Host, TrustHost
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import auth
 import demjson
@@ -20,6 +20,41 @@ from django.conf import settings
 def home(request):
     alive_hosts = cache.get('alive_hosts', dict())
     unsafe_hosts = cache.get('last_unsafe_hosts', dict())
+    if request.method == "POST" and request.is_ajax:
+        mac = request.POST.get('mac_address')
+        method = request.POST.get('method')
+
+        if method == 'add':
+            trust_host = TrustHost.objects.get_or_create(mac_address=mac)
+            trust_host[0].save()
+
+            if mac in alive_hosts or mac in unsafe_hosts:
+                stat = 'online'
+            else:
+                stat = 'offline'
+            method = 'remove'
+        elif method == 'remove':
+            try:
+                trust_host = TrustHost.objects.get(mac_address=mac)
+                trust_host.delete()
+            except ObjectDoesNotExist:
+                pass
+
+            if mac in alive_hosts:
+                stat = 'online'
+            elif mac in unsafe_hosts:
+                stat = 'unsafe'
+            else:
+                stat = 'offline'
+            method = 'add'
+
+        content = mac + '&' + method + '&' + stat
+
+        return HttpResponse(content=content)
+
+    trust_hosts = TrustHost.objects.all()
+
+    # 获取数据hosts
     hosts = {}
     for e in Host.objects.all():
         hosts[e.mac_address] = {}
@@ -27,22 +62,32 @@ def home(request):
         hosts[e.mac_address]['hostname'] = e.hostname
         hosts[e.mac_address]['boottime'] = e.last_boottime.strftime("%Y-%m-%d %H:%M:%S")
         hosts[e.mac_address]['stat'] = '2offline'
+        hosts[e.mac_address]['is_trusted'] = False
 
         if e.mac_address in alive_hosts:
             hosts[e.mac_address]['stat'] = '1online'
 
+    # 获取未安装客户端并在线的hosts
     for mac_address, ip in unsafe_hosts.items():
-        if mac_address not in hosts:
-            hosts[mac_address] = {}
+        if mac_address not in alive_hosts:
+            if mac_address not in hosts:
+                hosts[mac_address] = {}
             hosts[mac_address]['ip'] = ip
             hosts[mac_address]['stat'] = '0unsafe'
+            hosts[mac_address]['is_trusted'] = False
+
+    # 是否在信任列表里
+    for e in trust_hosts:
+        if e.mac_address in hosts:
+            hosts[e.mac_address]['is_trusted'] = True
+            if hosts[e.mac_address]['stat'] == '0unsafe':
+                hosts[e.mac_address]['stat'] = '1online'
+
     # hosts = Host.objects.all().values()
     sorted_host = sorted(hosts.iteritems(), key=lambda item: item[1]['stat'])
-    time_range = request.GET.get('r', '')
 
     context = {
         'hosts': sorted_host,
-        'range': time_range,
     }
 
     # send_safe_strategy.delay("127.0.0.1", 8649, net='192.168.1.120', cpu=60)

@@ -66,6 +66,10 @@ class Host(models.Model):
     last_boottime = models.DateTimeField()
 
 
+class TrustHost(models.Model):
+    mac_address = models.CharField(max_length=30, unique=True)
+
+
 class UserAction(models.Model):
     hostname = models.ForeignKey(Host, on_delete=models.CASCADE)
     user = models.CharField(max_length=30)

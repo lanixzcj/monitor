@@ -4,15 +4,18 @@
 <script type="text/javascript">
 $(document).ready(function () {
     $('#myModal').on('show.bs.modal', function(e) {
-        var hostname = $(e.relatedTarget).data('hostname');
-        var ip = $(e.relatedTarget).data('ip');
-        var mac_address = $(e.relatedTarget).data('mac_address');
-        var boottime = $(e.relatedTarget).data('boottime');
+        var relatedTarget = $(e.relatedTarget)
+        var currentTarget = $(e.currentTarget)
+
+        var hostname = relatedTarget.data('hostname');
+        var ip = relatedTarget.data('ip');
+        var mac_address = relatedTarget.data('mac_address');
+        var boottime = relatedTarget.data('boottime');
         console.log(hostname, ip, boottime);
-        $(e.currentTarget).find('[name="hostname"]').html(hostname);
-        $(e.currentTarget).find('[name="ip"]').html(ip);
-        $(e.currentTarget).find('[name="mac_address"]').html(mac_address);
-        $(e.currentTarget).find('[name="boottime"]').html(boottime);
+        currentTarget.find('[name="hostname"]').html(hostname);
+        currentTarget.find('[name="ip"]').html(ip);
+        currentTarget.find('[name="mac_address"]').html(mac_address);
+        currentTarget.find('[name="boottime"]').html(boottime);
     })
 
     $("#graphIframe").on("load", function(){
@@ -21,14 +24,69 @@ $(document).ready(function () {
     })
 
     $('#docDrawer').on('show.bs.drawer', function(e) {
-        var hostname = $(e.relatedTarget).data('hostname');
+        var relatedTarget = $(e.relatedTarget)
+        var currentTarget = $(e.currentTarget)
+        var hostname = relatedTarget.data('hostname');
 
         src = 'hostgraph/?h=' + hostname
-        $(e.currentTarget).find('[name="hostname"]').html(hostname);
-        $(e.currentTarget).find('iframe#graphIframe').attr('src', src);
+        currentTarget.find('[name="hostname"]').html(hostname);
+        currentTarget.find('iframe#graphIframe').attr('src', src);
     })
 
+    $("form#trust_form").submit(function() {
 
+        $this = $(this);
+        $.ajax({
+            type: $this.attr('method'),
+            url: $this.attr('action'),
+            data: $this.serialize(),
+            success: function (response) {
+                <!--TODO:mac地址正则表达式不严谨-->
+                var ref = new RegExp("^([A-Fa-f0-9:]*)&(remove|add)&(unsafe|online|offline)$");
+                var cap = response.match(ref);
+                if (!cap)
+                    return
+
+                var tag_a = $('a[data-mac="'+cap[1]+'"]');
+
+                if (cap[2] == 'remove') {
+                    tag_a.html('从信任列表中移除');
+                } else {
+                    tag_a.html('加入信任列表中');
+                }
+
+                tag_a.data('method', cap[2]);
+
+                var tag_stat = $('td.stat[data-mac="'+cap[1]+'"]');
+                if (cap[3] == 'unsafe') {
+                    tag_stat.html('危险');
+                    tag_stat.attr('class', 'text-danger');
+                } else if (cap[3] == 'online') {
+                    tag_stat.html('在线中');
+                    tag_stat.attr('class', 'text-success');
+                } else {
+                    tag_stat.html('离线');
+                    tag_stat.attr('class', 'text-warning');
+                }
+
+                tag_stat.addClass('stat');
+            }
+        });
+
+        return false;
+
+    })
+
+    $(".trust-submit").click(function() {
+        var mac_address = $(this).data('mac');
+        var method = $(this).data('method');
+
+        var form = $("form#trust_form")
+        $('input[name="mac_address"]').val(mac_address)
+        $('input[name="method"]').val(method)
+
+        $("form#trust_form").submit();
+    })
 });
 
 
@@ -67,6 +125,9 @@ $(document).ready(function () {
     </tr>
 </thead>
     <tbody>
+<form action="" role="form" name="form" id="trust_form" method="post"> {% csrf_token %}
+    <input type="hidden" name="mac_address" value="">
+    <input type="hidden" name="method" value="">
 {% for mac_address, host in hosts %}
     <tr>
         <td>{{ host.hostname }}</td>
@@ -78,11 +139,11 @@ $(document).ready(function () {
             {% endif %}
 
         {% if host.stat == '1online' %}
-            <td class="text-success">在线中</td>
+            <td data-mac="{{ mac_address }}" class="text-success stat">在线中</td>
         {% elif host.stat == '2offline' %}
-            <td class="text-warning">离线</td>
+            <td data-mac="{{ mac_address }}" class="text-warning stat">离线</td>
         {% elif host.stat == '0unsafe' %}
-            <td class="text-danger">危险</td>
+            <td data-mac="{{ mac_address }}" class="text-danger stat">危险</td>
         {% endif %}
         <td>{{ host.ip }}</td>
         <td>{{ mac_address }}</td>
@@ -93,13 +154,20 @@ $(document).ready(function () {
                 </button>
                 <ul class="dropdown-menu" role="menu">
                     <li><a href="#">配置安全策略</a></li>
-                    <li><a href="#">加入信任列表</a></li>
+                    {% if host.is_trusted %}
+                        <li><a href="#" class="trust-submit" data-method="remove"
+                               data-mac="{{ mac_address }}">从信任列表中移除</a></li>
+                    {% else %}
+                        <li><a href="#" class="trust-submit" data-method="add"
+                               data-mac="{{ mac_address }}">加入信任列表</a></li>
+
+                    {% endif %}
                 </ul>
             </div>
-
         </td>
     </tr>
 {% endfor %}
+</form>
     </tbody>
 </table>
 

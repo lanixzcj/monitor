@@ -6,7 +6,7 @@ import time
 import datetime
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
-from models import Host, TrustHost
+from models import Host, TrustHost, DiskInfo
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import auth
 import demjson
@@ -97,9 +97,23 @@ def home(request):
 def host_graphs(request):
     host = request.GET.get('h')
     time_range = request.GET.get('r', '')
+    try:
+        host_info = Host.objects.get(hostname=host)
+        disk = DiskInfo.objects.get(hostname=host_info)
+    except ObjectDoesNotExist:
+        disk = None
+        pass
 
+    disk_info = {}
+    if disk is not None:
+        disk_info['total'] = disk.disk_total
+        disk_info['used'] = disk.disk_total - disk.disk_free
+        disk_info['used_per'] = int(disk_info['used'] / disk_info['total'] * 100)
+
+    print disk_info
     context = {
         'host': host,
+        'disk': disk_info,
         'range': time_range,
     }
 

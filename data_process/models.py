@@ -65,9 +65,18 @@ class Host(models.Model):
     mac_address = models.CharField(max_length=30, unique=True)
     last_boottime = models.DateTimeField()
 
+    def __unicode__(self):
+        return self.hostname
+
 
 class TrustHost(models.Model):
     mac_address = models.CharField(max_length=30, unique=True)
+
+
+class DiskInfo(models.Model):
+    hostname = models.ForeignKey(Host, on_delete=models.CASCADE)
+    disk_total = models.FloatField()
+    disk_free = models.FloatField()
 
 
 class UserAction(models.Model):

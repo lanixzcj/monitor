@@ -21,24 +21,9 @@
     <li class="list-group-item text-center">
         <img src="image/?h={{ host }}&m=cpu&r={{ range }}"/>
     <li class="list-group-item-heading">内存监控</li>
-    <li class="list-group-item text-center">
+    </li>
+        <li class="list-group-item text-center">
         <img src="image/?h={{ host }}&m=mem&r={{ range }}"/>
-    <li class="list-group-item-heading">磁盘使用率</li>
-    <li class="list-group-item text-center">
-        <div content="container">
-            <div class="row">
-            <div class="progress  col-xs-9">
-                <div class="progress-bar" role="progressbar" aria-valuenow="{{ disk.used_per }}"
-                 aria-valuemin="0" aria-valuemax="100" style="width: {{ disk.used_per }}%;">
-                {{ disk.used_per }}%
-                </div>
-
-            </div>
-            <div class="col-xs-3" style="font-size: 12px;">
-                {{ disk.used }} GB/{{ disk.total }} GB
-            </div>
-        </div>
-        </div>
     </li>
     </ul>
 {% endblock %}

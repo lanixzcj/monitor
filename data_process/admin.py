@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django import forms
-from models import UserAction, MyUser
+from models import UserAction, MyUser, DiskInfo
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
@@ -83,4 +83,5 @@ class MyUserAdmin(UserAdmin):
 admin.site.register(MyUser, MyUserAdmin)
 
 admin.site.register(UserAction)
+admin.site.register(DiskInfo)
 

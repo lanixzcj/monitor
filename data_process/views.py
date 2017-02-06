@@ -6,12 +6,13 @@ import time
 import datetime
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
-from models import Host, TrustHost, DiskInfo
+from models import Host, TrustHost, DeviceInfo, HostThreshold
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import auth
 import demjson
 from tasks import send_safe_strategy
 from django.conf import settings
+import socket
 
 
 # Create your views here.
@@ -20,6 +21,7 @@ from django.conf import settings
 def home(request):
     alive_hosts = cache.get('alive_hosts', dict())
     unsafe_hosts = cache.get('last_unsafe_hosts', dict())
+    print unsafe_hosts
     if request.method == "POST" and request.is_ajax:
         mac = request.POST.get('mac_address')
         method = request.POST.get('method')
@@ -68,11 +70,15 @@ def home(request):
             hosts[e.mac_address]['stat'] = '1online'
 
     # 获取未安装客户端并在线的hosts
-    for mac_address, ip in unsafe_hosts.items():
+    for mac_address, host in unsafe_hosts.items():
         if mac_address not in alive_hosts:
             if mac_address not in hosts:
                 hosts[mac_address] = {}
-            hosts[mac_address]['ip'] = ip
+            hosts[mac_address]['ip'] = host['ip']
+            # TODO: 局域网内获得主机名均为localhost
+            if 'hostname' not in hosts[mac_address]:
+                pass
+                # hosts[mac_address]['hostname'] = host['hostname']
             hosts[mac_address]['stat'] = '0unsafe'
             hosts[mac_address]['is_trusted'] = False
 
@@ -99,7 +105,7 @@ def host_graphs(request):
     time_range = request.GET.get('r', '')
     try:
         host_info = Host.objects.get(hostname=host)
-        disk = DiskInfo.objects.get(hostname=host_info)
+        disk = DeviceInfo.objects.get(hostname=host_info)
     except ObjectDoesNotExist:
         disk = None
         pass
@@ -118,6 +124,52 @@ def host_graphs(request):
     }
 
     return render(request, 'data_process/host.html', context)
+
+
+def safe_strategy(request):
+    if request.method == "GET":
+        host = request.GET.get('h')
+    elif request.method == "POST" and request.is_ajax:
+        host = request.POST.get('hostname')
+        disk_used = request.POST.get('disk_used')
+        cpu_used = request.POST.get('cpu_used')
+        mem_used = request.POST.get('mem_used')
+
+    try:
+        host_info = Host.objects.get(hostname=host)
+        threshold = host_info.hostthreshold
+        device = host_info.deviceinfo
+    except ObjectDoesNotExist:
+        print 'bad host.'
+        threshold = None
+
+    if request.method == "POST" and request.is_ajax:
+        if threshold is not None:
+            threshold.disk_used = disk_used
+            threshold.cpu_used = cpu_used
+            threshold.mem_used = mem_used
+            threshold.save()
+
+            print threshold
+            return HttpResponse(content='saved')
+
+    threshold_info = {}
+    if threshold is not None and device is not None:
+        threshold_info['bytes_in'] = threshold.bytes_in
+        threshold_info['bytes_out'] = threshold.bytes_out
+        threshold_info['cpu_used'] = threshold.cpu_used
+        threshold_info['mem_used'] = threshold.mem_used
+        threshold_info['disk_used'] = threshold.disk_used
+        threshold_info['disk_total'] = device.disk_total
+        threshold_info['mem_total'] = device.mem_total
+
+    print threshold_info
+    context = {
+        'host': host,
+        'threshold': threshold_info,
+    }
+
+    return render(request, 'data_process/safe_strategy.html', context)
 
 
 def image(request):

@@ -9,13 +9,16 @@
         <title>{% block title %}{% endblock %}</title>
         <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
         <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-drawer.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-slider.css' %}">
         <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
         <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
         <script type="text/javascript" src="{% static 'js/drawer.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/bootstrap-slider.js' %}"></script>
         {% block files %} {% endblock %}
     </head>
 
     <body class="has-offcanvas">
+
         {% block main_content %} {% endblock %}
     </body>
 </html>

@@ -13,9 +13,9 @@ $(document).ready(function () {
         currentTarget.find('iframe#safeStrategyIframe').attr('src', src);
     })
 
-    $("iframe").on("load", function(){
-        var bHeight = $("#graphIframe")[0].contentWindow.document.body.scrollHeight;
-        $("#graphIframe").attr('height', bHeight);
+    $(".modal iframe").on("load", function(){
+        var bHeight = $(this)[0].contentWindow.document.body.scrollHeight;
+        $(this).attr('height', bHeight);
     })
 
     $('#docDrawer').on('show.bs.drawer', function(e) {
@@ -31,6 +31,7 @@ $(document).ready(function () {
     $("form#trust_form").submit(function() {
 
         $this = $(this);
+        console.log($this.serialize())
         $.ajax({
             type: $this.attr('method'),
             url: $this.attr('action'),
@@ -137,7 +138,9 @@ $(document).ready(function () {
                 更多 <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" role="menu">
+                    {% if host.hostname %}
                     <li><a href="#" data-hostname="{{ host.hostname }}" data-toggle="modal" data-target="#myModal">配置安全策略</a></li>
+                    {% endif %}
                     {% if host.is_trusted %}
                         <li><a href="#" class="trust-submit" data-method="remove"
                                data-mac="{{ mac_address }}">从信任列表中移除</a></li>
@@ -156,15 +159,15 @@ $(document).ready(function () {
 </table>
 
 <div id="docDrawer" class="drawer drawer-right dw-xs-10 dw-sm-8 dw-md-6 fold in" aria-labelledby="docDrawer">
+    <div class="drawer-heading">
+        <button type="button" class="close" data-dismiss="drawer"><span aria-hidden="true">&times;</span><span
+                class="sr-only">Close</span></button>
+        <h2 class="drawer-title" name="hostname"><strong>bootstrap-drawer</strong></h2>
+    </div>
     <div class="drawer-contents">
-        <div class="drawer-heading">
-            <button type="button" class="close" data-dismiss="drawer"><span aria-hidden="true">&times;</span><span
-                    class="sr-only">Close</span></button>
-            <h2 class="drawer-title" name="hostname"><strong>bootstrap-drawer</strong></h2>
-        </div>
 
         <iframe id="graphIframe"
-                src="" frameborder="0" scrolling="no" width="100%" height=""></iframe>
+                src="" frameborder="0" scrolling="auto" width="100%" height="90%"></iframe>
     </div>
 </div>
 
@@ -180,9 +183,9 @@ $(document).ready(function () {
                 <iframe id="safeStrategyIframe"
                 src="" frameborder="0" scrolling="no" width="100%" height=""></iframe>
             </div>
-            <div class="modal-footer">
+            <!--<div class="modal-footer">-->
                 <!--<button type="button" class="btn btn-primary">Save changes</button>-->
-            </div>
+            <!--</div>-->
         </div>
     </div>
 </div>

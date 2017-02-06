@@ -1,8 +1,10 @@
 from scapy.layers.l2 import *
+from django.conf import settings
+import socket
 
 interface = "eth0"
 packet_count = 1000
-gateway_ip = '192.168.1.1'
+gateway_ip = settings.GATEWAY_IP
 # set our interface
 conf.iface = interface
 
@@ -22,6 +24,10 @@ def get_mac(ip_address):
     for s, r in responses:
         return r[Ether].src
     return None
+
+
+def get_hostname(ip_address):
+    return socket.gethostbyaddr(ip_address)[0]
 
 
 def poison_target(gateway_ip, gateway_mac, target_ip, target_mac):

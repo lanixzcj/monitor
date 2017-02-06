@@ -28,6 +28,7 @@ class MyStreamRequestHandler(StreamRequestHandler):
                 traceback.print_exc()
                 break
 
+
 @shared_task
 def server_thread():
     addr = '', 8650
@@ -52,7 +53,7 @@ def clean_up():
 def scanning_host():
     start = time.time()
 
-    ipscan = '192.168.1.0/24'
+    ipscan = arp_poison.gateway_ip + '/24'
     try:
         ans, unans = srp(Ether(dst="FF:FF:FF:FF:FF:FF") / ARP(pdst=ipscan), timeout=2, verbose=False)
     except Exception, e:
@@ -71,15 +72,15 @@ def scanning_host():
             unsafe_hosts = {}
             for snd, rcv in ans:
                 mac_address = rcv.sprintf("%Ether.src%").strip()
-                if mac_address not in alive_hosts:
-                    unsafe_hosts[mac_address] = rcv.sprintf('%ARP.psrc%').strip()
+                if mac_address not in alive_hosts and mac_address != gateway_mac:
+                    unsafe_hosts[mac_address] = {}
+                    unsafe_hosts[mac_address]['ip'] = rcv.sprintf('%ARP.psrc%').strip()
+                    unsafe_hosts[mac_address]['hostname'] = arp_poison.get_hostname(unsafe_hosts[mac_address]['ip'])
                     # arp poison
                     # TODO:用一个用例测试
-                    # if unsafe_hosts[mac_address] == '192.168.1.105':
-                    #     arp_poison.poison_target(arp_poison.gateway_ip, gateway_mac,
-                    #                          unsafe_hosts[mac_address], mac_address)
-
-            time.sleep(5)
+                    if unsafe_hosts[mac_address]['ip'] == '192.168.1.3':
+                        arp_poison.poison_target(arp_poison.gateway_ip, gateway_mac,
+                                             unsafe_hosts[mac_address]['ip'], mac_address)
 
             print unsafe_hosts
 
@@ -87,12 +88,12 @@ def scanning_host():
                 if mac_address not in unsafe_hosts:
                     #restore
 
-                        print mac_address
+                        pass
                         # arp_poison.restore_target(arp_poison.gateway_ip, gateway_mac,
                         #                          unsafe_hosts[mac_address], mac_address)
 
             cache.set('last_unsafe_hosts', unsafe_hosts)
-            break
+            time.sleep(5)
 
 
 @shared_task

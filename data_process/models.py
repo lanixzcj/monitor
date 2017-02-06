@@ -73,10 +73,20 @@ class TrustHost(models.Model):
     mac_address = models.CharField(max_length=30, unique=True)
 
 
-class DiskInfo(models.Model):
-    hostname = models.ForeignKey(Host, on_delete=models.CASCADE)
-    disk_total = models.FloatField()
-    disk_free = models.FloatField()
+class DeviceInfo(models.Model):
+    hostname = models.OneToOneField(Host, on_delete=models.CASCADE, primary_key=True)
+    disk_total = models.FloatField(default=100)
+    disk_free = models.FloatField(default=0)
+    mem_total = models.FloatField(default=1800000)
+
+
+class HostThreshold(models.Model):
+    hostname = models.OneToOneField(Host, on_delete=models.CASCADE, primary_key=True)
+    bytes_in = models.FloatField(default=0)
+    bytes_out = models.FloatField(default=0)
+    disk_used = models.FloatField(default=0)
+    mem_used = models.FloatField(default=0)
+    cpu_used = models.FloatField(default=0)
 
 
 class UserAction(models.Model):

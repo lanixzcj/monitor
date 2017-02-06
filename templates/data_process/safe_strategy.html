@@ -1,29 +1,80 @@
 {% extends 'base_without_header.html' %}
 {% load staticfiles %}
+{% block files %}
+<script type="text/javascript">
+$(document).ready(function () {
+    var disk = $('#disk-slider').slider().data('slider');
+    var cpu = $('#cpu-slider').slider().data('slider');
+    var mem = $('#mem-slider').slider().data('slider');
+
+    $("#disk-slider").on("slide", function(slideEvt) {
+	    $("#DiskSliderVal").text(slideEvt.value);
+    });
+
+    $("form#safe_strategy_form").submit(function() {
+
+        $this = $(this);
+
+        var data = $this.serialize() + '&disk_used=' + disk.getValue() +
+                                   '&cpu_used=' + cpu.getValue() +
+                                   '&mem_used=' + mem.getValue();
+        console.log(data)
+        $.ajax({
+            type: 'POST',
+            url: $this.attr('action'),
+            data: data,
+            success: function (response) {
+                console.log(response)
+            }
+        });
+
+        return false;
+
+    })
+
+    $('#save-btn').on('click', function() {
+        console.log(disk.getValue(), cpu.getValue(), mem.getValue())
+
+        $("form#safe_strategy_form").submit();
+    })
+
+})
+</script>
+<style type="text/css">
+#Slider .slider-selection {
+	background: #BABABA;
+}
+</style>
+{% endblock %}
 {% block main_content %}
-    <form action="" role="form" name = "monitor_form">
-        <input type="hidden" name="h" value="{{ host }}">
-        <div class="btn-group" id="color" data-toggle="buttons">
-            {% for time_value, time in time_range %}
-               <label class="btn btn-default">
-                 <input type="radio" OnChange="monitor_form.submit();" name="r" class="toggle" value="{{ time_value }}">
-                   {{ time.1 }}
-               </label>
-            {% endfor %}
-        </div>
-    </form>
+<form action="" role="form" name="form" id="safe_strategy_form" method="post"> {% csrf_token %}
+    <input type="hidden" name="hostname" value="{{ host }}">
+
     <ul class="list-group">
-    <li class="list-group-item-heading">网络监控</li>
-    <li class="list-group-item text-center">
-        <img src="image/?h={{ host }}&m=net&r={{ range }}"/>
+    <li class="list-group-item-heading">硬盘监控</li>
+    <li class="list-group-item">
+        硬盘使用阀值：<input id="disk-slider" data-slider-id='Slider' type="text"
+               data-slider-min="0" data-slider-max="{{ threshold.disk_total }}"
+               data-slider-step="1" data-slider-value="{{ threshold.disk_used }}"/>
+        <span id="DiskSliderValLabel">当前值: <span id="DiskSliderVal">{{ threshold.disk_used }}</span></span>
     </li>
     <li class="list-group-item-heading">CPU监控</li>
-    <li class="list-group-item text-center">
-        <img src="image/?h={{ host }}&m=cpu&r={{ range }}"/>
+    <li class="list-group-item">
+        CPU使用阀值：<input id="cpu-slider" data-slider-id='Slider' type="text"
+               data-slider-min="0" data-slider-max="100" data-slider-step="1"
+               data-slider-value="{{ threshold.cpu_used }}"/>
+        <span id="CpuSliderValLabel">当前值: <span id="CpuSliderVal">{{ threshold.cpu_used }}</span></span>
     <li class="list-group-item-heading">内存监控</li>
     </li>
-        <li class="list-group-item text-center">
-        <img src="image/?h={{ host }}&m=mem&r={{ range }}"/>
+        <li class="list-group-item">
+        内存使用阀值：<input id="mem-slider" data-slider-id='Slider' type="text"
+               data-slider-min="0" data-slider-max="{{ threshold.mem_total }}"
+               data-slider-step="1" data-slider-value="{{ threshold.mem_used }}"/>
+            <span id="MemSliderValLabel">当前值: <span id="MemSliderVal">{{ threshold.mem_used }}</span></span>
     </li>
     </ul>
+    <div class="modal-footer">
+        <button id="save-btn" type="button" class="btn btn-primary">保存</button>
+    </div>
+</form>
 {% endblock %}

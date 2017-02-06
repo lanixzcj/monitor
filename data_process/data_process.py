@@ -5,8 +5,8 @@ import rrd_helper
 import time
 import datetime
 from django.core.cache import cache
-from models import Host
-from models import IpPacket
+from models import Host, HostThreshold, IpPacket, DeviceInfo
+from django.core.exceptions import ObjectDoesNotExist
 from pytz import timezone
 
 
@@ -50,15 +50,21 @@ def hostinfo_save_into_db(host, ip):
     mac_address = host['mac_address'].strip() if 'mac_address' in host else None
     boottime = host['boottime'] if 'boottime' in host else None
     boottime = string.atof(boottime)
-    db_host = Host.objects.get_or_create(hostname=hostname, defaults={
-        'ip': ip,
-        'mac_address': mac_address,
-        'last_boottime': datetime.datetime.fromtimestamp(boottime, tz=timezone('Asia/Shanghai'))
-    })
-    db_host[0].ip = ip
-    db_host[0].mac_address = mac_address
-    db_host[0].last_boottime = datetime.datetime.fromtimestamp(boottime, tz=timezone('Asia/Shanghai'))
-    db_host[0].save()
+
+    try:
+        db_host = Host.objects.get(hostname=hostname)
+        db_host.ip = ip
+        db_host.mac_address = mac_address
+        db_host.last_boottime = datetime.datetime.fromtimestamp(boottime, tz=timezone('Asia/Shanghai'))
+        db_host.save()
+    except ObjectDoesNotExist:
+        db_host = Host(hostname=hostname, ip=ip, mac_address=mac_address,
+                       last_boottime=datetime.datetime.fromtimestamp(boottime, tz=timezone('Asia/Shanghai')))
+        db_host.save()
+        threshold = HostThreshold(hostname=db_host)
+        threshold.save()
+        deviceinfo = DeviceInfo(hostname=db_host)
+        deviceinfo.save()
 
 
 def metrics_save_into_rrd(host, name, metric):
@@ -67,6 +73,24 @@ def metrics_save_into_rrd(host, name, metric):
 
     rrd_helper.write_to_rrd(str(hostname), str(name), str(metric['value']), 1, 'GAUGE',
                             '20', str(localtime))
+
+    try:
+        db_host = Host.objects.get(hostname=hostname)
+        deviceinfo = db_host.deviceinfo
+    except ObjectDoesNotExist:
+        print 'bad host'
+        return
+
+    if name == 'disk_total':
+        deviceinfo.disk_total = metric['value']
+        deviceinfo.save()
+    elif name == 'disk_free':
+        deviceinfo.disk_free = metric['value']
+        deviceinfo.save()
+    elif name == 'mem_total':
+        deviceinfo.mem_total = metric['value']
+        deviceinfo.save()
+
 
 
 def save_ip_packet(host, metric):

@@ -1,44 +1,92 @@
 {% extends 'base_without_header.html' %}
 {% load staticfiles %}
-{% block main_content %}
-    <form action="" role="form" name = "monitor_form">
-        <input type="hidden" name="h" value="{{ host }}">
-        <div class="btn-group" id="color" data-toggle="buttons">
-            {% for time_value, time in time_range %}
-               <label class="btn btn-default">
-                 <input type="radio" OnChange="monitor_form.submit();" name="r" class="toggle" value="{{ time_value }}">
-                   {{ time.1 }}
-               </label>
-            {% endfor %}
-        </div>
-    </form>
-    <ul class="list-group">
-    <li class="list-group-item-heading">网络监控</li>
-    <li class="list-group-item text-center">
-        <img src="image/?h={{ host }}&m=net&r={{ range }}"/>
-    </li>
-    <li class="list-group-item-heading">CPU监控</li>
-    <li class="list-group-item text-center">
-        <img src="image/?h={{ host }}&m=cpu&r={{ range }}"/>
-    <li class="list-group-item-heading">内存监控</li>
-    <li class="list-group-item text-center">
-        <img src="image/?h={{ host }}&m=mem&r={{ range }}"/>
-    <li class="list-group-item-heading">磁盘使用率</li>
-    <li class="list-group-item text-center">
-        <div content="container">
-            <div class="row">
-            <div class="progress  col-xs-9">
-                <div class="progress-bar" role="progressbar" aria-valuenow="{{ disk.used_per }}"
-                 aria-valuemin="0" aria-valuemax="100" style="width: {{ disk.used_per }}%;">
-                {{ disk.used_per }}%
-                </div>
+{% block files %}
+<script type="text/javascript">
+$(document).ready(function () {
+    $('#ex1').slider({
+        formatter: function(value) {
 
+        }
+    });
+
+})
+
+
+</script>
+<style type="text/css">
+#ex1Slider .slider-selection {
+	background: #BABABA;
+}
+
+body {
+    padding-top: 140px;
+}
+
+
+</style>
+{% endblock %}
+{% block main_content %}
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+        <form action="" role="form" name="monitor_form" style="padding: 20px 0 20px 0">
+            <input type="hidden" name="h" value="{{ host }}">
+            <div class="btn-group" id="color" data-toggle="buttons">
+                {% for time_value, time in time_range %}
+                <label class="btn btn-default">
+                    <input type="radio" OnChange="monitor_form.submit();" name="r" class="toggle"
+                           value="{{ time_value }}">
+                    {{ time.1 }}
+                </label>
+                {% endfor %}
             </div>
-            <div class="col-xs-3" style="font-size: 12px;">
-                {{ disk.used }} GB/{{ disk.total }} GB
-            </div>
-        </div>
-        </div>
-    </li>
-    </ul>
+        </form>
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#device" aria-controls="device" role="tab"
+                                  data-toggle="tab">设备</a></li>
+            <li><a href="#process" aria-controls="process" role="tab" data-toggle="tab">进程</a></li>
+            <li><a href="#file" aria-controls="file" role="tab" data-toggle="tab">文件</a></li>
+            <li><a href="#ippackets" aria-controls="ippackets" role="tab" data-toggle="tab">ip包</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="device">
+        <ul class="list-group">
+            <li class="list-group-item-heading">网络监控</li>
+            <li class="list-group-item text-center">
+                <img src="image/?h={{ host }}&m=net&r={{ range }}"/>
+            </li>
+            <li class="list-group-item-heading">CPU监控</li>
+            <li class="list-group-item text-center">
+                <img src="image/?h={{ host }}&m=cpu&r={{ range }}"/>
+            <li class="list-group-item-heading">内存监控</li>
+            <li class="list-group-item text-center">
+                <img src="image/?h={{ host }}&m=mem&r={{ range }}"/>
+            <li class="list-group-item-heading">磁盘使用率</li>
+            <li class="list-group-item text-center">
+                <div content="container">
+                    <div class="row">
+                        <div class="progress  col-xs-9">
+                            <div class="progress-bar" role="progressbar" aria-valuenow="{{ disk.used_per }}"
+                                 aria-valuemin="0" aria-valuemax="100" style="width: {{ disk.used_per }}%;">
+                                {{ disk.used_per }}%
+                            </div>
+
+                        </div>
+                        <div class="col-xs-3" style="font-size: 12px;">
+                            {{ disk.used }} GB/{{ disk.total }} GB
+                        </div>
+                    </div>
+                </div>
+            </li>
+
+        </ul>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="process">....</div>
+    <div role="tabpanel" class="tab-pane" id="file">........</div>
+    <div role="tabpanel" class="tab-pane" id="ippackets">.....</div>
+</div>
+
 {% endblock %}

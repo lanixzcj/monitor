@@ -10,6 +10,12 @@ $(document).ready(function () {
     $("#disk-slider").on("slide", function(slideEvt) {
 	    $("#DiskSliderVal").text(slideEvt.value);
     });
+    $("#cpu-slider").on("slide", function(slideEvt) {
+	    $("#CpuSliderVal").text(slideEvt.value);
+    });
+    $("#mem-slider").on("slide", function(slideEvt) {
+	    $("#MemSliderVal").text(slideEvt.value);
+    });
 
     $("form#safe_strategy_form").submit(function() {
 
@@ -51,20 +57,20 @@ $(document).ready(function () {
     <input type="hidden" name="hostname" value="{{ host }}">
 
     <ul class="list-group">
-    <li class="list-group-item-heading">硬盘监控</li>
+    <li class="list-group-item-heading"><strong>硬盘监控</strong></li>
     <li class="list-group-item">
         硬盘使用阀值：<input id="disk-slider" data-slider-id='Slider' type="text"
                data-slider-min="0" data-slider-max="{{ threshold.disk_total }}"
                data-slider-step="1" data-slider-value="{{ threshold.disk_used }}"/>
         <span id="DiskSliderValLabel">当前值: <span id="DiskSliderVal">{{ threshold.disk_used }}</span></span>
     </li>
-    <li class="list-group-item-heading">CPU监控</li>
+    <li class="list-group-item-heading"><strong>CPU监控</strong></li>
     <li class="list-group-item">
         CPU使用阀值：<input id="cpu-slider" data-slider-id='Slider' type="text"
                data-slider-min="0" data-slider-max="100" data-slider-step="1"
                data-slider-value="{{ threshold.cpu_used }}"/>
         <span id="CpuSliderValLabel">当前值: <span id="CpuSliderVal">{{ threshold.cpu_used }}</span></span>
-    <li class="list-group-item-heading">内存监控</li>
+    <li class="list-group-item-heading"><strong>内存监控</strong></li>
     </li>
         <li class="list-group-item">
         内存使用阀值：<input id="mem-slider" data-slider-id='Slider' type="text"

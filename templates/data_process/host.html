@@ -54,17 +54,17 @@ body {
 <div class="tab-content">
     <div role="tabpanel" class="tab-pane active" id="device">
         <ul class="list-group">
-            <li class="list-group-item-heading">网络监控</li>
+            <li class="list-group-item-heading"><strong>网络监控</strong></li>
             <li class="list-group-item text-center">
                 <img src="image/?h={{ host }}&m=net&r={{ range }}"/>
             </li>
-            <li class="list-group-item-heading">CPU监控</li>
+            <li class="list-group-item-heading"><strong>CPU监控</strong></li>
             <li class="list-group-item text-center">
                 <img src="image/?h={{ host }}&m=cpu&r={{ range }}"/>
-            <li class="list-group-item-heading">内存监控</li>
+            <li class="list-group-item-heading"><strong>内存监控</strong></li>
             <li class="list-group-item text-center">
                 <img src="image/?h={{ host }}&m=mem&r={{ range }}"/>
-            <li class="list-group-item-heading">磁盘使用率</li>
+            <li class="list-group-item-heading"><strong>磁盘使用率</strong></li>
             <li class="list-group-item text-center">
                 <div content="container">
                     <div class="row">
@@ -84,9 +84,9 @@ body {
 
         </ul>
     </div>
-    <div role="tabpanel" class="tab-pane" id="process">....</div>
-    <div role="tabpanel" class="tab-pane" id="file">........</div>
-    <div role="tabpanel" class="tab-pane" id="ippackets">.....</div>
+    <div role="tabpanel" class="tab-pane" id="process"></div>
+    <div role="tabpanel" class="tab-pane" id="file"></div>
+    <div role="tabpanel" class="tab-pane" id="ippackets"></div>
 </div>
 
 {% endblock %}

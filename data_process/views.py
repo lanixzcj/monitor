@@ -6,7 +6,7 @@ import time
 import datetime
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
-from models import Host, TrustHost, DeviceInfo, HostThreshold, ProcessInfo, IpPacket, FileInfo
+from models import Host, TrustHost, DeviceInfo, HostThreshold, ProcessInfo, IpPacket, FileInfo, MediaInfo
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import auth
 import demjson
@@ -120,6 +120,8 @@ def host_graphs(request):
                                     time__gt=datetime.datetime.fromtimestamp(time.time() - start[0]))
         files = FileInfo.objects.filter(host__exact=host_info,
                                     time__gt=datetime.datetime.fromtimestamp(time.time() - start[0]))
+        medias = MediaInfo.objects.filter(host__exact=host_info,
+                                    time__gt=datetime.datetime.fromtimestamp(time.time() - start[0]))
     except ObjectDoesNotExist:
         pass
 
@@ -166,6 +168,16 @@ def host_graphs(request):
         files_info.append(one_file_info)
     # print files_info
 
+    medias_info = []
+    for e in medias:
+        one_media_info = {}
+        one_media_info['time'] = e.time.strftime("%Y-%m-%d %H:%M:%S")
+        one_media_info['media_name'] = e.media_name
+        one_media_info['media_size'] = e.media_size
+        one_media_info['io_type'] = e.io_type
+        one_media_info['operate_file'] = e.operate_file
+        medias_info.append(one_media_info)
+
     context = {
         'host': host,
         'disk': disk_info,
@@ -173,6 +185,7 @@ def host_graphs(request):
         'process': process_info,
         'ip_packets': ip_packets_info,
         'files': files_info,
+        'medias': medias_info,
     }
 
     return render(request, 'data_process/host.html', context)

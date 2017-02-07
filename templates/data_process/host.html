@@ -81,6 +81,7 @@ body {
                                   data-toggle="tab">设备</a></li>
             <li><a href="#process" aria-controls="process" role="tab" data-toggle="tab">进程</a></li>
             <li><a href="#file" aria-controls="file" role="tab" data-toggle="tab">文件</a></li>
+            <li><a href="#media" aria-controls="media" role="tab" data-toggle="tab">移动介质</a>
             <li><a href="#ippackets" aria-controls="ippackets" role="tab" data-toggle="tab">ip包</a>
             </li>
         </ul>
@@ -167,6 +168,30 @@ body {
                  <td>{{ file.user }}</td>
                  <td>{{ file.operate_type }}</td>
                  <td>{{ file.modify_size }}</td>
+             </tr>
+             {% endfor %}
+             </tbody>
+         </table>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="media">
+        <table class="table table-striped">
+            <thead>
+                 <tr>
+                     <td>时间</td>
+                     <td>介质名</td>
+                     <td>介质大小(MB)</td>
+                     <td>使用的io接口</td>
+                     <td>所操作的文件名</td>
+                 </tr>
+             </thead>
+             <tbody>
+             {% for media in medias %}
+             <tr>
+                 <td>{{ media.time }}</td>
+                 <td>{{ media.media_name }}</td>
+                 <td>{{ media.media_size }}</td>
+                 <td>{{ media.io_type }}</td>
+                 <td>{{ media.operate_file }}</td>
              </tr>
              {% endfor %}
              </tbody>

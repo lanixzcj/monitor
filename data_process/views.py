@@ -129,7 +129,7 @@ def host_graphs(request):
         disk_info['used'] = disk.disk_total - disk.disk_free
         disk_info['used_per'] = int(disk_info['used'] / disk_info['total'] * 100)
 
-    print disk_info
+    # print disk_info
 
     process_info = []
     for e in process:
@@ -142,7 +142,7 @@ def host_graphs(request):
         one_process_info['runtime'] = e.runtime
         one_process_info['used_ports'] = e.used_ports
         process_info.append(one_process_info)
-    print process_info
+    # print process_info
 
     ip_packets_info = []
     for e in ip_packets:
@@ -153,7 +153,7 @@ def host_graphs(request):
         one_ip_packet['recv_ip'] = e.recv_ip
         one_ip_packet['recv_port'] = e.recv_port
         ip_packets_info.append(one_ip_packet)
-    print ip_packets_info
+    # print ip_packets_info
 
     files_info = []
     for e in files:
@@ -164,7 +164,7 @@ def host_graphs(request):
         one_file_info['operate_type'] = e.operate_type
         one_file_info['modify_size'] = e.modify_size
         files_info.append(one_file_info)
-    print files_info
+    # print files_info
 
     context = {
         'host': host,

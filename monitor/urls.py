@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 """celery_test URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -17,6 +18,7 @@ from django.conf.urls import url
 from django.contrib import admin
 from data_process import views as server_view
 
+admin.site.site_header = u'网络监控平台'
 urlpatterns = [
     url(r'^$', server_view.home),
     url(r'^hostgraph/$', server_view.host_graphs),

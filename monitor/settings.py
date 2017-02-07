@@ -166,6 +166,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_PATH = os.path.join(BASE_DIR, 'static').replace('\\', '/')
+# STATIC_ROOT = STATIC_PATH
 
 STATICFILES_DIRS = [
     STATIC_PATH,

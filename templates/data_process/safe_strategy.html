@@ -6,6 +6,8 @@ $(document).ready(function () {
     var disk = $('#disk-slider').slider().data('slider');
     var cpu = $('#cpu-slider').slider().data('slider');
     var mem = $('#mem-slider').slider().data('slider');
+    var bytes_in = $('#bytes-in-slider').slider().data('slider');
+    var bytes_out = $('#bytes-out-slider').slider().data('slider');
 
     $("#disk-slider").on("slide", function(slideEvt) {
 	    $("#DiskSliderVal").text(slideEvt.value);
@@ -16,6 +18,12 @@ $(document).ready(function () {
     $("#mem-slider").on("slide", function(slideEvt) {
 	    $("#MemSliderVal").text(slideEvt.value);
     });
+    $("#bytes-in-slider").on("slide", function(slideEvt) {
+	    $("#BytesInSliderVal").text(slideEvt.value);
+    });
+    $("#bytes-out-slider").on("slide", function(slideEvt) {
+	    $("#BytesOutSliderVal").text(slideEvt.value);
+    });
 
     $("form#safe_strategy_form").submit(function() {
 
@@ -23,7 +31,9 @@ $(document).ready(function () {
 
         var data = $this.serialize() + '&disk_used=' + disk.getValue() +
                                    '&cpu_used=' + cpu.getValue() +
-                                   '&mem_used=' + mem.getValue();
+                                   '&mem_used=' + mem.getValue() +
+                                   '&bytes_in=' + bytes_in.getValue() +
+                                   '&bytes_out=' + bytes_out.getValue();
         console.log(data)
         $.ajax({
             type: 'POST',
@@ -48,40 +58,84 @@ $(document).ready(function () {
 })
 </script>
 <style type="text/css">
+body {
+    padding-top: 50px;
+}
+ul li {
+    list-style-type:none;
+}
 #Slider .slider-selection {
 	background: #BABABA;
 }
 </style>
 {% endblock %}
 {% block main_content %}
-<form action="" role="form" name="form" id="safe_strategy_form" method="post"> {% csrf_token %}
-    <input type="hidden" name="hostname" value="{{ host }}">
-
-    <ul class="list-group">
-    <li class="list-group-item-heading"><strong>硬盘监控</strong></li>
-    <li class="list-group-item">
-        硬盘使用阀值：<input id="disk-slider" data-slider-id='Slider' type="text"
-               data-slider-min="0" data-slider-max="{{ threshold.disk_total }}"
-               data-slider-step="1" data-slider-value="{{ threshold.disk_used }}"/>
-        <span id="DiskSliderValLabel">当前值: <span id="DiskSliderVal">{{ threshold.disk_used }}</span> GB</span>
-    </li>
-    <li class="list-group-item-heading"><strong>CPU监控</strong></li>
-    <li class="list-group-item">
-        CPU使用阀值：<input id="cpu-slider" data-slider-id='Slider' type="text"
-               data-slider-min="0" data-slider-max="100" data-slider-step="1"
-               data-slider-value="{{ threshold.cpu_used }}"/>
-        <span id="CpuSliderValLabel">当前值: <span id="CpuSliderVal">{{ threshold.cpu_used }}</span> %</span>
-    <li class="list-group-item-heading"><strong>内存监控</strong></li>
-    </li>
-        <li class="list-group-item">
-        内存使用阀值：<input id="mem-slider" data-slider-id='Slider' type="text"
-               data-slider-min="0" data-slider-max="{{ threshold.mem_total }}"
-               data-slider-step="1" data-slider-value="{{ threshold.mem_used }}"/>
-            <span id="MemSliderValLabel">当前值: <span id="MemSliderVal">{{ threshold.mem_used }}</span> KB</span>
-    </li>
-    </ul>
-    <div class="modal-footer">
-        <button id="save-btn" type="button" class="btn btn-primary">保存</button>
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation" style="min-height: 30px">
+    <div class="container-fluid">
+        <ul class="nav nav-tabs" id="tabs">
+            <li class="active"><a href="#device" aria-controls="device" role="tab"
+                                  data-toggle="tab">设备</a></li>
+            <li><a href="#process" aria-controls="process" role="tab" data-toggle="tab">进程</a></li>
+            <li><a href="#file" aria-controls="file" role="tab" data-toggle="tab">文件</a></li>
+            <li><a href="#ippackets" aria-controls="ippackets" role="tab" data-toggle="tab">ip包</a>
+            </li>
+        </ul>
     </div>
-</form>
+</nav>
+
+<div class="tab-content" style="padding: 0 20px 0 20px">
+    <div role="tabpanel" class="tab-pane active" id="device">
+        <form action="" role="form" name="form" id="safe_strategy_form" method="post"> {% csrf_token %}
+            <input type="hidden" name="hostname" value="{{ host }}">
+
+            <ul class="list-group">
+            <li class="list-group-item-heading"><strong>硬盘监控</strong></li>
+            <li class="list-group-item">
+                硬盘使用阀值：<input id="disk-slider" data-slider-id='Slider' type="text"
+                       data-slider-min="0" data-slider-max="{{ threshold.disk_total }}"
+                       data-slider-step="1" data-slider-value="{{ threshold.disk_used }}"/>
+                <span id="DiskSliderValLabel">当前值: <span id="DiskSliderVal">{{ threshold.disk_used }}</span> GB</span>
+            </li>
+            <li class="list-group-item-heading"><strong>CPU监控</strong></li>
+            <li class="list-group-item">
+                CPU使用阀值：<input id="cpu-slider" data-slider-id='Slider' type="text"
+                       data-slider-min="0" data-slider-max="100" data-slider-step="1"
+                       data-slider-value="{{ threshold.cpu_used }}"/>
+                <span id="CpuSliderValLabel">当前值: <span id="CpuSliderVal">{{ threshold.cpu_used }}</span> %</span>
+            <li class="list-group-item-heading"><strong>内存监控</strong></li>
+            </li>
+                <li class="list-group-item">
+                内存使用阀值：<input id="mem-slider" data-slider-id='Slider' type="text"
+                       data-slider-min="0" data-slider-max="{{ threshold.mem_total }}"
+                       data-slider-step="1" data-slider-value="{{ threshold.mem_used }}"/>
+                    <span id="MemSliderValLabel">当前值: <span id="MemSliderVal">{{ threshold.mem_used }}</span> KB</span>
+            </li>
+                <li class="list-group-item-heading"><strong>网络监控</strong></li>
+            </li>
+                <li class="list-group-item">
+                下载阀值：<input id="bytes-in-slider" data-slider-id='Slider' type="text"
+                       data-slider-min="0" data-slider-max="{{ threshold.bytes_in_max }}"
+                       data-slider-step="1" data-slider-value="{{ threshold.bytes_in }}"/>
+                    <span id="BytesInSliderValLabel">当前值: <span id="BytesInSliderVal">{{ threshold.bytes_in }}</span> KB</span>
+                <br><br>上传阀值：<input id="bytes-out-slider" data-slider-id='Slider' type="text"
+                   data-slider-min="0" data-slider-max="{{ threshold.bytes_out_max }}"
+                   data-slider-step="1" data-slider-value="{{ threshold.bytes_out }}"/>
+                <span id="BytesOutSliderValLabel">当前值: <span id="BytesOutSliderVal">{{ threshold.bytes_out }}</span> KB</span>
+            </li>
+            </ul>
+            <div class="modal-footer">
+                <button id="save-btn" type="button" class="btn btn-primary">保存</button>
+            </div>
+        </form>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="process">
+
+    </div>
+    <div role="tabpanel" class="tab-pane" id="file">
+
+    </div>
+    <div role="tabpanel" class="tab-pane" id="ippackets">
+
+    </div>
+</div>
 {% endblock %}

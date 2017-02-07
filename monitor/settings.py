@@ -38,6 +38,10 @@ GRAPH_SIZE = {
 # gateway ip
 GATEWAY_IP = '192.168.1.1'
 
+# net threshold(KB)
+BYTES_IN = 2000
+BYTES_OUT = 500
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 

@@ -186,6 +186,8 @@ def safe_strategy(request):
         disk_used = request.POST.get('disk_used')
         cpu_used = request.POST.get('cpu_used')
         mem_used = request.POST.get('mem_used')
+        bytes_in = request.POST.get('bytes_in')
+        bytes_out = request.POST.get('bytes_out')
 
     try:
         host_info = Host.objects.get(hostname=host)
@@ -200,6 +202,8 @@ def safe_strategy(request):
             threshold.disk_used = disk_used
             threshold.cpu_used = cpu_used
             threshold.mem_used = mem_used
+            threshold.bytes_in = bytes_in
+            threshold.bytes_out = bytes_out
             threshold.save()
 
             print threshold
@@ -208,7 +212,9 @@ def safe_strategy(request):
     threshold_info = {}
     if threshold is not None and device is not None:
         threshold_info['bytes_in'] = threshold.bytes_in
+        threshold_info['bytes_in_max'] = settings.BYTES_IN
         threshold_info['bytes_out'] = threshold.bytes_out
+        threshold_info['bytes_out_max'] = settings.BYTES_OUT
         threshold_info['cpu_used'] = threshold.cpu_used
         threshold_info['mem_used'] = threshold.mem_used
         threshold_info['disk_used'] = threshold.disk_used

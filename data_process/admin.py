@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django import forms
-from models import UserAction, MyUser, DeviceInfo
+from models import UserAction, MyUser, DeviceInfo, MediaInfo, FileInfo, ProcessInfo, IpPacket, TrustHost
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
@@ -84,4 +84,8 @@ admin.site.register(MyUser, MyUserAdmin)
 
 admin.site.register(UserAction)
 admin.site.register(DeviceInfo)
-
+admin.site.register(MediaInfo)
+admin.site.register(FileInfo)
+admin.site.register(ProcessInfo)
+admin.site.register(IpPacket)
+admin.site.register(TrustHost)

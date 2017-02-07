@@ -106,3 +106,41 @@ class IpPacket(models.Model):
     send_port = models.IntegerField()
     recv_ip = models.GenericIPAddressField(default='0.0.0.0')
     recv_port = models.IntegerField()
+
+
+class ProcessInfo(models.Model):
+    time = models.DateTimeField()
+    host = models.ForeignKey(Host, on_delete=models.CASCADE)
+    process_name = models.CharField(max_length=30)
+    process_id = models.IntegerField()
+    user = models.CharField(max_length=30)
+    boottime = models.DateTimeField()
+    runtime = models.DurationField()
+    used_ports = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return self.process_name
+
+
+class FileInfo(models.Model):
+    time = models.DateTimeField()
+    host = models.ForeignKey(Host, on_delete=models.CASCADE)
+    file_name = models.CharField(max_length=100)
+    user = models.CharField(max_length=30)
+    operate_type = models.CharField(max_length=30)
+    modify_size = models.FloatField(default=0)
+
+    def __unicode__(self):
+        return self.file_name
+
+
+class MediaInfo(models.Model):
+    time = models.DateTimeField()
+    host = models.ForeignKey(Host, on_delete=models.CASCADE)
+    media_name = models.CharField(max_length=100)
+    io_type = models.CharField(max_length=30)
+    media_size = models.FloatField(default=0)
+    operate_file = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return self.media_name

@@ -2,46 +2,79 @@
 {% load staticfiles %}
 {% block files %}
 <script type="text/javascript">
-$(document).ready(function () {
-    $('#ex1').slider({
-        formatter: function(value) {
-
-        }
+(function($) {
+    $.extend({
+        urlGet:function(){
+            var aQuery = window.location.href.split("?");//取得Get参数
+            var aGET = new Array();
+            if(aQuery.length > 1) {
+                var aBuf = aQuery[1].split("&");
+                for(var i=0, iLoop = aBuf.length; i<iLoop; i++) {
+                    var aTmp = aBuf[i].split("=");//分离key与Value
+                    aGET[aTmp[0]] = aTmp[1];
+                }
+            }
+            return aGET;
+        },
     });
+})(jQuery);
+$(document).ready(function () {
+    var GET = $.urlGet();
+    var tab_index = GET['tab'];
 
+    if (tab_index == "" || tab_index == undefined || tab_index == null) {
+        tab_index = 0
+    }
+    var activeTab = $("#tabs").find("li:eq(" + tab_index + ") a").tab("show");
+
+    $("input[name='r']").change(function(){
+        var activeTab = $("#tabs").find("li.active");
+        var activeTabIndex = activeTab.index();
+        console.log(activeTabIndex);
+        $('input[name="tab"]').val(activeTabIndex)
+        $("#monitor_form").submit();
+    });
 })
 
 
 </script>
 <style type="text/css">
-#ex1Slider .slider-selection {
-	background: #BABABA;
-}
 
 body {
     padding-top: 140px;
 }
 
+.table th, .table td {
+    text-align: center;
+    vertical-align: middle!important;
+}
 
 </style>
 {% endblock %}
 {% block main_content %}
 <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container-fluid">
-        <form action="" role="form" name="monitor_form" style="padding: 20px 0 20px 0">
+        <form action="" role="form" name="monitor_form" id="monitor_form" style="padding: 20px 0 20px 0">
             <input type="hidden" name="h" value="{{ host }}">
+            <input type="hidden" name="tab" value="">
             <div class="btn-group" id="color" data-toggle="buttons">
                 {% for time_value, time in time_range %}
-                <label class="btn btn-default">
-                    <input type="radio" OnChange="monitor_form.submit();" name="r" class="toggle"
+                <label class="btn btn-default
+                {% if request.GET.r == time_value %}
+                 active
+                {% elif not request.GET.r and time_value == 'hour' %}
+                 active
+                {% endif %}
+                ">
+                    <input type="radio" name="r" class="toggle"
                            value="{{ time_value }}">
                     {{ time.1 }}
                 </label>
                 {% endfor %}
             </div>
         </form>
-        <ul class="nav nav-tabs">
-            <li class="active"><a href="#device" aria-controls="device" role="tab"
+        <ul class="nav nav-tabs" id="tabs">
+            <li><a href="#device" aria-controls="device" role="tab"
                                   data-toggle="tab">设备</a></li>
             <li><a href="#process" aria-controls="process" role="tab" data-toggle="tab">进程</a></li>
             <li><a href="#file" aria-controls="file" role="tab" data-toggle="tab">文件</a></li>
@@ -52,7 +85,7 @@ body {
 </nav>
 
 <div class="tab-content">
-    <div role="tabpanel" class="tab-pane active" id="device">
+    <div role="tabpanel" class="tab-pane" id="device">
         <ul class="list-group">
             <li class="list-group-item-heading"><strong>网络监控</strong></li>
             <li class="list-group-item text-center">
@@ -84,9 +117,82 @@ body {
 
         </ul>
     </div>
-    <div role="tabpanel" class="tab-pane" id="process"></div>
-    <div role="tabpanel" class="tab-pane" id="file"></div>
-    <div role="tabpanel" class="tab-pane" id="ippackets"></div>
+    <div role="tabpanel" class="tab-pane" id="process">
+        <table class="table table-striped">
+            <thead>
+                 <tr>
+                     <td>时间</td>
+                     <td>进程名称</td>
+                     <td>进程id</td>
+                     <td>用户</td>
+                     <td>启动时间</td>
+                     <td>运行时间</td>
+                     <td>占用端口</td>
+                 </tr>
+             </thead>
+             <tbody>
+             {% for process_info in process %}
+             <tr>
+                 <td>{{ process_info.time }}</td>
+                 <td>{{ process_info.process_name }}</td>
+                 <td>{{ process_info.process_id }}</td>
+                 <td>{{ process_info.user }}</td>
+                 <td>{{ process_info.boottime }}</td>
+                 <td>{{ process_info.runtime }}</td>
+                 <td>{{ process_info.used_ports }}</td>
+             </tr>
+             {% endfor %}
+             </tbody>
+         </table>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="file">
+        <table class="table table-striped">
+            <thead>
+                 <tr>
+                     <td>时间</td>
+                     <td>文件名</td>
+                     <td>用户</td>
+                     <td>操作类型</td>
+                     <td>修改大小(KB)</td>
+                 </tr>
+             </thead>
+             <tbody>
+             {% for file in files %}
+             <tr>
+                 <td>{{ file.time }}</td>
+                 <td>{{ file.file_name }}</td>
+                 <td>{{ file.user }}</td>
+                 <td>{{ file.operate_type }}</td>
+                 <td>{{ file.modify_size }}</td>
+             </tr>
+             {% endfor %}
+             </tbody>
+         </table>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="ippackets">
+        <table class="table table-striped">
+            <thead>
+                 <tr>
+                     <td>时间</td>
+                     <td>应用名称</td>
+                     <td>发送端口</td>
+                     <td>接收ip</td>
+                     <td>接收端口</td>
+                 </tr>
+             </thead>
+             <tbody>
+             {% for ip_packet in ip_packets %}
+             <tr>
+                 <td>{{ ip_packet.time }}</td>
+                 <td>{{ ip_packet.app_name }}</td>
+                 <td>{{ ip_packet.send_port }}</td>
+                 <td>{{ ip_packet.recv_ip }}</td>
+                 <td>{{ ip_packet.recv_port }}</td>
+             </tr>
+             {% endfor %}
+             </tbody>
+         </table>
+    </div>
 </div>
 
 {% endblock %}

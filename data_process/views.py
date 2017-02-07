@@ -6,13 +6,14 @@ import time
 import datetime
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
-from models import Host, TrustHost, DeviceInfo, HostThreshold
+from models import Host, TrustHost, DeviceInfo, HostThreshold, ProcessInfo, IpPacket, FileInfo
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import auth
 import demjson
 from tasks import send_safe_strategy
 from django.conf import settings
 import socket
+from pytz import timezone
 
 
 # Create your views here.
@@ -103,11 +104,23 @@ def home(request):
 def host_graphs(request):
     host = request.GET.get('h')
     time_range = request.GET.get('r', '')
+
+    time_dict = settings.TIME_RANGE
+    if time_range in time_dict:
+        start = time_dict[time_range]
+    else:
+        start = time_dict['hour']
+
     try:
         host_info = Host.objects.get(hostname=host)
-        disk = DeviceInfo.objects.get(hostname=host_info)
+        disk = host_info.deviceinfo
+        process = ProcessInfo.objects.filter(host__exact=host_info,
+                time__gt=datetime.datetime.fromtimestamp(time.time() - start[0]))
+        ip_packets = IpPacket.objects.filter(host__exact=host_info,
+                                    time__gt=datetime.datetime.fromtimestamp(time.time() - start[0]))
+        files = FileInfo.objects.filter(host__exact=host_info,
+                                    time__gt=datetime.datetime.fromtimestamp(time.time() - start[0]))
     except ObjectDoesNotExist:
-        disk = None
         pass
 
     disk_info = {}
@@ -117,10 +130,49 @@ def host_graphs(request):
         disk_info['used_per'] = int(disk_info['used'] / disk_info['total'] * 100)
 
     print disk_info
+
+    process_info = []
+    for e in process:
+        one_process_info = {}
+        one_process_info['time'] = e.time.strftime("%Y-%m-%d %H:%M:%S")
+        one_process_info['process_name'] = e.process_name
+        one_process_info['process_id'] = e.process_id
+        one_process_info['user'] = e.user
+        one_process_info['boottime'] = e.boottime.strftime("%Y-%m-%d %H:%M:%S")
+        one_process_info['runtime'] = e.runtime
+        one_process_info['used_ports'] = e.used_ports
+        process_info.append(one_process_info)
+    print process_info
+
+    ip_packets_info = []
+    for e in ip_packets:
+        one_ip_packet = {}
+        one_ip_packet['time'] = e.time.strftime("%Y-%m-%d %H:%M:%S")
+        one_ip_packet['app_name'] = e.app_name
+        one_ip_packet['send_port'] = e.send_port
+        one_ip_packet['recv_ip'] = e.recv_ip
+        one_ip_packet['recv_port'] = e.recv_port
+        ip_packets_info.append(one_ip_packet)
+    print ip_packets_info
+
+    files_info = []
+    for e in files:
+        one_file_info = {}
+        one_file_info['time'] = e.time.strftime("%Y-%m-%d %H:%M:%S")
+        one_file_info['file_name'] = e.file_name
+        one_file_info['user'] = e.user
+        one_file_info['operate_type'] = e.operate_type
+        one_file_info['modify_size'] = e.modify_size
+        files_info.append(one_file_info)
+    print files_info
+
     context = {
         'host': host,
         'disk': disk_info,
         'range': time_range,
+        'process': process_info,
+        'ip_packets': ip_packets_info,
+        'files': files_info,
     }
 
     return render(request, 'data_process/host.html', context)

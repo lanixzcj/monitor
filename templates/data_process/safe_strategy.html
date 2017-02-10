@@ -1,8 +1,8 @@
 {% extends 'base_without_header.html' %}
 {% load staticfiles %}
 {% block files %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
+<link rel="stylesheet" href="{% static 'css/bootstrap-select.min.css'%}">
+<script src="{% static 'js/bootstrap-select.min.js' %}"></script>
 <script type="text/javascript">
 
 $(document).ready(function () {
@@ -59,27 +59,36 @@ $(document).ready(function () {
     })
 
 
-    $("#btnAdd").bind('click', function (e) {
-        $("#tablePxe tbody").append(
-            '<tr><td><input type="checkbox"></td> \
-                 <td><select class="selectpicker"> \
-                      <option>INPUT</option> \
-                      <option>FORWORD</option> \
-                      <option>OUTPUT</option>\
-                    </select></td>\
-                 <td><input></td></tr>'
-        );
+    $(".btnAdd").bind('click', function (e) {
+        $this = $(this);
+
+        if ($this.hasClass('net')) {
+            $this.parent().parent().find(".tablePxe tbody").append(
+                '<tr><td><input type="checkbox"></td> \
+                     <td><select class="selectpicker"> \
+                          <option>INPUT</option> \
+                          <option>FORWORD</option> \
+                          <option>OUTPUT</option>\
+                        </select></td>\
+                     <td><input></td></tr>');
+        } else if ($this.hasClass('file')) {
+            $this.parent().parent().find(".tablePxe tbody").append(
+                '<tr><td><input type="checkbox"></td> \
+                           <td><input></td>\
+                     <td><input></td></tr>');
+        }
+
         $('.selectpicker').selectpicker();
     });
     // 删除设备点击事件
-    $("#btnDel").bind('click', function (e) {
-        $("#tablePxe tbody :checkbox:checked").each(function (index, element) {
+    $(".btnDel").bind('click', function (e) {
+        $(this).parent().parent().find(".tablePxe tbody :checkbox:checked").each(function (index, element) {
             $(this).closest("tr").remove();
         });
     });
     // 全选框点击事件
-    $("#checkAll").bind('click', function (e) {
-        $(":checkbox", $("#tablePxe tbody")).prop('checked', this.checked);
+    $(".checkAll").bind('click', function (e) {
+        $(":checkbox", $(".tablePxe tbody")).prop('checked', this.checked);
         console.log(this.checked);
     });
 })
@@ -106,7 +115,7 @@ ul li {
         <ul class="nav nav-tabs" id="tabs">
             <li class="active"><a href="#device" aria-controls="device" role="tab"
                                   data-toggle="tab">设备</a></li>
-            <li><a href="#process" aria-controls="process" role="tab" data-toggle="tab">进程</a></li>
+            <!--<li><a href="#process" aria-controls="process" role="tab" data-toggle="tab">进程</a></li>-->
             <li><a href="#file" aria-controls="file" role="tab" data-toggle="tab">文件</a></li>
             <li><a href="#ippackets" aria-controls="ippackets" role="tab" data-toggle="tab">ip包</a>
             </li>
@@ -159,25 +168,59 @@ ul li {
             </div>
         </form>
     </div>
-    <div role="tabpanel" class="tab-pane" id="process">
+    <!--<div role="tabpanel" class="tab-pane" id="process">-->
 
-    </div>
+    <!--</div>-->
     <div role="tabpanel" class="tab-pane" id="file">
-
-    </div>
-    <div role="tabpanel" class="tab-pane" id="ippackets">
-        <div class="list-op" id="list_op">
-                        <button type="button" class="btn btn-success" id="btnAdd">
-                            新增
-                        </button>
-                        <button type="button" class="btn btn-danger" id="btnDel">
-                            删除
-                        </button>
-                    </div>
-        <table class="table table-striped" id="tablePxe">
+        <div class="list-op">
+            <button type="button" class="btn btn-success btnAdd file">
+                新增
+            </button>
+            <button type="button" class="btn btn-danger btnDel">
+                删除
+            </button>
+        </div>
+        <table class="table table-striped tablePxe">
             <thead>
                  <tr>
-                     <th><input type="checkbox" id="checkAll"></th>
+                     <th><input type="checkbox" class="checkAll"></th>
+                     <th>文件名</th>
+                     <th>权限</th>
+                 </tr>
+             </thead>
+             <tbody>
+
+             <tr>
+                 <td><input type="checkbox"></td>
+                 <td><input value="/home/ubuntu/test"></td>
+                 <td><input value="rwxrwxrwx"></td>
+
+             </tr>
+             <tr>
+                 <td><input type="checkbox"></td>
+                 <td><input value="/etc/test"></td>
+                 <td><input value="r--r--r--"></td>
+             </tr>
+
+             </tbody>
+         </table>
+        <div class="modal-footer">
+            <button id="save-file-btn" type="button" class="btn btn-primary">保存</button>
+        </div>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="ippackets">
+        <div class="list-op">
+            <button type="button" class="btn btn-success btnAdd net">
+                新增
+            </button>
+            <button type="button" class="btn btn-danger btnDel">
+                删除
+            </button>
+        </div>
+        <table class="table table-striped tablePxe"">
+            <thead>
+                 <tr>
+                     <th><input type="checkbox" class="checkAll"></th>
                      <th>规则链</th>
                      <th>ip</th>
                  </tr>

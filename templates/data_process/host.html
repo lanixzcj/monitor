@@ -83,6 +83,7 @@ body {
             <li><a href="#file" aria-controls="file" role="tab" data-toggle="tab">文件</a></li>
             <li><a href="#media" aria-controls="media" role="tab" data-toggle="tab">移动介质</a>
             <li><a href="#ippackets" aria-controls="ippackets" role="tab" data-toggle="tab">ip包</a>
+            <li><a href="#warning-history" aria-controls="ippackets" role="tab" data-toggle="tab">预警历史</a>
             </li>
         </ul>
     </div>
@@ -220,6 +221,32 @@ body {
              {% endfor %}
              </tbody>
          </table>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="warning-history">
+        <table class="table table-striped">
+        <thead>
+             <tr>
+                 <td>时间</td>
+                 <td>预警类别</td>
+                 <td>预警内容</td>
+                 <td>预警等级</td>
+             </tr>
+         </thead>
+         <tbody>
+         {% for warning in warnings %}
+         <tr>
+             <td>{{ warning.time }}</td>
+             <td>{{ warning.warning_type }}</td>
+             <td>{{ warning.warning_content }}</td>
+             {% if warning.warning_level == '警告' %}
+             <td class="text-warning">警告</td>
+             {% elif warning.warning_level == '危险' %}
+             <td class="text-danger">危险</td>
+             {% endif %}
+         </tr>
+         {% endfor %}
+         </tbody>
+     </table>
     </div>
 </div>
 

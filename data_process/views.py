@@ -6,7 +6,8 @@ import time
 import datetime
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
-from models import Host, TrustHost, DeviceInfo, HostThreshold, ProcessInfo, IpPacket, FileInfo, MediaInfo
+from models import Host, TrustHost, DeviceInfo, HostThreshold, \
+    ProcessInfo, IpPacket, FileInfo, MediaInfo, WarningHistory
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import auth
 import demjson
@@ -14,13 +15,17 @@ from tasks import send_safe_strategy
 from django.conf import settings
 import socket
 from pytz import timezone
+from django.core.mail import send_mail
 
 
 # Create your views here.
 
 
 def home(request):
+    # send_mail('测试', '该主机数据超过阀值', 'monitor_platform@163.com',
+    #           ['494651913@qq.com'], fail_silently=False)
     alive_hosts = cache.get('alive_hosts', dict())
+    print alive_hosts
     unsafe_hosts = cache.get('last_unsafe_hosts', dict())
     print unsafe_hosts
     if request.method == "POST" and request.is_ajax:
@@ -122,6 +127,8 @@ def host_graphs(request):
                                     time__gt=datetime.datetime.fromtimestamp(time.time() - start[0]))
         medias = MediaInfo.objects.filter(host__exact=host_info,
                                     time__gt=datetime.datetime.fromtimestamp(time.time() - start[0]))
+        warnings = WarningHistory.objects.filter(host__exact=host_info,
+                                          time__gt=datetime.datetime.fromtimestamp(time.time() - start[0]))
     except ObjectDoesNotExist:
         pass
 
@@ -178,6 +185,15 @@ def host_graphs(request):
         one_media_info['operate_file'] = e.operate_file
         medias_info.append(one_media_info)
 
+    warnings_info = []
+    for e in warnings:
+        one_warning_info = {}
+        one_warning_info['time'] = e.time.strftime("%Y-%m-%d %H:%M:%S")
+        one_warning_info['warning_type'] = e.warning_type
+        one_warning_info['warning_content'] = e.warning_content
+        one_warning_info['warning_level'] = e.warning_level
+        warnings_info.append(one_warning_info)
+
     context = {
         'host': host,
         'disk': disk_info,
@@ -186,6 +202,7 @@ def host_graphs(request):
         'ip_packets': ip_packets_info,
         'files': files_info,
         'medias': medias_info,
+        'warnings': warnings_info,
     }
 
     return render(request, 'data_process/host.html', context)

@@ -39,14 +39,14 @@ def server_thread():
 
 @shared_task
 def clean_up():
-    hosts = cache.get('alive_host', dict())
+    hosts = cache.get('alive_hosts', dict())
 
     print hosts
     for mac_address, host in hosts.items():
         if (time.time() - host['last']) > 40:
             del hosts[mac_address]
 
-    cache.set('alive_host', hosts, 300)
+    cache.set('alive_hosts', hosts, 300)
 
 
 @shared_task

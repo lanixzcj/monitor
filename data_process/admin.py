@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django import forms
-from models import UserAction, MyUser, DeviceInfo, MediaInfo, FileInfo, ProcessInfo, IpPacket, TrustHost
+from models import UserAction, MyUser, DeviceInfo, MediaInfo, FileInfo, \
+    ProcessInfo, IpPacket, TrustHost, WarningHistory, Host
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
@@ -15,7 +16,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = MyUser
-        fields = ('username', 'password', 'mac_address')
+        fields = ('username', 'password', 'mac_address', 'email', 'tel')
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -43,7 +44,7 @@ class UserChangeForm(forms.ModelForm):
 
     class Meta:
         model = MyUser
-        fields = ('username', 'password', 'mac_address', 'is_active', 'is_admin')
+        fields = ('username', 'password', 'mac_address', 'email', 'tel', 'is_active', 'is_admin')
 
     def clean_password(self):
         # Regardless of what the user provides, return the initial value.
@@ -60,11 +61,11 @@ class MyUserAdmin(UserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('username', 'password', 'mac_address', 'is_admin')
+    list_display = ('username', 'password', 'mac_address', 'email', 'tel', 'is_admin')
     list_filter = ('is_admin', 'groups',)
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
-        ('Personal info', {'fields': ('mac_address',)}),
+        ('Personal info', {'fields': ('mac_address', 'email', 'tel',)}),
         ('Permissions', {'fields': ('is_admin', 'groups','user_permissions',)}),
     )
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
@@ -72,7 +73,7 @@ class MyUserAdmin(UserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('username', 'mac_address', 'password1', 'password2')}
+            'fields': ('username', 'mac_address', 'email', 'tel', 'password1', 'password2')}
         ),
     )
     search_fields = ('username',)
@@ -89,3 +90,5 @@ admin.site.register(FileInfo)
 admin.site.register(ProcessInfo)
 admin.site.register(IpPacket)
 admin.site.register(TrustHost)
+admin.site.register(WarningHistory)
+admin.site.register(Host)

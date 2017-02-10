@@ -92,7 +92,6 @@ def metrics_save_into_rrd(host, name, metric):
         deviceinfo.save()
 
 
-
 def save_ip_packet(host, metric):
     hostname = host['hostname'] if 'hostname' in host else None
     db_host = Host.objects.get(hostname=hostname)

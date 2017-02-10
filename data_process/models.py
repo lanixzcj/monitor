@@ -8,13 +8,15 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseU
 
 
 class MyUserManager(BaseUserManager):
-    def create_user(self, username, mac_address, password=None):
+    def create_user(self, username, mac_address, email, tel, password=None):
         if not username:
-            raise ValueError('Users must have an email address')
+            raise ValueError('Users must have an username')
 
         user = self.model(
             username=username,
             mac_address=mac_address,
+            email=email,
+            tel=tel
         )
 
         user.is_superuser = False
@@ -37,6 +39,8 @@ class MyUserManager(BaseUserManager):
 
 class MyUser(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=30, unique=True)
+    email = models.EmailField()
+    tel = models.CharField(max_length=24)
     mac_address = models.CharField(max_length=24)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
@@ -144,3 +148,14 @@ class MediaInfo(models.Model):
 
     def __unicode__(self):
         return self.media_name
+
+
+class WarningHistory(models.Model):
+    time = models.DateTimeField()
+    host = models.ForeignKey(Host, on_delete=models.CASCADE)
+    warning_type = models.CharField(max_length=30)
+    warning_content = models.CharField(max_length=100)
+    warning_level = models.CharField(max_length=30)
+
+    def __unicode__(self):
+        return self.warning_type

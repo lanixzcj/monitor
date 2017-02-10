@@ -55,7 +55,7 @@ SECRET_KEY = 'o2f0p%x1o38v*m#oa_40tt6j43+zj7ao!knucf2rphxydydjd1'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["123.206.13.150", "127.0.0.1", "192.168.1.18"]
+ALLOWED_HOSTS = ["123.206.13.150", "127.0.0.1", "192.168.1.101"]
 
 # Application definition
 
@@ -175,6 +175,15 @@ STATIC_PATH = os.path.join(BASE_DIR, 'static').replace('\\', '/')
 STATICFILES_DIRS = [
     STATIC_PATH,
 ]
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.163.com'
+EMAIL_PORT = 25
+EMAIL_HOST_USER = 'monitor_platform@163.com'
+EMAIL_HOST_PASSWORD = 'zcj654321'
+DEFAULT_FROM_EMAIL = 'monitor_platform@163.com'
 
 #celery
 CELERY_BROKER_URL = 'redis://localhost:6379/0' 

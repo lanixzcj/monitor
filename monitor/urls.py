@@ -22,6 +22,8 @@ admin.site.site_header = u'网络监控平台'
 urlpatterns = [
     url(r'^$', server_view.home),
     url(r'^hostgraph/$', server_view.host_graphs),
+    url(r'^hostgraph/get_warnings$', server_view.get_warnings),
+    url(r'^hostgraph/get_ippackets$', server_view.get_ippackets),
     url(r'^safe_strategy/$', server_view.safe_strategy),
     url(r'^(?:hostgraph/)?image/$', server_view.image),
     url(r'^admin/', admin.site.urls),

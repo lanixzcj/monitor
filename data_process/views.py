@@ -106,6 +106,67 @@ def home(request):
     return render(request, 'data_process/homepage.html', context)
 
 
+def get_warnings(request):
+    host = request.GET.get('h')
+    time_range = request.GET.get('r', '')
+
+    time_dict = settings.TIME_RANGE
+    if time_range in time_dict:
+        start = time_dict[time_range]
+    else:
+        start = time_dict['hour']
+
+    try:
+        host_info = Host.objects.get(hostname=host)
+        warnings = WarningHistory.objects.filter(host__exact=host_info,
+                                          time__gt=datetime.datetime.fromtimestamp(time.time() - start[0]))
+    except ObjectDoesNotExist:
+        pass
+
+    warnings_info = []
+    for e in warnings:
+        one_warning_info = {}
+        one_warning_info['time'] = e.time.strftime("%Y-%m-%d %H:%M:%S")
+        one_warning_info['warning_type'] = e.warning_type
+        one_warning_info['warning_content'] = e.warning_content
+        one_warning_info['warning_level'] = e.warning_level
+        warnings_info.append(one_warning_info)
+
+    warning_json = demjson.encode(warnings_info)
+    return HttpResponse(content=warning_json)
+
+
+def get_ippackets(request):
+    host = request.GET.get('h')
+    time_range = request.GET.get('r', '')
+
+    time_dict = settings.TIME_RANGE
+    if time_range in time_dict:
+        start = time_dict[time_range]
+    else:
+        start = time_dict['hour']
+
+    try:
+        host_info = Host.objects.get(hostname=host)
+        ip_packets = IpPacket.objects.filter(host__exact=host_info,
+                                             time__gt=datetime.datetime.fromtimestamp(time.time() - start[0]))
+    except ObjectDoesNotExist:
+        pass
+
+    ip_packets_info = []
+    for e in ip_packets:
+        one_ip_packet = {}
+        one_ip_packet['time'] = e.time.strftime("%Y-%m-%d %H:%M:%S")
+        one_ip_packet['app_name'] = e.app_name
+        one_ip_packet['send_port'] = e.send_port
+        one_ip_packet['recv_ip'] = e.recv_ip
+        one_ip_packet['recv_port'] = e.recv_port
+        ip_packets_info.append(one_ip_packet)
+
+        ip_packets_json = demjson.encode(ip_packets_info)
+    return HttpResponse(content=ip_packets_json)
+
+
 def host_graphs(request):
     host = request.GET.get('h')
     time_range = request.GET.get('r', '')

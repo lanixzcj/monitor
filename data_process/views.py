@@ -106,6 +106,101 @@ def home(request):
     return render(request, 'data_process/homepage.html', context)
 
 
+def get_mediainfo(request):
+    host = request.GET.get('h')
+    time_range = request.GET.get('r', '')
+
+    time_dict = settings.TIME_RANGE
+    if time_range in time_dict:
+        start = time_dict[time_range]
+    else:
+        start = time_dict['hour']
+
+    try:
+        host_info = Host.objects.get(hostname=host)
+        medias = MediaInfo.objects.filter(host__exact=host_info,
+                                          time__gt=datetime.datetime.fromtimestamp(time.time() - start[0]))
+    except ObjectDoesNotExist:
+        pass
+
+    medias_info = []
+    for e in medias:
+        one_media_info = {}
+        one_media_info['time'] = e.time.strftime("%Y-%m-%d %H:%M:%S")
+        one_media_info['media_name'] = e.media_name
+        one_media_info['media_size'] = e.media_size
+        one_media_info['io_type'] = e.io_type
+        one_media_info['operate_file'] = e.operate_file
+        medias_info.append(one_media_info)
+
+    media_json = demjson.encode(medias_info)
+    return HttpResponse(content=media_json)
+
+
+def get_fileinfo(request):
+    host = request.GET.get('h')
+    time_range = request.GET.get('r', '')
+
+    time_dict = settings.TIME_RANGE
+    if time_range in time_dict:
+        start = time_dict[time_range]
+    else:
+        start = time_dict['hour']
+
+    try:
+        host_info = Host.objects.get(hostname=host)
+        files = FileInfo.objects.filter(host__exact=host_info,
+                                          time__gt=datetime.datetime.fromtimestamp(time.time() - start[0]))
+    except ObjectDoesNotExist:
+        pass
+
+    files_info = []
+    for e in files:
+        one_file_info = {}
+        one_file_info['time'] = e.time.strftime("%Y-%m-%d %H:%M:%S")
+        one_file_info['file_name'] = e.file_name
+        one_file_info['user'] = e.user
+        one_file_info['operate_type'] = e.operate_type
+        one_file_info['modify_size'] = e.modify_size
+        files_info.append(one_file_info)
+
+    file_json = demjson.encode(files_info)
+    return HttpResponse(content=file_json)
+
+
+def get_processinfo(request):
+    host = request.GET.get('h')
+    time_range = request.GET.get('r', '')
+
+    time_dict = settings.TIME_RANGE
+    if time_range in time_dict:
+        start = time_dict[time_range]
+    else:
+        start = time_dict['hour']
+
+    try:
+        host_info = Host.objects.get(hostname=host)
+        process = ProcessInfo.objects.filter(host__exact=host_info,
+                                          time__gt=datetime.datetime.fromtimestamp(time.time() - start[0]))
+    except ObjectDoesNotExist:
+        pass
+
+    process_info = []
+    for e in process:
+        one_process_info = {}
+        one_process_info['time'] = e.time.strftime("%Y-%m-%d %H:%M:%S")
+        one_process_info['process_name'] = e.process_name
+        one_process_info['process_id'] = e.process_id
+        one_process_info['user'] = e.user
+        one_process_info['boottime'] = e.boottime.strftime("%Y-%m-%d %H:%M:%S")
+        one_process_info['runtime'] = e.runtime
+        one_process_info['used_ports'] = e.used_ports
+        process_info.append(one_process_info)
+
+    process_json = demjson.encode(process_info)
+    return HttpResponse(content=process_json)
+
+
 def get_warnings(request):
     host = request.GET.get('h')
     time_range = request.GET.get('r', '')
@@ -171,25 +266,9 @@ def host_graphs(request):
     host = request.GET.get('h')
     time_range = request.GET.get('r', '')
 
-    time_dict = settings.TIME_RANGE
-    if time_range in time_dict:
-        start = time_dict[time_range]
-    else:
-        start = time_dict['hour']
-
     try:
         host_info = Host.objects.get(hostname=host)
         disk = host_info.deviceinfo
-        process = ProcessInfo.objects.filter(host__exact=host_info,
-                time__gt=datetime.datetime.fromtimestamp(time.time() - start[0]))
-        ip_packets = IpPacket.objects.filter(host__exact=host_info,
-                                    time__gt=datetime.datetime.fromtimestamp(time.time() - start[0]))
-        files = FileInfo.objects.filter(host__exact=host_info,
-                                    time__gt=datetime.datetime.fromtimestamp(time.time() - start[0]))
-        medias = MediaInfo.objects.filter(host__exact=host_info,
-                                    time__gt=datetime.datetime.fromtimestamp(time.time() - start[0]))
-        warnings = WarningHistory.objects.filter(host__exact=host_info,
-                                          time__gt=datetime.datetime.fromtimestamp(time.time() - start[0]))
     except ObjectDoesNotExist:
         pass
 
@@ -199,71 +278,10 @@ def host_graphs(request):
         disk_info['used'] = disk.disk_total - disk.disk_free
         disk_info['used_per'] = int(disk_info['used'] / disk_info['total'] * 100)
 
-    # print disk_info
-
-    process_info = []
-    for e in process:
-        one_process_info = {}
-        one_process_info['time'] = e.time.strftime("%Y-%m-%d %H:%M:%S")
-        one_process_info['process_name'] = e.process_name
-        one_process_info['process_id'] = e.process_id
-        one_process_info['user'] = e.user
-        one_process_info['boottime'] = e.boottime.strftime("%Y-%m-%d %H:%M:%S")
-        one_process_info['runtime'] = e.runtime
-        one_process_info['used_ports'] = e.used_ports
-        process_info.append(one_process_info)
-    # print process_info
-
-    ip_packets_info = []
-    for e in ip_packets:
-        one_ip_packet = {}
-        one_ip_packet['time'] = e.time.strftime("%Y-%m-%d %H:%M:%S")
-        one_ip_packet['app_name'] = e.app_name
-        one_ip_packet['send_port'] = e.send_port
-        one_ip_packet['recv_ip'] = e.recv_ip
-        one_ip_packet['recv_port'] = e.recv_port
-        ip_packets_info.append(one_ip_packet)
-    # print ip_packets_info
-
-    files_info = []
-    for e in files:
-        one_file_info = {}
-        one_file_info['time'] = e.time.strftime("%Y-%m-%d %H:%M:%S")
-        one_file_info['file_name'] = e.file_name
-        one_file_info['user'] = e.user
-        one_file_info['operate_type'] = e.operate_type
-        one_file_info['modify_size'] = e.modify_size
-        files_info.append(one_file_info)
-    # print files_info
-
-    medias_info = []
-    for e in medias:
-        one_media_info = {}
-        one_media_info['time'] = e.time.strftime("%Y-%m-%d %H:%M:%S")
-        one_media_info['media_name'] = e.media_name
-        one_media_info['media_size'] = e.media_size
-        one_media_info['io_type'] = e.io_type
-        one_media_info['operate_file'] = e.operate_file
-        medias_info.append(one_media_info)
-
-    warnings_info = []
-    for e in warnings:
-        one_warning_info = {}
-        one_warning_info['time'] = e.time.strftime("%Y-%m-%d %H:%M:%S")
-        one_warning_info['warning_type'] = e.warning_type
-        one_warning_info['warning_content'] = e.warning_content
-        one_warning_info['warning_level'] = e.warning_level
-        warnings_info.append(one_warning_info)
-
     context = {
         'host': host,
         'disk': disk_info,
         'range': time_range,
-        'process': process_info,
-        'ip_packets': ip_packets_info,
-        'files': files_info,
-        'medias': medias_info,
-        'warnings': warnings_info,
     }
 
     return render(request, 'data_process/host.html', context)

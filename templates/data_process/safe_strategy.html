@@ -59,40 +59,106 @@ $(document).ready(function () {
     })
 
 
-    $(".btnAdd").bind('click', function (e) {
-        $this = $(this);
+});
 
-        if ($this.hasClass('net')) {
-            $this.parent().parent().find(".tablePxe tbody").append(
-                '<tr><td><input type="checkbox"></td> \
-                     <td><select class="selectpicker"> \
+function ruleSelect(value) {
+    return '<select class="form-control"> \
                           <option>INPUT</option> \
                           <option>FORWORD</option> \
                           <option>OUTPUT</option>\
-                        </select></td>\
-                     <td><input></td></tr>');
-        } else if ($this.hasClass('file')) {
-            $this.parent().parent().find(".tablePxe tbody").append(
-                '<tr><td><input type="checkbox"></td> \
-                           <td><input></td>\
-                     <td><input></td></tr>');
-        }
+                        </select>' ;
+}
 
-        $('.selectpicker').selectpicker();
-    });
-    // 删除设备点击事件
-    $(".btnDel").bind('click', function (e) {
-        $(this).parent().parent().find(".tablePxe tbody :checkbox:checked").each(function (index, element) {
-            $(this).closest("tr").remove();
+$(function () {
+    var oTable = new TableInit();
+    oTable.Init();
+
+    var oButtonInit = new ButtonInit();
+    oButtonInit.Init();
+
+});
+
+var data = [
+    {
+        "rule": "INPUT",
+        "ip": "192.168.1.100"
+    }
+]
+
+var TableInit = function () {
+    var oTableInit = new Object();
+    //初始化Table
+    oTableInit.Init = function () {
+        $('#table').bootstrapTable({
+            url: '/Home/GetDepartment',         //请求后台的URL（*）
+            method: 'get',                      //请求方式（*）
+            toolbar: '#toolbar',                //工具按钮用哪个容器
+            striped: true,                      //是否显示行间隔色
+            sortOrder: "asc",                   //排序方式
+            search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+            showRefresh: true,                  //是否显示刷新按钮
+            columns: [{
+                checkbox: true
+            }, {
+                field: 'rule',
+                title: '规则链',
+                editable: {
+                    type: 'select',
+                    url: '',
+                    source: [
+                        {value: 'INPUT', text: 'INPUT'},
+                        {value: 'FORWARD', text: 'FORWARD'},
+                        {value: 'OUTPUT', text: 'OUTPUT'}
+                    ],
+                    success: function(response, newValue) {
+                        console.log(newValue);
+                    }
+                }
+            }, {
+                field: 'ip',
+                title: 'ip',
+                editable: {
+                    type: 'text'
+                }
+            }],
+            data: data
         });
-    });
-    // 全选框点击事件
-    $(".checkAll").bind('click', function (e) {
-        $(":checkbox", $(".tablePxe tbody")).prop('checked', this.checked);
-        console.log(this.checked);
-    });
-})
+    };
+    return oTableInit;
+};
+
+
+var ButtonInit = function () {
+    var oInit = new Object();
+    var postdata = {};
+
+    oInit.Init = function () {
+        $("#btn_add").click(function () {
+            $('#table').bootstrapTable('append', [
+                {
+                    "rule": "INPUT",
+                    "ip": "192.168.1.100"
+                }
+            ]);
+        });
+
+        $("#btn_remove").click(function () {
+            var ids = $.map($('#table').bootstrapTable('getSelections'), function (row) {
+                return row.rule;
+            });
+            $('#table').bootstrapTable('remove', {
+                    field: 'ruleu',
+                    values: ids
+                });
+        });
+    };
+
+    return oInit;
+};
 </script>
+<script type="text/javascript" src="{% static 'js/bootstrap-table.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap-table-zh-CN.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap-table-editable.js' %}"></script>
 <style type="text/css">
 body {
     padding-top: 50px;
@@ -209,45 +275,19 @@ ul li {
         </div>
     </div>
     <div role="tabpanel" class="tab-pane" id="ippackets">
-        <div class="list-op">
-            <button type="button" class="btn btn-success btnAdd net">
-                新增
+        <div id="toolbar" class="btn-group">
+            <button type="button" class="btn btn-default" id="btn_add">
+                <i class="glyphicon glyphicon-plus"></i>
             </button>
-            <button type="button" class="btn btn-danger btnDel">
-                删除
+            <button type="button" class="btn btn-default">
+                <i class="glyphicon glyphicon-heart"></i>
+            </button>
+            <button type="button" class="btn btn-default" id="btn_remove">
+                <i class="glyphicon glyphicon-trash"></i>
             </button>
         </div>
-        <table class="table table-striped tablePxe"">
-            <thead>
-                 <tr>
-                     <th><input type="checkbox" class="checkAll"></th>
-                     <th>规则链</th>
-                     <th>ip</th>
-                 </tr>
-             </thead>
-             <tbody>
+        <table id="table">
 
-             <tr>
-                 <td><input type="checkbox"></td>
-                 <td><select class="selectpicker">
-                      <option>INPUT</option>
-                      <option>FORWORD</option>
-                      <option>OUTPUT</option>
-                    </select></td>
-                 <td><input value="192.168.1.2"></td>
-
-             </tr>
-             <tr>
-                 <td><input type="checkbox"></td>
-                 <td><select class="selectpicker">
-                      <option>INPUT</option>
-                      <option>FORWORD</option>
-                      <option>OUTPUT</option>
-                    </select></td>
-                 <td><input value="192.168.1.4"></td>
-             </tr>
-
-             </tbody>
          </table>
         <div class="modal-footer">
             <button id="save-net-btn" type="button" class="btn btn-primary">保存</button>

@@ -43,6 +43,9 @@ $(document).ready(function () {
 
     $("#warning-table").attr('data-url', 'get_warnings?h=' + host + '&r=' + time_range);
     $("#ip-table").attr('data-url', 'get_ippackets?h=' + host + '&r=' + time_range);
+    $("#media-table").attr('data-url', 'get_mediainfo?h=' + host + '&r=' + time_range);
+    $("#file-table").attr('data-url', 'get_fileinfo?h=' + host + '&r=' + time_range);
+    $("#process-table").attr('data-url', 'get_processinfo?h=' + host + '&r=' + time_range);
 
     $('#warning-table').on('sort.bs.table', function(name,order) {
         console.log(name, order);
@@ -53,6 +56,8 @@ $(document).ready(function () {
 </script>
 <script type="text/javascript" src="{% static 'js/bootstrap-table.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/bootstrap-table-zh-CN.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap-table-export.js' %}"></script>
+
 <style type="text/css">
 
 body {
@@ -135,85 +140,56 @@ body {
         </ul>
     </div>
     <div role="tabpanel" class="tab-pane" id="process">
-        <table class="table table-striped">
+        <table data-classes="table table-striped" id="process-table"
+               data-toggle="table" data-url="" data-sort-name="time"
+               data-show-export="true" data-search="true" data-show-refresh="true" z data-sort-order="desc">
             <thead>
                  <tr>
-                     <th>时间</th>
-                     <th>进程名称</th>
-                     <th>进程id</th>
-                     <th>用户</th>
-                     <th>启动时间</th>
-                     <th>运行时间</th>
-                     <th>占用端口</th>
+                     <th data-field="time" data-sortable="true">时间</th>
+                     <th data-field="process_name" data-sortable="true">进程名称</th>
+                     <th data-field="process_id" data-sortable="true">进程id</th>
+                     <th data-field="user" data-sortable="true">用户</th>
+                     <th data-field="boottime" data-sortable="true">启动时间</th>
+                     <th data-field="runtime"  data-sortable="true">运行时间</th>
+                     <th data-field="used_ports">占用端口</th>
                  </tr>
              </thead>
-             <tbody>
-             {% for process_info in process %}
-             <tr>
-                 <td>{{ process_info.time }}</td>
-                 <td>{{ process_info.process_name }}</td>
-                 <td>{{ process_info.process_id }}</td>
-                 <td>{{ process_info.user }}</td>
-                 <td>{{ process_info.boottime }}</td>
-                 <td>{{ process_info.runtime }}</td>
-                 <td>{{ process_info.used_ports }}</td>
-             </tr>
-             {% endfor %}
-             </tbody>
          </table>
     </div>
     <div role="tabpanel" class="tab-pane" id="file">
-        <table class="table table-striped">
+        <table data-classes="table table-striped" id="file-table"
+               data-toggle="table" data-url="" data-sort-name="time"
+               data-show-export="true" data-search="true" data-show-refresh="true"  data-sort-order="desc">
             <thead>
                  <tr>
-                     <th>时间</th>
-                     <th>文件名</th>
-                     <th>用户</th>
-                     <th>操作类型</th>
-                     <th>修改大小(KB)</th>
+                     <th data-field="time" data-sortable="true">时间</th>
+                     <th data-field="file_name" data-sortable="true">文件名</th>
+                     <th data-field="user" data-sortable="true">用户</th>
+                     <th data-field="operate_type" data-sortable="true">操作类型</th>
+                     <th data-field="modify_size" data-sortable="true">修改大小(KB)</th>
                  </tr>
              </thead>
-             <tbody>
-             {% for file in files %}
-             <tr>
-                 <td>{{ file.time }}</td>
-                 <td>{{ file.file_name }}</td>
-                 <td>{{ file.user }}</td>
-                 <td>{{ file.operate_type }}</td>
-                 <td>{{ file.modify_size }}</td>
-             </tr>
-             {% endfor %}
-             </tbody>
          </table>
     </div>
     <div role="tabpanel" class="tab-pane" id="media">
-        <table class="table table-striped">
+        <table data-classes="table table-striped" id="media-table"
+               data-toggle="table" data-url="" data-sort-name="time"
+               data-show-export="true" data-search="true" data-show-refresh="true"  data-sort-order="desc">
             <thead>
                  <tr>
-                     <th>时间</th>
-                     <th>介质名</th>
-                     <th>介质大小(MB)</th>
-                     <th>使用的io接口</th>
-                     <th>所操作的文件名</th>
+                     <th data-field="time" data-sortable="true">时间</th>
+                     <th data-field="media_name" data-sortable="true">介质名</th>
+                     <th data-field="media_size" data-sortable="true">介质大小(MB)</th>
+                     <th data-field="io_type" data-sortable="true">使用的io接口</th>
+                     <th data-field="operate_file" data-sortable="true">所操作的文件名</th>
                  </tr>
              </thead>
-             <tbody>
-             {% for media in medias %}
-             <tr>
-                 <td>{{ media.time }}</td>
-                 <td>{{ media.media_name }}</td>
-                 <td>{{ media.media_size }}</td>
-                 <td>{{ media.io_type }}</td>
-                 <td>{{ media.operate_file }}</td>
-             </tr>
-             {% endfor %}
-             </tbody>
          </table>
     </div>
     <div role="tabpanel" class="tab-pane" id="ippackets">
         <table data-classes="table table-striped" id="ip-table"
                data-toggle="table" data-url="" data-sort-name="time"
-                data-sort-order="desc">
+               data-show-export="true" data-search="true" data-show-refresh="true"  data-sort-order="desc">
             <thead>
                  <tr>
                      <th data-field="time" data-sortable="true">时间</th>
@@ -223,23 +199,12 @@ body {
                      <th data-field="recv_port" data-sortable="true">接收端口</th>
                  </tr>
              </thead>
-             <tbody>
-             {% for ip_packet in ip_packets %}
-             <tr>
-                 <td>{{ ip_packet.time }}</td>
-                 <td>{{ ip_packet.app_name }}</td>
-                 <td>{{ ip_packet.send_port }}</td>
-                 <td>{{ ip_packet.recv_ip }}</td>
-                 <td>{{ ip_packet.recv_port }}</td>
-             </tr>
-             {% endfor %}
-             </tbody>
          </table>
     </div>
     <div role="tabpanel" class="tab-pane" id="warning-history">
         <table data-classes="table table-striped" id="warning-table"
                data-toggle="table" data-url="" data-sort-name="time"
-                data-sort-order="desc">
+               data-show-export="true" data-search="true" data-show-refresh="true" data-sort-order="desc">
         <thead>
              <tr>
                  <th data-field="time" data-sortable="true">时间</th>

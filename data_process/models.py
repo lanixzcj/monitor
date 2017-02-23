@@ -159,3 +159,21 @@ class WarningHistory(models.Model):
 
     def __unicode__(self):
         return self.warning_type
+
+
+class IpPacketsRules(models.Model):
+    host = models.ForeignKey(Host, on_delete=models.CASCADE)
+    rule_chain = models.CharField(max_length=30)
+    ip = models.GenericIPAddressField(default='0.0.0.0')
+
+    def __unicode__(self):
+        return self.rule_chain
+
+
+class FileRules(models.Model):
+    host = models.ForeignKey(Host, on_delete=models.CASCADE)
+    file = models.CharField(max_length=30)
+    permission = models.CharField(max_length=30)
+
+    def __unicode__(self):
+        return self.file

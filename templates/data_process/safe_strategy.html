@@ -4,6 +4,22 @@
 <link rel="stylesheet" href="{% static 'css/bootstrap-select.min.css'%}">
 <script src="{% static 'js/bootstrap-select.min.js' %}"></script>
 <script type="text/javascript">
+(function($) {
+    $.extend({
+        urlGet:function(){
+            var aQuery = window.location.href.split("?");//取得Get参数
+            var aGET = new Array();
+            if(aQuery.length > 1) {
+                var aBuf = aQuery[1].split("&");
+                for(var i=0, iLoop = aBuf.length; i<iLoop; i++) {
+                    var aTmp = aBuf[i].split("=");//分离key与Value
+                    aGET[aTmp[0]] = aTmp[1];
+                }
+            }
+            return aGET;
+        },
+    });
+})(jQuery);
 
 $(document).ready(function () {
     var disk = $('#disk-slider').slider().data('slider');
@@ -44,7 +60,7 @@ $(document).ready(function () {
             data: data,
             success: function (response) {
                 console.log(response)
-                alert(response)
+
             }
         });
 
@@ -58,6 +74,27 @@ $(document).ready(function () {
         $("form#safe_strategy_form").submit();
     })
 
+    $table = $('#net-table');
+    $table.on('click', '.edit', function(){
+
+        $table.find('.editable').show();
+        $table.find('.ok').hide();
+        $table.find('.edit').show();
+        $(this).hide().siblings('.ok').show();
+        $(this).closest('tr').find('.editable').editable('show');
+        console.log($(this).closest('tr').find('.editable'));
+    });
+
+    $table.on('click', '.ok', function() {
+        var $btn = $(this);
+        /*
+         Currently no elegant way to get actual values from shown inputs.
+         It's possible to collect it manually, submit and then use `setValue` method to update data in table row. But it's overload..
+         Need investigation.
+        */
+        $btn.closest('tr').find('.editable').editable('hide');
+        $btn.hide().siblings('.edit').show();
+    });
 
 });
 
@@ -69,59 +106,136 @@ function ruleSelect(value) {
                         </select>' ;
 }
 
+function idFormatter(value, row, index) {
+    return index + 1;
+}
+
+function editFormatter(value, row, index) {
+    return [
+        '<a class="edit" href="javascript:void(0)" title="Edit">',
+        '<i class="glyphicon glyphicon-pencil"></i>',
+        '</a>',
+        '<a class="ok" href="javascript:void(0)" title="Ok" style="display: none">',
+        '<i class="glyphicon glyphicon-ok"></i>',
+        '</a>',
+    ].join('');
+}
+
+
+
+window.actionEvents = {
+    'click .edit': function (e, value, row, index) {
+        $(this).closest('tr').find('.editable').editable('show');
+        console.log($(this).closest('tr').find('.editable'))
+    },
+};
+
+function getColcomns(classPrefix) {
+    if (classPrefix == 'net') {
+         return [{
+                    field: 'id',
+                    title: 'id',
+                    <!--visible: false,-->
+                    searchable: false,
+                    formatter: idFormatter
+                }, {
+                    checkbox: true
+                }, {
+                    field: 'rule',
+                    title: '规则链',
+                    editable: {
+                        type: 'select',
+                        url: '',
+                        source: [
+                            {value: 'INPUT', text: 'INPUT'},
+                            {value: 'FORWARD', text: 'FORWARD'},
+                            {value: 'OUTPUT', text: 'OUTPUT'}
+                        ],
+                        success: function(response, newValue) {
+                            console.log(newValue);
+                        },
+                        mode: 'inline'
+                    }
+                }, {
+                    field: 'ip',
+                    title: 'ip',
+                    editable: {
+                        type: 'text',
+                        showbuttons: false,
+                        toggle: 'manual',
+                        mode: 'inline'
+                    },
+
+                }, {
+                    field: 'edit',
+                    title: '编辑',
+                    formatter: editFormatter,
+                    events: actionEvents
+                }];
+     } else if (classPrefix == 'file') {
+        return [{
+                    field: 'id',
+                    title: 'id',
+                    <!--visible: false,-->
+                    searchable: false
+                }, {
+                    checkbox: true
+                }, {
+                    field: 'file',
+                    title: '文件名',
+                    editable: {
+                        type: 'text',
+                    }
+                }, {
+                    field: 'permission',
+                    title: '权限',
+                    editable: {
+                        type: 'text'
+                    },
+                }];
+     }
+
+}
+
+function getUrl(classPrefix) {
+    var GET = $.urlGet();
+    var host = GET['h'];
+    if (classPrefix == 'net') {
+        return 'get_ippackets_rules?h=' + host;
+    } else if (classPrefix == 'file') {
+        return 'get_file_rules?h=' + host;
+    }
+
+}
+
 $(function () {
     var oTable = new TableInit();
-    oTable.Init();
+    oTable.Init('net');
+    oTable.Init('file');
 
     var oButtonInit = new ButtonInit();
-    oButtonInit.Init();
+    oButtonInit.Init('net');
+    oButtonInit.Init('file');
 
 });
-
-var data = [
-    {
-        "rule": "INPUT",
-        "ip": "192.168.1.100"
-    }
-]
 
 var TableInit = function () {
     var oTableInit = new Object();
     //初始化Table
-    oTableInit.Init = function () {
-        $('#table').bootstrapTable({
-            url: '/Home/GetDepartment',         //请求后台的URL（*）
+    oTableInit.Init = function (classPrefix) {
+        $('#'+classPrefix+'-table').bootstrapTable({
+            url: getUrl(classPrefix),         //请求后台的URL（*）
             method: 'get',                      //请求方式（*）
-            toolbar: '#toolbar',                //工具按钮用哪个容器
+            toolbar: '#'+classPrefix+'-toolbar',                //工具按钮用哪个容器
             striped: true,                      //是否显示行间隔色
             sortOrder: "asc",                   //排序方式
             search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
             showRefresh: true,                  //是否显示刷新按钮
-            columns: [{
-                checkbox: true
-            }, {
-                field: 'rule',
-                title: '规则链',
-                editable: {
-                    type: 'select',
-                    url: '',
-                    source: [
-                        {value: 'INPUT', text: 'INPUT'},
-                        {value: 'FORWARD', text: 'FORWARD'},
-                        {value: 'OUTPUT', text: 'OUTPUT'}
-                    ],
-                    success: function(response, newValue) {
-                        console.log(newValue);
-                    }
-                }
-            }, {
-                field: 'ip',
-                title: 'ip',
-                editable: {
-                    type: 'text'
-                }
-            }],
-            data: data
+            ajax: function (request) {
+                $.ajax(request);
+                console.log(request);
+              },
+            columns: getColcomns(classPrefix)
         });
     };
     return oTableInit;
@@ -132,9 +246,12 @@ var ButtonInit = function () {
     var oInit = new Object();
     var postdata = {};
 
-    oInit.Init = function () {
-        $("#btn_add").click(function () {
-            $('#table').bootstrapTable('append', [
+    oInit.Init = function (classPrefix) {
+        $("#"+classPrefix+"-btn-add").click(function () {
+            $table = $('#'+classPrefix+'-table');
+            index = $table.bootstrapTable('getData');
+            console.log(index);
+            $table.bootstrapTable('append', [
                 {
                     "rule": "INPUT",
                     "ip": "192.168.1.100"
@@ -142,12 +259,13 @@ var ButtonInit = function () {
             ]);
         });
 
-        $("#btn_remove").click(function () {
-            var ids = $.map($('#table').bootstrapTable('getSelections'), function (row) {
-                return row.rule;
+        $("#"+classPrefix+"-btn-remove").click(function () {
+            var ids = $.map($('#'+classPrefix+'-table').bootstrapTable('getSelections'), function (row) {
+                return row.id;
             });
-            $('#table').bootstrapTable('remove', {
-                    field: 'ruleu',
+            console.log(ids);
+            $('#'+classPrefix+'-table').bootstrapTable('remove', {
+                    field: 'id',
                     values: ids
                 });
         });
@@ -238,55 +356,31 @@ ul li {
 
     <!--</div>-->
     <div role="tabpanel" class="tab-pane" id="file">
-        <div class="list-op">
-            <button type="button" class="btn btn-success btnAdd file">
-                新增
+        <div id="file-toolbar" class="btn-group">
+            <button type="button" class="btn btn-default" id="file-btn-add">
+                <i class="glyphicon glyphicon-plus"></i>
             </button>
-            <button type="button" class="btn btn-danger btnDel">
-                删除
+            <button type="button" class="btn btn-default" id="file-btn-remove">
+                <i class="glyphicon glyphicon-trash"></i>
             </button>
         </div>
-        <table class="table table-striped tablePxe">
-            <thead>
-                 <tr>
-                     <th><input type="checkbox" class="checkAll"></th>
-                     <th>文件名</th>
-                     <th>权限</th>
-                 </tr>
-             </thead>
-             <tbody>
+        <table id="file-table">
 
-             <tr>
-                 <td><input type="checkbox"></td>
-                 <td><input value="/home/ubuntu/test"></td>
-                 <td><input value="rwxrwxrwx"></td>
-
-             </tr>
-             <tr>
-                 <td><input type="checkbox"></td>
-                 <td><input value="/etc/test"></td>
-                 <td><input value="r--r--r--"></td>
-             </tr>
-
-             </tbody>
          </table>
         <div class="modal-footer">
             <button id="save-file-btn" type="button" class="btn btn-primary">保存</button>
         </div>
     </div>
     <div role="tabpanel" class="tab-pane" id="ippackets">
-        <div id="toolbar" class="btn-group">
-            <button type="button" class="btn btn-default" id="btn_add">
+        <div id="net-toolbar" class="btn-group">
+            <button type="button" class="btn btn-default" id="net-btn-add">
                 <i class="glyphicon glyphicon-plus"></i>
             </button>
-            <button type="button" class="btn btn-default">
-                <i class="glyphicon glyphicon-heart"></i>
-            </button>
-            <button type="button" class="btn btn-default" id="btn_remove">
+            <button type="button" class="btn btn-default" id="net-btn-remove" >
                 <i class="glyphicon glyphicon-trash"></i>
             </button>
         </div>
-        <table id="table">
+        <table id="net-table">
 
          </table>
         <div class="modal-footer">

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django import forms
 from models import UserAction, MyUser, DeviceInfo, MediaInfo, FileInfo, \
-    ProcessInfo, IpPacket, TrustHost, WarningHistory, Host
+    ProcessInfo, IpPacket, TrustHost, WarningHistory, Host, IpPacketsRules, FileRules
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
@@ -92,3 +92,5 @@ admin.site.register(IpPacket)
 admin.site.register(TrustHost)
 admin.site.register(WarningHistory)
 admin.site.register(Host)
+admin.site.register(IpPacketsRules)
+admin.site.register(FileRules)

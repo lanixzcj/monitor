@@ -7,7 +7,8 @@ import datetime
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from models import Host, TrustHost, DeviceInfo, HostThreshold, \
-    ProcessInfo, IpPacket, FileInfo, MediaInfo, WarningHistory
+    ProcessInfo, IpPacket, FileInfo, MediaInfo, WarningHistory, IpPacketsRules, \
+    FileRules
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import auth
 import demjson
@@ -258,8 +259,50 @@ def get_ippackets(request):
         one_ip_packet['recv_port'] = e.recv_port
         ip_packets_info.append(one_ip_packet)
 
-        ip_packets_json = demjson.encode(ip_packets_info)
+    ip_packets_json = demjson.encode(ip_packets_info)
     return HttpResponse(content=ip_packets_json)
+
+
+def get_ippackets_rules(request):
+    host = request.GET.get('h')
+
+    try:
+        host_info = Host.objects.get(hostname=host)
+        ip_packets = IpPacketsRules.objects.filter(host__exact=host_info)
+    except ObjectDoesNotExist:
+        pass
+
+    ip_packets_info = []
+    for e in ip_packets:
+        one_ip_packet = {}
+        one_ip_packet['id'] = e.id
+        one_ip_packet['rule'] = e.rule_chain
+        one_ip_packet['ip'] = e.ip
+        ip_packets_info.append(one_ip_packet)
+
+    ip_packets_json = demjson.encode(ip_packets_info)
+    return HttpResponse(content=ip_packets_json)
+
+
+def get_file_rules(request):
+    host = request.GET.get('h')
+
+    try:
+        host_info = Host.objects.get(hostname=host)
+        files = FileRules.objects.filter(host__exact=host_info)
+    except ObjectDoesNotExist:
+        pass
+
+    files_info = []
+    for e in files:
+        one_file = {}
+        one_file['id'] = e.id
+        one_file['file'] = e.file
+        one_file['permission'] = e.permission
+        files_info.append(one_file)
+
+    files_json = demjson.encode(files_info)
+    return HttpResponse(content=files_json)
 
 
 def host_graphs(request):
@@ -300,11 +343,19 @@ def safe_strategy(request):
 
     try:
         host_info = Host.objects.get(hostname=host)
+
+    except ObjectDoesNotExist:
+        print 'bad host.'
+        return
+
+    try:
         threshold = host_info.hostthreshold
         device = host_info.deviceinfo
     except ObjectDoesNotExist:
-        print 'bad host.'
-        threshold = None
+        threshold = HostThreshold(hostname=host_info)
+        threshold.save()
+        device = DeviceInfo(hostname=host_info)
+        device.save()
 
     if request.method == "POST" and request.is_ajax:
         if threshold is not None:
@@ -319,16 +370,16 @@ def safe_strategy(request):
             return HttpResponse(content='saved')
 
     threshold_info = {}
-    if threshold is not None and device is not None:
-        threshold_info['bytes_in'] = threshold.bytes_in
-        threshold_info['bytes_in_max'] = settings.BYTES_IN
-        threshold_info['bytes_out'] = threshold.bytes_out
-        threshold_info['bytes_out_max'] = settings.BYTES_OUT
-        threshold_info['cpu_used'] = threshold.cpu_used
-        threshold_info['mem_used'] = threshold.mem_used
-        threshold_info['disk_used'] = threshold.disk_used
-        threshold_info['disk_total'] = device.disk_total
-        threshold_info['mem_total'] = device.mem_total
+
+    threshold_info['bytes_in'] = threshold.bytes_in
+    threshold_info['bytes_in_max'] = settings.BYTES_IN
+    threshold_info['bytes_out'] = threshold.bytes_out
+    threshold_info['bytes_out_max'] = settings.BYTES_OUT
+    threshold_info['cpu_used'] = threshold.cpu_used
+    threshold_info['mem_used'] = threshold.mem_used
+    threshold_info['disk_used'] = threshold.disk_used
+    threshold_info['disk_total'] = device.disk_total
+    threshold_info['mem_total'] = device.mem_total
 
     print threshold_info
     context = {

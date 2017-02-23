@@ -28,6 +28,8 @@ urlpatterns = [
     url(r'^hostgraph/get_fileinfo$', server_view.get_fileinfo),
     url(r'^hostgraph/get_processinfo$', server_view.get_processinfo),
     url(r'^safe_strategy/$', server_view.safe_strategy),
+    url(r'^safe_strategy/get_ippackets_rules$', server_view.get_ippackets_rules),
+    url(r'^safe_strategy/get_file_rules$', server_view.get_file_rules),
     url(r'^(?:hostgraph/)?image/$', server_view.image),
     url(r'^admin/', admin.site.urls),
     url(r'^login/$', server_view.login),

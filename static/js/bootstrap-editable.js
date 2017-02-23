@@ -918,6 +918,7 @@ Applied as jQuery method.
         
         init: function(element, options) {
             this.$element = $(element);
+
             //since 1.4.1 container do not use data-* directly as they already merged into options.
             this.options = $.extend({}, $.fn.editableContainer.defaults, options);         
             this.splitOptions();
@@ -1080,6 +1081,8 @@ Applied as jQuery method.
         **/
         /* Note: poshytip owerwrites this method totally! */          
         show: function (closeAll) {
+
+
             this.$element.addClass('editable-open');
             if(closeAll !== false) {
                 //close all open containers (except this)

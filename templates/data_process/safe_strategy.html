@@ -257,6 +257,18 @@ var ButtonInit = function () {
                     "ip": "192.168.1.100"
                 }
             ]);
+
+            var GET = $.urlGet();
+            var host = GET['h'];
+
+            $.ajax({
+                type: 'post',
+                url: 'add_ippackets_rules?h=' + host,
+                data: 'chain=INPUT&ip=192.168.1.100',
+                success: function (response) {
+                    console.log(response)
+                }
+            });
         });
 
         $("#"+classPrefix+"-btn-remove").click(function () {
@@ -264,10 +276,25 @@ var ButtonInit = function () {
                 return row.id;
             });
             console.log(ids);
-            $('#'+classPrefix+'-table').bootstrapTable('remove', {
-                    field: 'id',
-                    values: ids
-                });
+            <!--$('#'+classPrefix+'-table').bootstrapTable('remove', {-->
+                    <!--field: 'id',-->
+                    <!--values: ids-->
+                <!--});-->
+
+            var GET = $.urlGet();
+            var host = GET['h'];
+
+            data = $('#'+classPrefix+'-table').bootstrapTable('getSelections');
+            console.log(data);
+            console.log(JSON.stringify(data));
+            <!--$.ajax({-->
+                <!--type: 'post',-->
+                <!--url: 'revome_ippackets_rules?h=' + host,-->
+                <!--data: 'chain=INPUT&ip=192.168.1.100',-->
+                <!--success: function (response) {-->
+                    <!--console.log(response)-->
+                <!--}-->
+            <!--});-->
         });
     };
 

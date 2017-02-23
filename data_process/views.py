@@ -284,6 +284,40 @@ def get_ippackets_rules(request):
     return HttpResponse(content=ip_packets_json)
 
 
+@csrf_exempt
+def add_ippackets_rules(request):
+    host = request.GET.get('h')
+    if request.method == "POST" and request.is_ajax:
+        chain = request.POST.get('chain')
+        ip = request.POST.get('ip')
+
+    try:
+        host_info = Host.objects.get(hostname=host)
+        ip_packets = IpPacketsRules.objects.create(host=host_info,
+                                                   rule_chain=chain, ip=ip)
+        ip_packets.save()
+
+        return HttpResponse('saved')
+    except ObjectDoesNotExist:
+        pass
+
+    return HttpResponse('failed')
+
+
+@csrf_exempt
+def remove_ippackets_rules(request):
+    host = request.GET.get('h')
+
+    try:
+        host_info = Host.objects.get(hostname=host)
+        ip_packets = IpPacketsRules.objects.filter(host__exact=host_info)
+    except ObjectDoesNotExist:
+        pass
+
+    print request.POST
+    return HttpResponse()
+
+
 def get_file_rules(request):
     host = request.GET.get('h')
 

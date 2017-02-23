@@ -287,14 +287,16 @@ var ButtonInit = function () {
             data = $('#'+classPrefix+'-table').bootstrapTable('getSelections');
             console.log(data);
             console.log(JSON.stringify(data));
-            <!--$.ajax({-->
-                <!--type: 'post',-->
-                <!--url: 'revome_ippackets_rules?h=' + host,-->
-                <!--data: 'chain=INPUT&ip=192.168.1.100',-->
-                <!--success: function (response) {-->
-                    <!--console.log(response)-->
-                <!--}-->
-            <!--});-->
+            $.ajax({
+                type: 'post',
+                url: 'remove_ippackets_rules?h=' + host,
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                success: function (response) {
+                    console.log(response);
+                    $('#'+classPrefix+'-table').bootstrapTable('refresh');
+                }
+            });
         });
     };
 

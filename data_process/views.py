@@ -307,15 +307,26 @@ def add_ippackets_rules(request):
 @csrf_exempt
 def remove_ippackets_rules(request):
     host = request.GET.get('h')
+    datas = demjson.decode(request.body)
+    print datas, host
 
     try:
         host_info = Host.objects.get(hostname=host)
-        ip_packets = IpPacketsRules.objects.filter(host__exact=host_info)
     except ObjectDoesNotExist:
-        pass
+        return HttpResponse('failed')
 
-    print request.POST
-    return HttpResponse()
+    for data in datas:
+        print data
+        try:
+            ip_packets = IpPacketsRules.objects.filter(host__exact=host_info,
+                                                       ip=data['ip'],
+                                                       rule_chain=data['rule'])
+            ip_packets.delete()
+            pass
+        except ObjectDoesNotExist:
+            pass
+
+    return HttpResponse('delete')
 
 
 def get_file_rules(request):

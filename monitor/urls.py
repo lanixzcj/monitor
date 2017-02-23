@@ -30,6 +30,7 @@ urlpatterns = [
     url(r'^safe_strategy/$', server_view.safe_strategy),
     url(r'^safe_strategy/get_ippackets_rules$', server_view.get_ippackets_rules),
     url(r'^safe_strategy/add_ippackets_rules', server_view.add_ippackets_rules),
+    url(r'^safe_strategy/remove_ippackets_rules', server_view.remove_ippackets_rules),
     url(r'^safe_strategy/get_file_rules$', server_view.get_file_rules),
     url(r'^(?:hostgraph/)?image/$', server_view.image),
     url(r'^admin/', admin.site.urls),

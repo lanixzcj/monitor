@@ -75,26 +75,26 @@ $(document).ready(function () {
     })
 
     $table = $('#net-table');
-    $table.on('click', '.edit', function(){
+//    $table.on('click', '.edit', function(){
+//
+//        $table.find('.editable').show();
+//        $table.find('.ok').hide();
+//        $table.find('.edit').show();
+//        $(this).hide().siblings('.ok').show();
+//        $(this).closest('tr').find('.editable').editable('show');
+//        console.log($(this).closest('tr').find('.editable'));
+//    });
 
-        $table.find('.editable').show();
-        $table.find('.ok').hide();
-        $table.find('.edit').show();
-        $(this).hide().siblings('.ok').show();
-        $(this).closest('tr').find('.editable').editable('show');
-        console.log($(this).closest('tr').find('.editable'));
-    });
-
-    $table.on('click', '.ok', function() {
-        var $btn = $(this);
-        /*
-         Currently no elegant way to get actual values from shown inputs.
-         It's possible to collect it manually, submit and then use `setValue` method to update data in table row. But it's overload..
-         Need investigation.
-        */
-        $btn.closest('tr').find('.editable').editable('hide');
-        $btn.hide().siblings('.edit').show();
-    });
+//    $table.on('click', '.ok', function() {
+//        var $btn = $(this);
+//        /*
+//         Currently no elegant way to get actual values from shown inputs.
+//         It's possible to collect it manually, submit and then use `setValue` method to update data in table row. But it's overload..
+//         Need investigation.
+//        */
+//        $btn.closest('tr').find('.editable').editable('hide');
+//        $btn.hide().siblings('.edit').show();
+//    });
 
     $('#add-modal').on('show.bs.modal', function(e) {
         var classPrefix = e.relatedTarget.classPrefix;
@@ -104,9 +104,55 @@ $(document).ready(function () {
         $('#add-btn').one('click', function () {
             addEvent(classPrefix);
         });
-    })
+    });
 
+    var data = [{
+        'name': name
+    }]
+
+    $(function () {
+        var $table = $('#table').bootstrapTable({
+            idField: 'name',
+            url: '',
+            columns: [{
+                field: 'name',
+                title: 'Name'
+            }, {
+                field: 'stargazers_count',
+                title: 'Stars',
+                editable: {
+                    type: 'text'
+                }
+            }, {
+                field: 'forks_count',
+                title: 'Forks',
+                editable: {
+                    type: 'text'
+                }
+            }, {
+                field: 'description',
+                title: 'Description',
+                editable: {
+                    type: 'textarea'
+                }
+            }],
+            data: data
+        });
+
+        $table.on('editable-save.bs.table', function (e, field, row, old, $el) {
+                var $els = $table.find('.editable'),
+                next = $els.index($el) + 1;
+
+                if (next >= $els.length) {
+                    return;
+                }
+
+                $els.editable('show');
+        });
+    });
 });
+
+
 
 function ruleSelect(value) {
     return '<select class="form-control"> \
@@ -146,8 +192,27 @@ function addEvent(classPrefix) {
 
 window.actionEvents = {
     'click .edit': function (e, value, row, index) {
-        $(this).closest('tr').find('.editable').editable('show');
-        console.log($(this).closest('tr').find('.editable'))
+        var $table = $('#table').bootstrapTable();
+        var $els = $table.find('.editable');
+
+        $els.eq(0).editable('show');
+        var $this = $(this);
+        var $table = $('#net-table');
+        $table.find('.editable').eq(0).editable('show');
+        $table.find('.ok').hide();
+        $table.find('.edit').show();
+        $this.hide().siblings('.ok').show();
+        $this.closest('tr').find('.editable').editable('show');
+    },
+    'click .ok': function (e, value, row, index) {
+        var $btn = $(this);
+        /*
+         Currently no elegant way to get actual values from shown inputs.
+         It's possible to collect it manually, submit and then use `setValue` method to update data in table row. But it's overload..
+         Need investigation.
+        */
+        $btn.closest('tr').find('.editable').editable('hide');
+        $btn.hide().siblings('.edit').show();
     },
 };
 
@@ -175,7 +240,9 @@ function getColcomns(classPrefix) {
                         success: function(response, newValue) {
                             console.log(newValue);
                         },
-                        mode: 'inline'
+                        showbuttons: false,
+//                        toggle: 'manual',
+//                        mode: 'inline'
                     }
                 }, {
                     field: 'ip',
@@ -183,8 +250,8 @@ function getColcomns(classPrefix) {
                     editable: {
                         type: 'text',
                         showbuttons: false,
-                        toggle: 'manual',
-                        mode: 'inline'
+//                        toggle: 'manual',
+//                        mode: 'inline'
                     },
 
                 }, {
@@ -447,9 +514,7 @@ ul li {
         <table id="file-table">
 
          </table>
-        <div class="modal-footer">
-            <button id="save-file-btn" type="button" class="btn btn-primary">保存</button>
-        </div>
+
     </div>
     <div role="tabpanel" class="tab-pane" id="ippackets">
         <div id="net-toolbar" class="btn-group">
@@ -463,11 +528,9 @@ ul li {
         <table id="net-table">
 
          </table>
+
         </div>
 
-        <!--<div class="modal-footer">-->
-            <!--<button id="save-net-btn" type="button" class="btn btn-primary">保存</button>-->
-        <!--</div>-->
     </div>
 </div>
 <div class="modal fade" id="add-modal" tabindex="-1" role="dialog" aria-labelledby="warning-modal-label" aria-hidden="true">

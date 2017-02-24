@@ -3,8 +3,10 @@ from __future__ import unicode_literals
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
-
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
 # Create your models here.
+from django.utils.encoding import python_2_unicode_compatible
 
 
 class MyUserManager(BaseUserManager):
@@ -61,6 +63,29 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
+
+
+class GlobalPermissionManager(models.Manager):
+    def get_query_set(self):
+        return super(GlobalPermissionManager, self).\
+            get_query_set().filter(content_type__model='global_permission')
+
+
+class GlobalPermission(Permission):
+    """A global permission, not attached to a model"""
+
+    objects = GlobalPermissionManager()
+
+    class Meta:
+        proxy = True
+        verbose_name = "global_permission"
+
+    def save(self, *args, **kwargs):
+        ct, created = ContentType.objects.get_or_create(
+            model=self._meta.verbose_name, app_label=self._meta.app_label
+        )
+        self.content_type = ct
+        super(GlobalPermission, self).save(*args, **kwargs)
 
 
 class Host(models.Model):

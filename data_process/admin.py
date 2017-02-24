@@ -1,10 +1,12 @@
 from django.contrib import admin
 from django import forms
 from models import UserAction, MyUser, DeviceInfo, MediaInfo, FileInfo, \
-    ProcessInfo, IpPacket, TrustHost, WarningHistory, Host, IpPacketsRules, FileRules
+    ProcessInfo, IpPacket, TrustHost, WarningHistory, Host, IpPacketsRules, FileRules, \
+    GlobalPermission
 from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
+from django.contrib.auth.models import Permission
 # Register your models here.
 
 
@@ -81,7 +83,46 @@ class MyUserAdmin(UserAdmin):
     filter_horizontal = ('groups', 'user_permissions',)
 
 
+class PermissionForm(forms.ModelForm):
+
+    class Meta:
+        model = GlobalPermission
+        fields = ('name', 'codename')
+
+    def save(self, commit=True):
+        # Save the provided password in hashed format
+        permission = super(PermissionForm, self).save(commit=False)
+        if commit:
+            permission.save()
+        return permission
+
+
+class PermissionAdmin(admin.ModelAdmin):
+    # form = UserChangeForm
+    form = PermissionForm
+
+    # list_display = ['name', 'codename']
+
+# admin.site.unregister(Group)
+#
+#
+# @admin.register(Group)
+# class GroupAdmin(admin.ModelAdmin):
+#     search_fields = ('name',)
+#     ordering = ('name',)
+#     filter_horizontal = ('ss',)
+#
+#     def formfield_for_manytomany(self, db_field, request=None, **kwargs):
+#         if db_field.name == 'permissions':
+#             qs = kwargs.get('queryset', db_field.remote_field.model.objects)
+#             # Avoid a major performance hit resolving permission names which
+#             # triggers a content_type load:
+#             kwargs['queryset'] = qs.select_related('content_type')
+#         return super(GroupAdmin, self).formfield_for_manytomany(
+#             db_field, request=request, **kwargs)
+
 admin.site.register(MyUser, MyUserAdmin)
+admin.site.register(GlobalPermission, PermissionAdmin)
 
 admin.site.register(UserAction)
 admin.site.register(DeviceInfo)
@@ -94,3 +135,4 @@ admin.site.register(WarningHistory)
 admin.site.register(Host)
 admin.site.register(IpPacketsRules)
 admin.site.register(FileRules)
+admin.site.register(Permission)

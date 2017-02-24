@@ -96,12 +96,22 @@ $(document).ready(function () {
         $btn.hide().siblings('.edit').show();
     });
 
+    $('#add-modal').on('show.bs.modal', function(e) {
+        var classPrefix = e.relatedTarget.classPrefix;
+        var currentTarget = $(e.currentTarget)
+
+        currentTarget.find('#add-content').html(getAddHtml(classPrefix));
+        $('#add-btn').one('click', function () {
+            addEvent(classPrefix);
+        });
+    })
+
 });
 
 function ruleSelect(value) {
     return '<select class="form-control"> \
                           <option>INPUT</option> \
-                          <option>FORWORD</option> \
+                          <option>FORWARD</option> \
                           <option>OUTPUT</option>\
                         </select>' ;
 }
@@ -121,7 +131,18 @@ function editFormatter(value, row, index) {
     ].join('');
 }
 
-
+function addEvent(classPrefix) {
+    $.ajax({
+        type: 'post',
+        url: getAddUrl(classPrefix),
+        data: getAddData(classPrefix),
+        success: function (response) {
+            console.log(response);
+            $('#add-modal').modal('hide');
+            $('#'+classPrefix+'-table').bootstrapTable('refresh');
+        }
+    });
+}
 
 window.actionEvents = {
     'click .edit': function (e, value, row, index) {
@@ -135,7 +156,7 @@ function getColcomns(classPrefix) {
          return [{
                     field: 'id',
                     title: 'id',
-                    <!--visible: false,-->
+                    visible: false,
                     searchable: false,
                     formatter: idFormatter
                 }, {
@@ -176,7 +197,7 @@ function getColcomns(classPrefix) {
         return [{
                     field: 'id',
                     title: 'id',
-                    <!--visible: false,-->
+                    visible: false,
                     searchable: false
                 }, {
                     checkbox: true
@@ -205,7 +226,64 @@ function getUrl(classPrefix) {
     } else if (classPrefix == 'file') {
         return 'get_file_rules?h=' + host;
     }
+}
 
+function getRemoveUrl(classPrefix) {
+    var GET = $.urlGet();
+    var host = GET['h'];
+    if (classPrefix == 'net') {
+        return 'remove_ippackets_rules?h=' + host;
+    } else if (classPrefix == 'file') {
+        return 'remove_file_rules?h=' + host;
+    }
+}
+
+function getAddUrl(classPrefix) {
+    var GET = $.urlGet();
+    var host = GET['h'];
+    if (classPrefix == 'net') {
+        return 'add_ippackets_rules?h=' + host;
+    } else if (classPrefix == 'file') {
+        return 'add_file_rules?h=' + host;
+    }
+}
+
+function getAddData(classPrefix) {
+    if (classPrefix == 'net') {
+        var rule = $('#add-select').val();
+        var ip = $('#add-ip').val();
+        return 'chain='+rule+'&ip='+ip;
+    } else if (classPrefix == 'file') {
+        var file = $('#add-file').val();
+        var permission = $('#add-permission').val();
+        return 'file=' + file + '&permission=' + permission;
+    }
+}
+
+function getAddHtml(classPrefix) {
+    if (classPrefix == 'net') {
+        return '<div class="input-group" style="padding: 10px">' +
+            '<span class="input-group-addon" id="basic-addon">规则链</span>' +
+            '<select class="form-control" id="add-select">' +
+            '<option>INPUT</option>' +
+            '<option>FORWARD</option>' +
+            '<option>OUTPUT</option>' +
+            '</select>' +
+            '</div>' +
+            '<div class="input-group" style="padding: 10px">' +
+            '<span class="input-group-addon">ip</span>' +
+            '<input id="add-ip" type="text" class="form-control" placeholder="所限制的ip">' +
+            '</div>';
+    } else if (classPrefix == 'file') {
+       return '<div class="input-group" style="padding: 10px">' +
+            '<span class="input-group-addon">文件</span>' +
+            '<input id="add-file" type="text" class="form-control" placeholder="文件路径">' +
+            '</div>'+
+            '<div class="input-group" style="padding: 10px">' +
+            '<span class="input-group-addon">权限</span>' +
+            '<input id="add-permission" type="text" class="form-control" placeholder="权限">' +
+            '</div>';
+    }
 }
 
 $(function () {
@@ -251,45 +329,18 @@ var ButtonInit = function () {
             $table = $('#'+classPrefix+'-table');
             index = $table.bootstrapTable('getData');
             console.log(index);
-            $table.bootstrapTable('append', [
-                {
-                    "rule": "INPUT",
-                    "ip": "192.168.1.100"
-                }
-            ]);
-
-            var GET = $.urlGet();
-            var host = GET['h'];
-
-            $.ajax({
-                type: 'post',
-                url: 'add_ippackets_rules?h=' + host,
-                data: 'chain=INPUT&ip=192.168.1.100',
-                success: function (response) {
-                    console.log(response)
-                }
+            $('#add-modal').modal({}, {
+                classPrefix: classPrefix
             });
         });
 
         $("#"+classPrefix+"-btn-remove").click(function () {
-            var ids = $.map($('#'+classPrefix+'-table').bootstrapTable('getSelections'), function (row) {
-                return row.id;
-            });
-            console.log(ids);
-            <!--$('#'+classPrefix+'-table').bootstrapTable('remove', {-->
-                    <!--field: 'id',-->
-                    <!--values: ids-->
-                <!--});-->
-
-            var GET = $.urlGet();
-            var host = GET['h'];
-
             data = $('#'+classPrefix+'-table').bootstrapTable('getSelections');
             console.log(data);
             console.log(JSON.stringify(data));
             $.ajax({
                 type: 'post',
-                url: 'remove_ippackets_rules?h=' + host,
+                url: getRemoveUrl(classPrefix),
                 data: JSON.stringify(data),
                 contentType: "application/json",
                 success: function (response) {
@@ -412,8 +463,25 @@ ul li {
         <table id="net-table">
 
          </table>
-        <div class="modal-footer">
-            <button id="save-net-btn" type="button" class="btn btn-primary">保存</button>
+        </div>
+
+        <!--<div class="modal-footer">-->
+            <!--<button id="save-net-btn" type="button" class="btn btn-primary">保存</button>-->
+        <!--</div>-->
+    </div>
+</div>
+<div class="modal fade" id="add-modal" tabindex="-1" role="dialog" aria-labelledby="warning-modal-label" aria-hidden="true">
+    <div class="modal-dialog modal-sm" style="width: 300px;margin: 10px auto 0 auto" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+                        class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="warning-modal-label">添加</h4>
+            </div>
+            <div id="add-content"></div>
+            <div class="modal-footer">
+                <button id="add-btn" type="button" class="btn btn-primary">保存</button>
+            </div>
         </div>
     </div>
 </div>

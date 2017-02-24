@@ -350,6 +350,50 @@ def get_file_rules(request):
     return HttpResponse(content=files_json)
 
 
+@csrf_exempt
+def add_file_rules(request):
+    host = request.GET.get('h')
+    if request.method == "POST" and request.is_ajax:
+        file = request.POST.get('file')
+        permission = request.POST.get('permission')
+
+    try:
+        host_info = Host.objects.get(hostname=host)
+        file_rule = FileRules.objects.create(host=host_info,
+                                              file=file,
+                                              permission=permission)
+        file_rule.save()
+
+        return HttpResponse('saved')
+    except ObjectDoesNotExist:
+        pass
+
+    return HttpResponse('failed')
+
+
+@csrf_exempt
+def remove_file_rules(request):
+    host = request.GET.get('h')
+    datas = demjson.decode(request.body)
+    print datas, host
+
+    try:
+        host_info = Host.objects.get(hostname=host)
+    except ObjectDoesNotExist:
+        return HttpResponse('failed')
+
+    for data in datas:
+        print data
+        try:
+            file_rules = FileRules.objects.filter(host__exact=host_info,
+                                                       file=data['file'],
+                                                       permission=data['permission'])
+            file_rules.delete()
+        except ObjectDoesNotExist:
+            pass
+
+    return HttpResponse('delete')
+
 def host_graphs(request):
     host = request.GET.get('h')
     time_range = request.GET.get('r', '')

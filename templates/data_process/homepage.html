@@ -11,7 +11,7 @@ $(document).ready(function () {
         src = 'safe_strategy/?h=' + hostname
         currentTarget.find('#myModalLabel').html(hostname + "安全策略");
         currentTarget.find('iframe#safeStrategyIframe').attr('src', src);
-    })
+    });
 
     $(".modal iframe").on("load", function(){
         var bHeight = $(this)[0].contentWindow.document.body.scrollHeight;

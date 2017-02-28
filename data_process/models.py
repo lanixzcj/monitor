@@ -124,6 +124,24 @@ class MyPermission(PermissionsMixin):
     class Meta:
         abstract = True
 
+    def get_user_permissions(self, obj=None):
+        perms = self.user_permissions.all()
+        return set("%s" % name for name in perms)
+
+    def get_group_permissions(self, obj=None):
+        user_groups_field = MyUser._meta.get_field('roles')
+        user_groups_query = 'role__%s' % user_groups_field.related_query_name()
+        perms = GlobalPermission.objects.filter(**{user_groups_query: self})
+        return set("%s" % name for name in perms)
+
+    def get_all_permissions(self, obj=None):
+        if not self.is_active or self.is_anonymous:
+            return set()
+        perms = set()
+        perms.update(self.get_user_permissions(obj))
+        perms.update(self.get_group_permissions(obj))
+        return perms
+
     def has_perm(self, perm, obj=None):
 
         return True

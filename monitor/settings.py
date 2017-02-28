@@ -55,7 +55,7 @@ SECRET_KEY = 'o2f0p%x1o38v*m#oa_40tt6j43+zj7ao!knucf2rphxydydjd1'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["123.206.13.150", "127.0.0.1", "192.168.1.100", "192.168.3.135"]
+ALLOWED_HOSTS = ["123.206.13.150", "127.0.0.1", "192.168.1.100", "192.168.3.139"]
 
 # Application definition
 
@@ -117,7 +117,7 @@ DATABASES = {
             'sql_mode': 'TRADITIONAL',
             'charset': 'utf8',
             'init_command': 'SET '
-                'storage_engine=INNODB,'
+                # 'storage_engine=INNODB,'
                 'character_set_connection=utf8,'
                 'collation_connection=utf8_bin'
         }

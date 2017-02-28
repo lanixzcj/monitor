@@ -1,12 +1,14 @@
 from __future__ import unicode_literals
 
+import six
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Permission, Group
 from django.contrib.contenttypes.models import ContentType
 # Create your models here.
 from django.utils.encoding import python_2_unicode_compatible
+from django.utils.translation import ugettext_lazy as _
 
 
 class MyUserManager(BaseUserManager):
@@ -39,7 +41,102 @@ class MyUserManager(BaseUserManager):
         return user
 
 
-class MyUser(AbstractBaseUser, PermissionsMixin):
+class GlobalPermissionManager(models.Manager):
+    use_in_migrations = True
+
+    def get_by_natural_key(self, codename):
+        return self.get(
+            codename=codename,
+        )
+
+
+class GlobalPermission(models.Model):
+    name = models.CharField(_('name'), max_length=255)
+    codename = models.CharField(_('codename'), max_length=100)
+    objects = GlobalPermissionManager()
+
+    class Meta:
+        verbose_name = _('permission')
+        verbose_name_plural = _('permissions')
+        unique_together = ('codename',)
+        ordering = ('codename',)
+
+    def __str__(self):
+        return six.text_type(self.name)
+
+    def natural_key(self):
+        return (self.name,)
+
+
+class RoleManager(models.Manager):
+    use_in_migrations = True
+
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
+
+class Role(models.Model):
+    name = models.CharField(_('name'), max_length=80, unique=True)
+    permissions = models.ManyToManyField(
+        GlobalPermission,
+        verbose_name=_('permissions'),
+        blank=True,
+    )
+
+    objects = RoleManager()
+
+    class Meta:
+        verbose_name = _('role')
+        verbose_name_plural = _('roles')
+
+    def __str__(self):
+        return self.name
+
+    def natural_key(self):
+        return (self.name,)
+
+
+class MyPermission(PermissionsMixin):
+    is_superuser = models.BooleanField(
+        _('superuser status'),
+        default=False,
+        help_text=_(
+            'Designates that this user has all permissions without '
+            'explicitly assigning them.'
+        ),
+    )
+    roles = models.ManyToManyField(
+        Role,
+        verbose_name=_('roles'),
+        blank=True,
+        related_name="user_set",
+        related_query_name="user",
+    )
+    user_permissions = models.ManyToManyField(
+        GlobalPermission,
+        verbose_name=_('user permissions'),
+        blank=True,
+        help_text=_('Specific permissions for this user.'),
+        related_name="user_set",
+        related_query_name="user",
+    )
+
+    class Meta:
+        abstract = True
+
+    def has_perm(self, perm, obj=None):
+
+        return True
+
+    def has_perms(self, perm_list, obj=None):
+
+        return True
+
+    def has_module_perms(self, app_label):
+        return True
+
+
+class MyUser(AbstractBaseUser, MyPermission):
     username = models.CharField(max_length=30, unique=True)
     email = models.EmailField()
     tel = models.CharField(max_length=24)
@@ -63,29 +160,6 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
-
-
-class GlobalPermissionManager(models.Manager):
-    def get_query_set(self):
-        return super(GlobalPermissionManager, self).\
-            get_query_set().filter(content_type__model='global_permission')
-
-
-class GlobalPermission(Permission):
-    """A global permission, not attached to a model"""
-
-    objects = GlobalPermissionManager()
-
-    class Meta:
-        proxy = True
-        verbose_name = "global_permission"
-
-    def save(self, *args, **kwargs):
-        ct, created = ContentType.objects.get_or_create(
-            model=self._meta.verbose_name, app_label=self._meta.app_label
-        )
-        self.content_type = ct
-        super(GlobalPermission, self).save(*args, **kwargs)
 
 
 class Host(models.Model):

@@ -4,4 +4,6 @@ celerybeat-schedule
 migrations/
 .idea/
 /rrd/
-
+node_modules
+*.log
+build

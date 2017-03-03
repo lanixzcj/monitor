@@ -3,28 +3,20 @@ import React, { Component, PropTypes } from 'react';
 import { Table} from 'react-bootstrap';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 
-const columns = [{
-  title: '标题',
-  dataIndex: 'title',
-  width: 100,
+var products = [{
+    id: 1,
+    name: "Product1",
+    price: 120
 }, {
-  title: '描述',
-  dataIndex: 'desc',
-  width: 400,
-}, {
-  title: '发布日期',
-  dataIndex: 'date',
-  width: 100,
-}, {
-  title: '操作',
-  render(text, record) {
-    return <a className="op-btn" onClick={this.handleDelete.bind(this, record)}>删除</a>;
-  },
+    id: 2,
+    name: "Product2",
+    price: 80
 }];
+
 
 export default class MonTable extends Component {
   componentDidMount() {
-
+      this.props.loadArticles();
   }
 
   handleDelete(record) {
@@ -38,13 +30,11 @@ export default class MonTable extends Component {
 
   render() {
     return (
-      <div>
-
-        <Table columns={columns.map(c => c.render ? ({
-          ...c,
-          render: c.render.bind(this)
-        }) : c)} dataSource={this.props.articles} />
-      </div>
+        <BootstrapTable data={products} options={ { noDataText: 'This is custom text sfor empty data' } }>
+          <TableHeaderColumn dataField='id' isKey={ true }>Product ID</TableHeaderColumn>
+          <TableHeaderColumn dataField='name'>Product Name</TableHeaderColumn>
+          <TableHeaderColumn dataField='price'>Product Price</TableHeaderColumn>
+        </BootstrapTable>
     );
   }
 }

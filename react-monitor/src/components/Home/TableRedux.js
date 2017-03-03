@@ -6,7 +6,7 @@ const initialState = {
 
 export function loadArticles() {
   return {
-    url: 'http://127.0.0.1:8000/ss/users/',
+    url: 'http://127.0.0.1:8000/ss',
     types: ['LOAD_ARTICLES', 'LOAD_ARTICLES_SUCCESS', 'LOAD_ARTICLES_ERROR']
   };
 }

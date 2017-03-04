@@ -23,8 +23,7 @@ export default class ArticleCRUD extends Component {
       <div>
         {/*<button onClick={this.props.modalActions.showModal}>新增文章</button>*/}
 
-        <MonTable {...this.props.table} {...this.props.tableActions}/>
-
+        <MonTable {...this.props.table} {...this.props.tableActions} />
       </div>
     );
   }

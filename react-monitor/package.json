@@ -7,8 +7,8 @@
     "url": "https://github.com/arcthur/react-book-examples"
   },
   "scripts": {
-    "build": "./node_modules/.bin/webpack",
-    "start": "./node_modules/.bin/webpack-dev-server --hot --inline --content-base .",
+    "build": "webpack",
+    "start": "webpack-dev-server --hot --inline --content-base .",
     "test": "mocha --compilers js:babel-register"
   },
   "dependencies": {

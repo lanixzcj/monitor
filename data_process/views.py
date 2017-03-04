@@ -33,13 +33,63 @@ def test(request):
     return HttpResponse(content=demjson.encode(list))
 
 
+def home_host_info(request):
+    alive_hosts = cache.get('alive_hosts', dict())
+    unsafe_hosts = cache.get('last_unsafe_hosts', dict())
+    trust_hosts = TrustHost.objects.all()
+
+    # 获取数据hosts
+    hosts = {}
+    for e in Host.objects.all():
+        hosts[e.mac_address] = {}
+        hosts[e.mac_address]['ip'] = e.ip
+        hosts[e.mac_address]['hostname'] = e.hostname
+        hosts[e.mac_address]['boottime'] = e.last_boottime.strftime("%Y-%m-%d %H:%M:%S")
+        hosts[e.mac_address]['stat'] = '2offline'
+        hosts[e.mac_address]['is_trusted'] = False
+
+        if e.mac_address in alive_hosts:
+            hosts[e.mac_address]['stat'] = '1online'
+
+    # 获取未安装客户端并在线的hosts
+    for mac_address, host in unsafe_hosts.items():
+        if mac_address not in alive_hosts:
+            if mac_address not in hosts:
+                hosts[mac_address] = {}
+            hosts[mac_address]['ip'] = host['ip']
+            # TODO: 局域网内获得主机名均为localhost
+            if 'hostname' not in hosts[mac_address]:
+                pass
+                # hosts[mac_address]['hostname'] = host['hostname']
+            hosts[mac_address]['stat'] = '0unsafe'
+            hosts[mac_address]['is_trusted'] = False
+
+    # 是否在信任列表里
+    for e in trust_hosts:
+        if e.mac_address in hosts:
+            hosts[e.mac_address]['is_trusted'] = True
+            if hosts[e.mac_address]['stat'] == '0unsafe':
+                hosts[e.mac_address]['stat'] = '1online'
+
+    # hosts = Host.objects.all().values()
+    sorted_host = sorted(hosts.iteritems(), key=lambda item: item[1]['stat'])
+
+    hosts_list = []
+    for item in sorted_host:
+        host = dict(dict(mac_address=item[0]), **item[1])
+        hosts_list.append(host)
+
+    # print demjson.encode(hosts_list)
+
+    return HttpResponse(content=demjson.encode(hosts_list))
+
+
 def home(request):
+    home_host_info(request)
     # send_mail('测试', '该主机数据超过阀值', 'monitor_platform@163.com',
     #           ['494651913@qq.com'], fail_silently=False)
     alive_hosts = cache.get('alive_hosts', dict())
-    print alive_hosts
     unsafe_hosts = cache.get('last_unsafe_hosts', dict())
-    print unsafe_hosts
     if request.method == "POST" and request.is_ajax:
         mac = request.POST.get('mac_address')
         method = request.POST.get('method')

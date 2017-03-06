@@ -49,14 +49,51 @@ function dropdownFormatter(cell, row) {
     );
 }
 
-function statusFormatter(cell, row) {
-    return `<a href="#"><i class='glyphicon glyphicon-stats'></i></a>` ;
+const cellEditProp = {
+    mode: 'click'
+};
+
+class ActiveFormatter extends React.Component {
+    showDrawera = ev => {
+        ev.preventDefault();
+        this.props.showDrawer();
+        console.log('ss');
+    };
+    render() {
+        return (
+            <button onClick={
+               this.showDrawera
+            }>新增文章</button>
+        );
+    }
 }
 
 export default class MonTable extends Component {
+    constructor(props) {
+        super(props);
+        // this.showDrawera = this.showDrawera.bind(this);
+    }
     componentDidMount() {
         this.props.loadArticles();
-        console.log(this.props.articles);
+        // this.props.showDrawer();
+
+    }
+
+    showDrawera = ev => {
+        ev.preventDefault();
+        this.props.showDrawer();
+        console.log('ss');
+    };
+
+    statusFormatter(cell, row, enumObject) {
+        console.log(enumObject);
+        return (
+        <ActiveFormatter showDrawer={enumObject}/>
+            // <a href="#" onClick={this.showDrawer}>
+            // <h1>s</h1>
+            //     <i className='glyphicon glyphicon-stats'/>
+            // </a>
+        );
     }
 
     handleDelete(record) {
@@ -72,9 +109,9 @@ export default class MonTable extends Component {
 
     render() {
         return (
-            <BootstrapTable data={this.props.articles} bordered={ false } options={ {noDataText: 'This is custom text sfor empty data'} }>
+            <BootstrapTable data={products} bordered={ false } options={ {noDataText: 'This is custom text sfor empty data'} }>
                 <TableHeaderColumn dataField='hostname' dataAlign='center' isKey={ true }>ID/主机名</TableHeaderColumn>
-                <TableHeaderColumn dataField='monitor' dataAlign='center' dataFormat={ statusFormatter}>监控</TableHeaderColumn>
+                <TableHeaderColumn dataField='monitor' dataAlign='center' dataFormat={ this.statusFormatter} formatExtraData={ this.props.showDrawer }>监控</TableHeaderColumn>
                 <TableHeaderColumn dataField='stat' dataAlign='center'  dataFormat={ statFormatter } formatExtraData={ statType }
                                    columnClassName={ columnClassNameFormat }>状态</TableHeaderColumn>
                 <TableHeaderColumn dataField='ip' dataAlign='center' >IP地址</TableHeaderColumn>

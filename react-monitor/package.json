@@ -8,19 +8,22 @@
   },
   "scripts": {
     "build": "webpack",
-    "start": "webpack-dev-server --hot --inline --content-base .",
+    "start": "webpack-dev-server --hot --inline --content-base --host 0.0.0.0 --display-error-details .",
     "test": "mocha --compilers js:babel-register"
   },
   "dependencies": {
     "antd": "^1.6.4",
     "fetch": "^1.1.0",
+    "node-sass": "^4.5.0",
     "react": "~15.0.0",
     "react-bootstrap": "^0.30.7",
     "react-bootstrap-table": "^3.0.0",
+    "react-burger-menu": "^1.10.14",
     "react-dom": "~15.0.0",
     "react-redux": "^4.4.0",
     "react-router": "^2.0.0",
     "react-router-redux": "^4.0.0",
+    "react-sidebar": "^2.3.0",
     "redux": "^3.3.1",
     "redux-composable-fetch": "^0.3.4",
     "redux-form-utils": "^1.0.8",

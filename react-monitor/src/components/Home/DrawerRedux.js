@@ -1,0 +1,60 @@
+/**
+ * Created by lan on 3/5/17.
+ */
+import config from './Modal.config';
+import { bindRedux } from 'redux-form-utils';
+
+const { state: formState, reducer: formReducer } = bindRedux(config);
+
+const initialState = {
+    open: false,
+    ...formState,
+};
+
+export function addArticle() {
+    return (dispatch, getState) => {
+        const { title, desc, date } = getState().article.dialog.form;
+        return dispatch({
+            url: '/api/article.json',
+            method: 'POST',
+            params: {
+                title: title.value,
+                desc: desc.value,
+                date: date.value
+            }
+        });
+    };
+}
+
+export function showDrawer() {
+    return {
+        type: 'SHOW_DRAWER'
+    };
+}
+
+export function hideDrawer() {
+    return {
+        type: 'HIDE_DRAWER'
+    };
+}
+
+export default function drawer(state = initialState, action) {
+    switch (action.type) {
+        case 'SHOW_DRAWER': {
+            return {
+                ...state,
+                open: true,
+            };
+        }
+
+        case 'HIDE_DRAWER': {
+            return {
+                ...state,
+                open: false,
+            };
+        }
+
+        default:
+            return formReducer(state, action);
+    }
+}

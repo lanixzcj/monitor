@@ -7,6 +7,8 @@ import ThunkMiddleware from 'redux-thunk';
 import rootReducer from './reducers';
 import DevTools from './DevTools';
 
+
+//type[0]:load type[1]:success type[2]:fail
 const FetchMiddleware = createFetchMiddleware({
   afterFetch({ action, result }) {
     return result.json().then(data => {

@@ -3,10 +3,12 @@
  */
 import React from 'react';
 import MaterialTitlePanel from './material_title_panel';
+import {ButtonGroup, Button, Tab, Tabs} from 'react-bootstrap'
+import MonTable from './MonitorTable'
 
 const styles = {
     sidebar: {
-        width: 256,
+        width: 600,
         height: '100%',
     },
     sidebarLink: {
@@ -27,21 +29,39 @@ const styles = {
     },
 };
 
+const values = [['hour', '小时'], ['2h', '2小时'],
+    ['4h', '4小时'], ['1d', '一天'], ['1w', '一周'], ['1m', '一月'], ['1y', '一年']];
+
+function renderButtons(values, current) {
+    return values.map((value) => {
+        let isActive = value[0] == current;
+        return <Button key={value[0]} value={value[0]} active={isActive}>{value[1]}</Button>
+    })
+}
+
 const SidebarContent = (props) => {
     const style = props.style ? {...styles.sidebar, ...props.style} : styles.sidebar;
-
+    const title = props.title;
+    const time = props.time;
+    console.log(props);
     const links = [];
 
-    for (let ind = 0; ind < 10; ind++) {
-        links.push(
-            <a key={ind} href="#" style={styles.sidebarLink}>Mock menu item {ind}</a>);
-    }
 
     return (
-        <MaterialTitlePanel title="Menu" style={style}>
+        <MaterialTitlePanel title={title} style={style}>
             <div style={styles.content}>
-                <a href="index.html" style={styles.sidebarLink}>Home</a>
-                <a href="responsive_example.html" style={styles.sidebarLink}>Responsive Example</a>
+                <ButtonGroup onClick={ (e) => {
+                    props.buttonClick(e.target.value);
+                }}>
+                    {renderButtons(values, time)}
+                </ButtonGroup>
+                <Tabs defaultActiveKey={1} id="uncontrolled-tab-example">
+                    <Tab eventKey={1} title="Tab 1">
+                        <MonTable></MonTable>
+                    </Tab>
+                    <Tab eventKey={2} title="Tab 2">Tab 2 content</Tab>
+                    <Tab eventKey={3} title="Tab 3">Tab 3 content</Tab>
+                </Tabs>
                 <div style={styles.divider} />
                 {links}
             </div>

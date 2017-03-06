@@ -25,13 +25,7 @@ export default class ArticleCRUD extends Component {
     render() {
         return (
             <div>
-
-                <Sidebar {...this.props.drawer} {...this.props.drawerActions} >
-                    <button onClick={this.props.drawerActions.showDrawer}>新增文章</button>
                     <MonTable showDrawer={this.props.drawerActions.showDrawer} {...this.props.table} {...this.props.tableActions} />
-                </Sidebar>
-
-
             </div>
         );
     }

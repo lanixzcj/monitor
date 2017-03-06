@@ -7,19 +7,17 @@
     "url": "https://github.com/arcthur/react-book-examples"
   },
   "scripts": {
-    "build": "webpack",
-    "start": "webpack-dev-server --hot --inline --content-base --host 0.0.0.0 --display-error-details .",
+    "build": "./node_modules/.bin/webpack",
+    "start": "./node_modules/.bin/webpack-dev-server --hot --inline --content-base --host 0.0.0.0 --display-error-details .",
     "test": "mocha --compilers js:babel-register"
   },
   "dependencies": {
-    "antd": "^1.6.4",
+    "antd": "^1.11.6",
     "fetch": "^1.1.0",
-    "node-sass": "^4.5.0",
-    "react": "~15.0.0",
+    "react": "^15.4.2",
     "react-bootstrap": "^0.30.7",
     "react-bootstrap-table": "^3.0.0",
-    "react-burger-menu": "^1.10.14",
-    "react-dom": "~15.0.0",
+    "react-dom": "^15.4.2",
     "react-redux": "^4.4.0",
     "react-router": "^2.0.0",
     "react-router-redux": "^4.0.0",

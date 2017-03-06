@@ -9,6 +9,8 @@ const { state: formState, reducer: formReducer } = bindRedux(config);
 const initialState = {
     open: false,
     ...formState,
+    title: '',
+    time: 'hour',
 };
 
 export function addArticle() {
@@ -26,9 +28,12 @@ export function addArticle() {
     };
 }
 
-export function showDrawer() {
+export function showDrawer(title) {
     return {
-        type: 'SHOW_DRAWER'
+        type: 'SHOW_DRAWER',
+        payload: {
+            title: title
+        }
     };
 }
 
@@ -38,12 +43,22 @@ export function hideDrawer() {
     };
 }
 
+export function buttonClick(time) {
+    return {
+        type: 'BUTTON_CLICK',
+        payload: {
+            time: time
+        }
+    };
+}
+
 export default function drawer(state = initialState, action) {
     switch (action.type) {
         case 'SHOW_DRAWER': {
             return {
                 ...state,
                 open: true,
+                title: action.payload.title,
             };
         }
 
@@ -51,6 +66,13 @@ export default function drawer(state = initialState, action) {
             return {
                 ...state,
                 open: false,
+            };
+        }
+
+        case 'BUTTON_CLICK': {
+            return {
+                ...state,
+                time: action.payload.time,
             };
         }
 

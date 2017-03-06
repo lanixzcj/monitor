@@ -4,23 +4,13 @@
 import React, {Component, PropTypes}  from 'react';
 import ReactDOM from 'react-dom';
 var Sidebar = require('react-sidebar').default;
-import MaterialTitlePanel from './material_title_panel';
 import SidebarContent from './sidebar_content';
-import MonNav from '../../layouts/Nav';
 
 const styles = {
     contentHeaderMenuLink: {
         textDecoration: 'none',
         color: 'white',
         padding: 8,
-    },
-    root: {
-        position: 'absolute',
-        top: 0,
-        // left: 0,
-        // right: 0,
-        // bottom: 0,
-        overflow: 'hidden',
     },
     content: {
         padding: '16px',
@@ -63,7 +53,7 @@ const App = React.createClass({
         };
 
         return (
-            <p key={prop}>
+            <p key={prop} >
                 <input type="checkbox" onChange={toggleMethod} checked={this.state[prop]} id={prop} />
                 <label htmlFor={prop}> {prop}</label>
             </p>);
@@ -83,8 +73,7 @@ const App = React.createClass({
     },
 
     render() {
-        const sidebar = <SidebarContent />;
-
+        const sidebar = <SidebarContent {...this.props} />;
 
         const sidebarProps = {
             sidebar: sidebar,

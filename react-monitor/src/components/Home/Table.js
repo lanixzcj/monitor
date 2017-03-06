@@ -5,7 +5,11 @@ import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import './Table.css';
 
 var products = [{
-    id: 1,
+    hostname: 'ss',
+    name: "Product1",
+    price: 120
+}, {
+    hostname: 'ss2',
     name: "Product1",
     price: 120
 }];
@@ -53,21 +57,6 @@ const cellEditProp = {
     mode: 'click'
 };
 
-class ActiveFormatter extends React.Component {
-    showDrawera = ev => {
-        ev.preventDefault();
-        this.props.showDrawer();
-        console.log('ss');
-    };
-    render() {
-        return (
-            <button onClick={
-               this.showDrawera
-            }>新增文章</button>
-        );
-    }
-}
-
 export default class MonTable extends Component {
     constructor(props) {
         super(props);
@@ -86,13 +75,13 @@ export default class MonTable extends Component {
     };
 
     statusFormatter(cell, row, enumObject) {
-        console.log(enumObject);
         return (
-        <ActiveFormatter showDrawer={enumObject}/>
-            // <a href="#" onClick={this.showDrawer}>
-            // <h1>s</h1>
-            //     <i className='glyphicon glyphicon-stats'/>
-            // </a>
+            <a href="#" onClick={
+                () => {
+                    enumObject(row.hostname);
+                }}>
+                <i className='glyphicon glyphicon-stats'/>
+            </a>
         );
     }
 

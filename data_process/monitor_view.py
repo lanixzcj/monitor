@@ -5,13 +5,14 @@ import time
 import datetime
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
-from models import Host, TrustHost, DeviceInfo, HostThreshold, \
-    ProcessInfo, IpPacket, FileInfo, MediaInfo, WarningHistory, IpPacketsRules, \
-    FileRules
+from models import *
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import auth
 import demjson
 from django.conf import settings
+from rest_framework.renderers import JSONRenderer
+from rest_framework.parsers import JSONParser
+from pytz import timezone
 
 
 def get_mediainfo(request):
@@ -300,3 +301,52 @@ def remove_file_rules(request):
             pass
 
     return HttpResponse('delete')
+
+
+class JSONResponse(HttpResponse):
+    def __init__(self, data, **kwargs):
+        content = JSONRenderer().render(data)
+        kwargs['content_type'] = 'application/json'
+        super(JSONResponse, self).__init__(content, **kwargs)
+
+
+def ip_packet(request, host):
+    time_dict = settings.TIME_RANGE
+    print request.GET
+
+    if request.method == 'GET':
+        try:
+            time_range = request.GET.get('r', '')
+            if time_range in time_dict:
+                start = time_dict[time_range]
+            else:
+                start = time_dict['hour']
+
+            ip_packet = IpPacket.objects.filter(host__hostname=host,
+                                    time__gt=datetime.datetime.fromtimestamp(time.time() - start[0],
+                                                                             tz=timezone('Asia/Shanghai')))
+            serializer = IpPacketSerializer(ip_packet, many=True)
+            return JSONResponse(serializer.data)
+        except ObjectDoesNotExist:
+            return JSONResponse("")
+
+
+def fileinfo(request, host):
+    time_dict = settings.TIME_RANGE
+    print request.GET
+
+    if request.method == 'GET':
+        try:
+            time_range = request.GET.get('r', '')
+            if time_range in time_dict:
+                start = time_dict[time_range]
+            else:
+                start = time_dict['hour']
+
+            file = FileInfo.objects.filter(host__hostname=host,
+                                    time__gt=datetime.datetime.fromtimestamp(time.time() - start[0],
+                                                                             tz=timezone('Asia/Shanghai')))
+            serializer = FileSerializer(file, many=True)
+            return JSONResponse(serializer.data)
+        except ObjectDoesNotExist:
+            return JSONResponse("")

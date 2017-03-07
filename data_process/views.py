@@ -8,7 +8,7 @@ from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from models import Host, TrustHost, DeviceInfo, HostThreshold, \
     ProcessInfo, IpPacket, FileInfo, MediaInfo, WarningHistory, IpPacketsRules, \
-    FileRules
+    FileRules, IpPacketSerializer
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import auth
 import demjson
@@ -30,7 +30,9 @@ def test(request):
         "date": "2016-04-17"
     })
 
-    return HttpResponse(content=demjson.encode(list))
+    response = HttpResponse(content=demjson.encode(list))
+
+    return response
 
 
 def home_host_info(request):
@@ -85,11 +87,12 @@ def home_host_info(request):
 
 
 def home(request):
-    home_host_info(request)
     # send_mail('测试', '该主机数据超过阀值', 'monitor_platform@163.com',
     #           ['494651913@qq.com'], fail_silently=False)
     alive_hosts = cache.get('alive_hosts', dict())
+    print alive_hosts
     unsafe_hosts = cache.get('last_unsafe_hosts', dict())
+    print unsafe_hosts
     if request.method == "POST" and request.is_ajax:
         mac = request.POST.get('mac_address')
         method = request.POST.get('method')
@@ -166,6 +169,13 @@ def home(request):
 
     # send_safe_strategy.delay("127.0.0.1", 8649, net='192.168.1.120', cpu=60)
     return render(request, 'data_process/homepage.html', context)
+
+
+def monitor_data(request, monitor_type, host):
+    if hasattr(monitor_view, monitor_type):
+        return getattr(monitor_view, monitor_type)(request, host)
+
+    return HttpResponse()
 
 
 def get_monitor_data(request, monitor_info):

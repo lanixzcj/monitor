@@ -9,6 +9,7 @@ from django.contrib.contenttypes.models import ContentType
 # Create your models here.
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
+from rest_framework import serializers
 
 
 class MyUserManager(BaseUserManager):
@@ -227,6 +228,12 @@ class IpPacket(models.Model):
     send_port = models.IntegerField()
     recv_ip = models.GenericIPAddressField(default='0.0.0.0')
     recv_port = models.IntegerField()
+
+
+class IpPacketSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = IpPacket
+        fields = ('time', 'host', 'app_name', 'send_port', 'recv_ip', 'recv_port')
 
 
 class ProcessInfo(models.Model):

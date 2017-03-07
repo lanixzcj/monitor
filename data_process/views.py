@@ -8,7 +8,7 @@ from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from models import Host, TrustHost, DeviceInfo, HostThreshold, \
     ProcessInfo, IpPacket, FileInfo, MediaInfo, WarningHistory, IpPacketsRules, \
-    FileRules
+    FileRules, IpPacketSerializer
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import auth
 import demjson
@@ -18,7 +18,8 @@ import monitor_view
 import socket
 from pytz import timezone
 from django.core.mail import send_mail
-
+from rest_framework.renderers import JSONRenderer
+from rest_framework.parsers import JSONParser
 
 # Create your views here.
 def test(request):
@@ -30,7 +31,23 @@ def test(request):
         "date": "2016-04-17"
     })
 
-    return HttpResponse(content=demjson.encode(list))
+    response = HttpResponse(content=demjson.encode(list))
+
+    return response
+
+
+class JSONResponse(HttpResponse):
+    def __init__(self, data, **kwargs):
+        content = JSONRenderer().render(data)
+        kwargs['content_type'] = 'application/json'
+        super(JSONResponse, self).__init__(content, **kwargs)
+
+
+def ip_packet_list(request):
+    if request.method == 'GET':
+        ip_packet = IpPacket.objects.all()
+        serializer = IpPacketSerializer(ip_packet, many=True)
+        return JSONResponse(serializer.data)
 
 
 def home(request):

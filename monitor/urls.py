@@ -43,6 +43,7 @@ router.register(r'users', UserViewSet)
 urlpatterns = [
     url(r'^$', server_view.home),
     url(r'^ss/', server_view.test),
+    url(r'^ip_packet/', server_view.ip_packet_list),
     url(r'^hostgraph/$', server_view.host_graphs),
     url(r'^hostgraph/(?P<monitor_info>\w+)$', server_view.get_monitor_data),
     url(r'^safe_strategy/$', server_view.safe_strategy),

@@ -18,8 +18,7 @@ import monitor_view
 import socket
 from pytz import timezone
 from django.core.mail import send_mail
-from rest_framework.renderers import JSONRenderer
-from rest_framework.parsers import JSONParser
+
 
 # Create your views here.
 def test(request):
@@ -36,18 +35,55 @@ def test(request):
     return response
 
 
-class JSONResponse(HttpResponse):
-    def __init__(self, data, **kwargs):
-        content = JSONRenderer().render(data)
-        kwargs['content_type'] = 'application/json'
-        super(JSONResponse, self).__init__(content, **kwargs)
+def home_host_info(request):
+    alive_hosts = cache.get('alive_hosts', dict())
+    unsafe_hosts = cache.get('last_unsafe_hosts', dict())
+    trust_hosts = TrustHost.objects.all()
 
+    # 获取数据hosts
+    hosts = {}
+    for e in Host.objects.all():
+        hosts[e.mac_address] = {}
+        hosts[e.mac_address]['ip'] = e.ip
+        hosts[e.mac_address]['hostname'] = e.hostname
+        hosts[e.mac_address]['boottime'] = e.last_boottime.strftime("%Y-%m-%d %H:%M:%S")
+        hosts[e.mac_address]['stat'] = '2offline'
+        hosts[e.mac_address]['is_trusted'] = False
 
-def ip_packet_list(request):
-    if request.method == 'GET':
-        ip_packet = IpPacket.objects.all()
-        serializer = IpPacketSerializer(ip_packet, many=True)
-        return JSONResponse(serializer.data)
+        if e.mac_address in alive_hosts:
+            hosts[e.mac_address]['stat'] = '1online'
+
+    # 获取未安装客户端并在线的hosts
+    for mac_address, host in unsafe_hosts.items():
+        if mac_address not in alive_hosts:
+            if mac_address not in hosts:
+                hosts[mac_address] = {}
+            hosts[mac_address]['ip'] = host['ip']
+            # TODO: 局域网内获得主机名均为localhost
+            if 'hostname' not in hosts[mac_address]:
+                pass
+                # hosts[mac_address]['hostname'] = host['hostname']
+            hosts[mac_address]['stat'] = '0unsafe'
+            hosts[mac_address]['is_trusted'] = False
+
+    # 是否在信任列表里
+    for e in trust_hosts:
+        if e.mac_address in hosts:
+            hosts[e.mac_address]['is_trusted'] = True
+            if hosts[e.mac_address]['stat'] == '0unsafe':
+                hosts[e.mac_address]['stat'] = '1online'
+
+    # hosts = Host.objects.all().values()
+    sorted_host = sorted(hosts.iteritems(), key=lambda item: item[1]['stat'])
+
+    hosts_list = []
+    for item in sorted_host:
+        host = dict(dict(mac_address=item[0]), **item[1])
+        hosts_list.append(host)
+
+    # print demjson.encode(hosts_list)
+
+    return HttpResponse(content=demjson.encode(hosts_list))
 
 
 def home(request):
@@ -133,6 +169,13 @@ def home(request):
 
     # send_safe_strategy.delay("127.0.0.1", 8649, net='192.168.1.120', cpu=60)
     return render(request, 'data_process/homepage.html', context)
+
+
+def monitor_data(request, monitor_type, host):
+    if hasattr(monitor_view, monitor_type):
+        return getattr(monitor_view, monitor_type)(request, host)
+
+    return HttpResponse()
 
 
 def get_monitor_data(request, monitor_info):

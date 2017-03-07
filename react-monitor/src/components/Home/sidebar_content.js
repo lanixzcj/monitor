@@ -8,7 +8,7 @@ import MonTable from './MonitorTable'
 
 const styles = {
     sidebar: {
-        width: 600,
+        width: 800,
         height: '100%',
     },
     sidebarLink: {
@@ -29,8 +29,24 @@ const styles = {
     },
 };
 
+const ipHeaders = {
+    time: '时间',
+    app_name: '应用名称',
+    send_port: '发送端口',
+    recv_ip: '接收ip',
+    recv_port: '接收端口',
+};
+
+const fileHeaders = {
+    time: '时间',
+    file_name: '文件名',
+    user: '用户',
+    operate_type: '操作类型',
+    modify_size: '修改大小(KB)',
+};
+
 const values = [['hour', '小时'], ['2h', '2小时'],
-    ['4h', '4小时'], ['1d', '一天'], ['1w', '一周'], ['1m', '一月'], ['1y', '一年']];
+    ['4h', '4小时'], ['day', '一天'], ['week', '一周'], ['month', '一月'], ['year', '一年']];
 
 function renderButtons(values, current) {
     return values.map((value) => {
@@ -41,29 +57,29 @@ function renderButtons(values, current) {
 
 const SidebarContent = (props) => {
     const style = props.style ? {...styles.sidebar, ...props.style} : styles.sidebar;
-    const title = props.title;
-    const time = props.time;
-    console.log(props);
+    const title = props.drawer.host;
+    const time = props.drawer.time;
     const links = [];
-
 
     return (
         <MaterialTitlePanel title={title} style={style}>
             <div style={styles.content}>
                 <ButtonGroup onClick={ (e) => {
-                    props.buttonClick(e.target.value);
+                    props.drawerActions.buttonClick(e.target.value);
                 }}>
                     {renderButtons(values, time)}
                 </ButtonGroup>
                 <Tabs defaultActiveKey={1} id="uncontrolled-tab-example">
-                    <Tab eventKey={1} title="Tab 1">
-                        <MonTable></MonTable>
+                    <Tab eventKey={1} title="IP包">
+                        <MonTable  host={title} headers={ ipHeaders} name="ip_packet"
+                                   time={time} {...props.ipPacket} {...props.monActions}/>
                     </Tab>
-                    <Tab eventKey={2} title="Tab 2">Tab 2 content</Tab>
+                    <Tab eventKey={2} title="文件">
+                        <MonTable  host={title} headers={ fileHeaders} name="fileinfo"
+                                   time={time} {...props.fileInfo} {...props.monActions}/>
+                    </Tab>
                     <Tab eventKey={3} title="Tab 3">Tab 3 content</Tab>
                 </Tabs>
-                <div style={styles.divider} />
-                {links}
             </div>
         </MaterialTitlePanel>
     );

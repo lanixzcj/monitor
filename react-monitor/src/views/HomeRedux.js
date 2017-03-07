@@ -1,16 +1,17 @@
-import { combineReducers } from 'redux';
+import {combineReducers} from 'redux';
 
 // 引入 reducer 及 actionCreator
 import table from '../components/Home/TableRedux';
 import drawer from '../components/Home/DrawerRedux';
 import modal from '../components/Home/ModalRedux';
-import montable from '../components/Home/MonitorTableRedux'
+import createMonReducer from '../components/Home/MonitorTableRedux'
 
 export default combineReducers({
-  table,
-  modal,
+    table,
+    modal,
     drawer,
-    montable,
+    ipPacket: createMonReducer('ip_packet'),
+    fileInfo: createMonReducer('fileinfo'),
 });
 
 export * as tableActions from '../components/Home/TableRedux';

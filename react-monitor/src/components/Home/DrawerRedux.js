@@ -9,7 +9,7 @@ const { state: formState, reducer: formReducer } = bindRedux(config);
 const initialState = {
     open: false,
     ...formState,
-    title: '',
+    host: '',
     time: 'hour',
 };
 
@@ -28,11 +28,11 @@ export function addArticle() {
     };
 }
 
-export function showDrawer(title) {
+export function showDrawer(host) {
     return {
         type: 'SHOW_DRAWER',
         payload: {
-            title: title
+            host: host
         }
     };
 }
@@ -58,7 +58,7 @@ export default function drawer(state = initialState, action) {
             return {
                 ...state,
                 open: true,
-                title: action.payload.title,
+                host: action.payload.host,
             };
         }
 

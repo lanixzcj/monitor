@@ -9,7 +9,8 @@ import {drawerActions, monActions} from '../views/HomeRedux';
 @connect(
     state => ({
         drawer: state.articles.drawer,
-        mon: state.articles.montable,
+        ipPacket: state.articles.ipPacket,
+        fileInfo: state.articles.fileInfo,
     }),
     dispatch => ({
         drawerActions: bindActionCreators(drawerActions, dispatch),
@@ -18,16 +19,16 @@ import {drawerActions, monActions} from '../views/HomeRedux';
 )
 
 export default class Frame extends React.Component {
-  render() {
-    return (
-      <div >
-          <Sidebar {...this.props.drawer} {...this.props.drawerActions} >
-              <MonNav />
-            <div className="container">
-              {this.props.children}
+    render() {
+        return (
+            <div >
+                <Sidebar {...this.props} {...this.props} >
+                    <MonNav />
+                    <div className="container">
+                        {this.props.children}
+                    </div>
+                </Sidebar>
             </div>
-          </Sidebar>
-      </div>
-    );
-  }
+        );
+    }
 }

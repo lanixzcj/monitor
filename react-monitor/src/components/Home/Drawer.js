@@ -34,7 +34,7 @@ const App = React.createClass({
 
     onSetOpen(open) {
         if (open) {
-            this.props.drawerActions.showDrawer();
+            this.props.drawerActions.showDrawer(this.props.host);
         } else {
             this.props.drawerActions.hideDrawer();
         }

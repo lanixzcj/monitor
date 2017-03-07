@@ -23,10 +23,11 @@ const headers = {
 function renderColHeader(headers) {
     let array = new Array();
     for (let col in headers) {
-        let isKey = col == 'hostname';
+        let isKey = col == 'time';
+        let width = col == 'time' ? '180px' : '';
         array.push(
             <TableHeaderColumn key={col} dataField={col} dataAlign='center' dataSort={ true }
-                               isKey={isKey}>{headers[col]}</TableHeaderColumn>
+                               width={width} isKey={isKey}>{headers[col]}</TableHeaderColumn>
         );
     }
 
@@ -38,23 +39,17 @@ export default class MonTable extends Component {
     constructor(props) {
         super(props);
     }
-    componentDidMount() {
 
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.host != this.props.host || nextProps.time != this.props.time ) {
+            this.props.loadArticles(this.props.name, nextProps.host, nextProps.time);
+        }
     }
-
-    showDrawera = ev => {
-        ev.preventDefault();
-        this.props.showDrawer();
-        console.log('ss');
-    };
-
-
-
 
     render() {
         return (
-            <BootstrapTable data={products} bordered={ false } options={ {noDataText: 'This is custom text sfor empty data'} }>
-                {renderColHeader(headers)}
+            <BootstrapTable data={this.props.data} bordered={ false } options={ {noDataText: 'This is custom text sfor empty data'} }>
+                {renderColHeader(this.props.headers)}
             </BootstrapTable>
         );
     }

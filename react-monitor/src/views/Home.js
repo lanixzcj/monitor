@@ -13,19 +13,16 @@ import Sidebar from '../components/Home/Drawer';
         table: state.articles.table,
         modal: state.articles.modal,
         drawer: state.articles.drawer,
-        mon: state.articles.montable,
     }),
     dispatch => ({
         tableActions: bindActionCreators(tableActions, dispatch),
         modalActions: bindActionCreators(modalActions, dispatch),
         drawerActions: bindActionCreators(drawerActions, dispatch),
-        monActions: bindActionCreators(monActions, dispatch),
     })
 )
 export default class ArticleCRUD extends Component {
 
     render() {
-        console.log(this.props);
         return (
             <div>
                     <MonTable showDrawer={this.props.drawerActions.showDrawer} {...this.props.table} {...this.props.tableActions} />

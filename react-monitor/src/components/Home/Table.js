@@ -68,19 +68,18 @@ export default class MonTable extends Component {
 
     }
 
-    showDrawera = ev => {
+    showDrawera = ev =>  {
         ev.preventDefault();
         this.props.showDrawer();
-        console.log('ss');
     };
 
     statusFormatter(cell, row, enumObject) {
         return (
-            <a href="#" onClick={
+            <a href="#" onClick= {
                 () => {
                     enumObject(row.hostname);
                 }}>
-                <i className='glyphicon glyphicon-stats'/>
+                <i className='glyphicon glyphicon-stats' />
             </a>
         );
     }
@@ -98,7 +97,7 @@ export default class MonTable extends Component {
 
     render() {
         return (
-            <BootstrapTable data={products} bordered={ false } options={ {noDataText: 'This is custom text sfor empty data'} }>
+            <BootstrapTable data={this.props.articles} bordered={ false } options={ {noDataText: 'This is custom text sfor empty data'} }>
                 <TableHeaderColumn dataField='hostname' dataAlign='center' isKey={ true }>ID/主机名</TableHeaderColumn>
                 <TableHeaderColumn dataField='monitor' dataAlign='center' dataFormat={ this.statusFormatter} formatExtraData={ this.props.showDrawer }>监控</TableHeaderColumn>
                 <TableHeaderColumn dataField='stat' dataAlign='center'  dataFormat={ statFormatter } formatExtraData={ statType }

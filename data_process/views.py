@@ -173,7 +173,15 @@ def home(request):
 
 def monitor_data(request, monitor_type, host):
     if hasattr(monitor_view, monitor_type):
-        return getattr(monitor_view, monitor_type)(request, host)
+        time_dict = settings.TIME_RANGE
+
+        if request.method == 'GET':
+            time_range = request.GET.get('r', '')
+            if time_range in time_dict:
+                start = time_dict[time_range]
+            else:
+                start = time_dict['hour']
+        return getattr(monitor_view, monitor_type)(request, host, start)
 
     return HttpResponse()
 

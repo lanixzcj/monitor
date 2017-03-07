@@ -230,12 +230,6 @@ class IpPacket(models.Model):
     recv_port = models.IntegerField()
 
 
-class IpPacketSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = IpPacket
-        fields = ('time', 'host', 'app_name', 'send_port', 'recv_ip', 'recv_port')
-
-
 class ProcessInfo(models.Model):
     time = models.DateTimeField()
     host = models.ForeignKey(Host, on_delete=models.CASCADE)
@@ -283,6 +277,36 @@ class WarningHistory(models.Model):
 
     def __unicode__(self):
         return self.warning_type
+
+
+class IpPacketSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = IpPacket
+        fields = ('time', 'host', 'app_name', 'send_port', 'recv_ip', 'recv_port')
+
+
+class ProcessSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProcessInfo
+        fields = ('time', 'host', 'process_name', 'process_id', 'user', 'boottime', 'runtime', 'used_ports')
+
+
+class FileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FileInfo
+        fields = ('time', 'host', 'file_name', 'user', 'operate_type', 'modify_size')
+
+
+class MediaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MediaInfo
+        fields = ('time', 'host', 'media_name', 'io_type', 'media_size', 'operate_file')
+
+
+class WarningHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WarningHistory
+        fields = ('time', 'host', 'warning_type', 'warning_content', 'warning_level')
 
 
 class IpPacketsRules(models.Model):

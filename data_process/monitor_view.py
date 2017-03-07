@@ -310,18 +310,9 @@ class JSONResponse(HttpResponse):
         super(JSONResponse, self).__init__(content, **kwargs)
 
 
-def ip_packet(request, host):
-    time_dict = settings.TIME_RANGE
-    print request.GET
-
+def ip_packet(request, host, start):
     if request.method == 'GET':
         try:
-            time_range = request.GET.get('r', '')
-            if time_range in time_dict:
-                start = time_dict[time_range]
-            else:
-                start = time_dict['hour']
-
             ip_packet = IpPacket.objects.filter(host__hostname=host,
                                     time__gt=datetime.datetime.fromtimestamp(time.time() - start[0],
                                                                              tz=timezone('Asia/Shanghai')))
@@ -331,22 +322,65 @@ def ip_packet(request, host):
             return JSONResponse("")
 
 
-def fileinfo(request, host):
-    time_dict = settings.TIME_RANGE
-    print request.GET
-
+def fileinfo(request, host, start):
     if request.method == 'GET':
         try:
-            time_range = request.GET.get('r', '')
-            if time_range in time_dict:
-                start = time_dict[time_range]
-            else:
-                start = time_dict['hour']
-
             file = FileInfo.objects.filter(host__hostname=host,
                                     time__gt=datetime.datetime.fromtimestamp(time.time() - start[0],
                                                                              tz=timezone('Asia/Shanghai')))
             serializer = FileSerializer(file, many=True)
             return JSONResponse(serializer.data)
+        except ObjectDoesNotExist:
+            return JSONResponse("")
+
+
+def processinfo(request, host, start):
+    if request.method == 'GET':
+        try:
+            process = ProcessInfo.objects.filter(host__hostname=host,
+                                    time__gt=datetime.datetime.fromtimestamp(time.time() - start[0],
+                                                                             tz=timezone('Asia/Shanghai')))
+            serializer = ProcessSerializer(process, many=True)
+            return JSONResponse(serializer.data)
+        except ObjectDoesNotExist:
+            return JSONResponse("")
+
+
+def mediainfo(request, host, start):
+    if request.method == 'GET':
+        try:
+            media = MediaInfo.objects.filter(host__hostname=host,
+                                    time__gt=datetime.datetime.fromtimestamp(time.time() - start[0],
+                                                                             tz=timezone('Asia/Shanghai')))
+            serializer = MediaSerializer(media, many=True)
+            return JSONResponse(serializer.data)
+        except ObjectDoesNotExist:
+            return JSONResponse("")
+
+
+def warninginfo(request, host, start):
+    if request.method == 'GET':
+        try:
+            warning = WarningHistory.objects.filter(host__hostname=host,
+                                    time__gt=datetime.datetime.fromtimestamp(time.time() - start[0],
+                                                                             tz=timezone('Asia/Shanghai')))
+            serializer = WarningHistorySerializer(warning, many=True)
+            return JSONResponse(serializer.data)
+        except ObjectDoesNotExist:
+            return JSONResponse("")
+
+
+def deviceinfo(request, host, start):
+    if request.method == 'GET':
+        try:
+            host_info = Host.objects.get(hostname=host)
+            disk = host_info.deviceinfo
+
+            disk_info = {}
+            if disk is not None:
+                disk_info['total'] = disk.disk_total
+                disk_info['used'] = disk.disk_total - disk.disk_free
+                disk_info['used_per'] = int(disk_info['used'] / disk_info['total'] * 100)
+            return JSONResponse(disk_info)
         except ObjectDoesNotExist:
             return JSONResponse("")

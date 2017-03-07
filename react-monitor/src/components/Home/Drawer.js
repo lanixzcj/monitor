@@ -34,9 +34,9 @@ const App = React.createClass({
 
     onSetOpen(open) {
         if (open) {
-            this.props.showDrawer();
+            this.props.drawerActions.showDrawer();
         } else {
-            this.props.hideDrawer();
+            this.props.drawerActions.hideDrawer();
         }
     },
 
@@ -79,7 +79,7 @@ const App = React.createClass({
             sidebar: sidebar,
             docked: this.state.docked,
             sidebarClassName: 'custom-sidebar-class',
-            open: this.props.open,
+            open: this.props.drawer.open,
             touch: this.state.touch,
             shadow: this.state.shadow,
             pullRight: true,

@@ -3,15 +3,17 @@ import MonNav from './Nav';
 import Sidebar from '../components/Home/Drawer'
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {drawerActions} from '../views/HomeRedux';
+import {drawerActions, monActions} from '../views/HomeRedux';
 
 
 @connect(
     state => ({
         drawer: state.articles.drawer,
+        mon: state.articles.montable,
     }),
     dispatch => ({
-        drawerActions: bindActionCreators(drawerActions, dispatch)
+        drawerActions: bindActionCreators(drawerActions, dispatch),
+        monActions: bindActionCreators(monActions, dispatch),
     })
 )
 

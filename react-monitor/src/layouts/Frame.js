@@ -11,6 +11,10 @@ import {drawerActions, monActions} from '../views/HomeRedux';
         drawer: state.articles.drawer,
         ipPacket: state.articles.ipPacket,
         fileInfo: state.articles.fileInfo,
+        warningInfo: state.articles.warningInfo,
+        mediaInfo: state.articles.mediaInfo,
+        processInfo: state.articles.processInfo,
+        deviceInfo: state.articles.deviceInfo,
     }),
     dispatch => ({
         drawerActions: bindActionCreators(drawerActions, dispatch),

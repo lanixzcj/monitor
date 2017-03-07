@@ -97,7 +97,7 @@ export default class MonTable extends Component {
 
     render() {
         return (
-            <BootstrapTable data={this.props.articles} bordered={ false } options={ {noDataText: 'This is custom text sfor empty data'} }>
+            <BootstrapTable data={this.props.articles} bordered={ false } options={ {noDataText: '没有找到匹配的记录'} }>
                 <TableHeaderColumn dataField='hostname' dataAlign='center' isKey={ true }>ID/主机名</TableHeaderColumn>
                 <TableHeaderColumn dataField='monitor' dataAlign='center' dataFormat={ this.statusFormatter} formatExtraData={ this.props.showDrawer }>监控</TableHeaderColumn>
                 <TableHeaderColumn dataField='stat' dataAlign='center'  dataFormat={ statFormatter } formatExtraData={ statType }

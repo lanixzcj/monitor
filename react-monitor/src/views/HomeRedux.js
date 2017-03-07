@@ -12,6 +12,10 @@ export default combineReducers({
     drawer,
     ipPacket: createMonReducer('ip_packet'),
     fileInfo: createMonReducer('fileinfo'),
+    processInfo: createMonReducer('processinfo'),
+    mediaInfo: createMonReducer('mediainfo'),
+    warningInfo: createMonReducer('warninginfo'),
+    deviceInfo: createMonReducer('deviceinfo'),
 });
 
 export * as tableActions from '../components/Home/TableRedux';

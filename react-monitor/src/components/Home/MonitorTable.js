@@ -48,7 +48,7 @@ export default class MonTable extends Component {
 
     render() {
         return (
-            <BootstrapTable data={this.props.data} bordered={ false } options={ {noDataText: 'This is custom text sfor empty data'} }>
+            <BootstrapTable data={this.props.data} bordered={ false } options={ {noDataText: '没有找到匹配的记录'} }>
                 {renderColHeader(this.props.headers)}
             </BootstrapTable>
         );

@@ -90,6 +90,7 @@ def host_list():
 
 
 def home_host_info(request):
+    print request.user.is_authenticated
     return HttpResponse(content=demjson.encode(host_list()))
 
 

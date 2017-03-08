@@ -5,6 +5,7 @@ const {state: formState, reducer: formReducer} = bindRedux(config);
 
 const initialState = {
     visible: false,
+    host: '',
     ...formState,
 };
 
@@ -23,10 +24,12 @@ export function addArticle() {
     };
 }
 
-export function showModal() {
+export function showModal(host) {
     return {
         type: 'SHOW_MODAL',
-
+        payload: {
+            host: host
+        }
     };
 }
 
@@ -42,6 +45,7 @@ export default function modal(state = initialState, action) {
             return {
                 ...state,
                 visible: true,
+                host: action.payload.host,
             };
         }
 

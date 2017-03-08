@@ -53,7 +53,11 @@ function dropdownFormatter(cell, row, enumObject) {
 
     return (
         <DropdownButton bsStyle='default' title='更多' key={1} id={`dropdown-basic-${row.id}`}>
-            <MenuItem eventKey={1.1}>配置安全策略</MenuItem>
+            <MenuItem eventKey={1.1} onClick={
+                () => {
+                    enumObject.showModal(row.hostname);
+                }
+            }>配置安全策略</MenuItem>
             { menuItem }
         </DropdownButton>
     );
@@ -76,7 +80,6 @@ export default class MonTable extends Component {
     }
 
     componentDidMount() {
-        console.log(this.props);
         this.props.loadHosts();
     }
 

@@ -1,6 +1,11 @@
 # -*- coding: UTF-8 -*-
 from django.shortcuts import render
 from django.http import HttpResponse
+from rest_framework import permissions
+from rest_framework import status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+
 import rrd_helper
 import time
 import datetime
@@ -35,7 +40,7 @@ def test(request):
     return response
 
 
-def home_host_info(request):
+def host_list():
     alive_hosts = cache.get('alive_hosts', dict())
     unsafe_hosts = cache.get('last_unsafe_hosts', dict())
     trust_hosts = TrustHost.objects.all()
@@ -81,9 +86,30 @@ def home_host_info(request):
         host = dict(dict(mac_address=item[0]), **item[1])
         hosts_list.append(host)
 
-    # print demjson.encode(hosts_list)
+    return hosts_list
 
-    return HttpResponse(content=demjson.encode(hosts_list))
+
+def home_host_info(request):
+    return HttpResponse(content=demjson.encode(host_list()))
+
+
+@csrf_exempt
+@api_view(['GET', 'POST', 'DELETE'])
+def trusted_hosts(request):
+    if request.method == 'POST':
+        mac_address = demjson.decode(request.body)['mac']
+        trust_host = TrustHost.objects.get_or_create(mac_address=mac_address)
+        trust_host[0].save()
+        return Response(host_list(), status=status.HTTP_201_CREATED)
+    elif request.method == 'DELETE':
+        try:
+            mac_address = demjson.decode(request.body)['mac']
+            trust_host = TrustHost.objects.get(mac_address=mac_address)
+            trust_host.delete()
+            print host_list()
+            return Response(host_list(), status=status.HTTP_200_OK)
+        except ObjectDoesNotExist:
+            return Response(host_list(), status=status.HTTP_404_NOT_FOUND)
 
 
 def home(request):
@@ -91,7 +117,7 @@ def home(request):
     #           ['494651913@qq.com'], fail_silently=False)
     alive_hosts = cache.get('alive_hosts', dict())
     print alive_hosts
-    unsafe_hosts = cache.get('last_unsafe_hosts', dict())
+    unsafe_hosts = cache.get('last_unsafe_ho1sts', dict())
     print unsafe_hosts
     if request.method == "POST" and request.is_ajax:
         mac = request.POST.get('mac_address')

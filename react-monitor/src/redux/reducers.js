@@ -1,5 +1,7 @@
-import articles from '../views/HomeRedux';
+import hosts from '../views/Home/HomeRedux';
+import monitors from '../views/Drawer/DrawerRedux'
 
 export default {
-  articles,
+    hosts,
+    monitors,
 };

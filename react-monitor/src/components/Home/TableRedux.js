@@ -1,74 +1,109 @@
 const initialState = {
-  articles: [],
-  loading: true,
-  error: false,
+    hosts: [],
+    loading: true,
+    error: false,
 };
 
-export function loadArticles() {
-  return {
-    url: 'http://192.168.3.106:8000/ss',
-    types: ['LOAD_ARTICLES', 'LOAD_ARTICLES_SUCCESS', 'LOAD_ARTICLES_ERROR']
-  };
+export function loadHosts() {
+    return {
+        url: 'http://192.168.3.106:8000/ss/',
+        types: ['LOAD_HOSTS', 'LOAD_HOSTS_SUCCESS', 'LOAD_HOSTS_ERROR']
+    };
+}
+
+export function addTrustedHost(mac_address) {
+    return {
+        url: 'http://192.168.3.106:8000/trusted_hosts/',
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            'mac': mac_address
+        }),
+        types: ['ADD_TRUSTED_HOST', 'ADD_TRUSTED_HOST_SUCCESS', 'ADD_TRUSTED_HOST_ERROR']
+    }
+}
+
+export function removeTrustedHost(mac_address) {
+    return {
+        url: 'http://192.168.3.106:8000/trusted_hosts/',
+        method: 'DELETE',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+
+        body: JSON.stringify({
+            'mac': mac_address
+         }),
+        types: ['REMOVE_TRUSTED_HOST', 'REMOVE_TRUSTED_HOST_SUCCESS', 'REMOVE_TRUSTED_HOST_ERROR']
+    }
 }
 
 export function changeQuery(e) {
-  return {
-    type: 'CHANGE_QUERY',
-    payload: {
-      query: e.target.value.trim()
-    }
-  };
+    return {
+        type: 'CHANGE_QUERY',
+        payload: {
+            query: e.target.value.trim()
+        }
+    };
 }
 
 export function search() {
-  return (dispatch, getState) => {
-    const { query } = getState().articles.table;
-    return dispatch(loadArticles(query));
-  }
+    return (dispatch, getState) => {
+        const {query} = getState().hosts.table;
+        return dispatch(loadHOSTS(query));
+    }
 }
 
-export default function articles(state = initialState, action) {
-  switch (action.type) {
-    case 'CHANGE_QUERY': {
-      return {
-        ...state,
-        query: action.payload.query
-      };
-    }
+export default function hosts(state = initialState, action) {
+    switch (action.type) {
+        case 'CHANGE_QUERY': {
+            return {
+                ...state,
+                query: action.payload.query
+            };
+        }
 
-    case 'LOAD_ARTICLES': {
-      return {
-        ...state,
-        loading: true,
-        error: false
-      };
-    }
+        case 'LOAD_HOSTS': {
+            return {
+                ...state,
+                loading: true,
+                error: false
+            };
+        }
 
-    case 'LOAD_ARTICLES_SUCCESS': {
-      return {
-        ...state,
-        articles: action.payload,
-        loading: false,
-        error: false
-      };
-    }
+        case 'LOAD_HOSTS_SUCCESS': {
+            return {
+                ...state,
+                hosts: action.payload,
+                loading: false,
+                error: false
+            };
+        }
 
-    case 'LOAD_ARTICLES_ERROR': {
-      return {
-        ...state,
-        loading: false,
-        error: true
-      };
-    }
+        case 'LOAD_HOSTS_ERROR': {
+            return {
+                ...state,
+                loading: false,
+                error: true
+            };
+        }
 
-    case 'CHANGE_QUERY': {
-      return {
-        ...state,
-        query: action.payload.query
-      };
-    }
+        case 'ADD_TRUSTED_HOST_SUCCESS':
+        case 'REMOVE_TRUSTED_HOST_SUCCESS': {
+            return {
+                ...state,
+                hosts: action.payload,
+                loading: false,
+                error: false
+            };
+        }
 
-    default:
-      return state;
-  }
+
+        default:
+            return state;
+    }
 }

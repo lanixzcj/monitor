@@ -3,8 +3,11 @@
  */
 import React, {Component, PropTypes}  from 'react';
 import ReactDOM from 'react-dom';
-var Sidebar = require('react-sidebar').default;
-import SidebarContent from './sidebar_content';
+import Sidebar from 'react-sidebar'
+import SidebarContent from '../views/Drawer/DrawerContent';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {drawerActions, monActions} from '../views/Drawer/DrawerRedux';
 
 const styles = {
     contentHeaderMenuLink: {
@@ -17,9 +20,21 @@ const styles = {
     },
 };
 
-const App = React.createClass({
-    getInitialState() {
-        return {
+
+
+
+@connect(
+    state => ({
+        drawer: state.monitors.drawer,
+    }),
+    dispatch => ({
+        drawerActions: bindActionCreators(drawerActions, dispatch),
+    })
+)
+export default class Drawer extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
             docked: false,
             open: true,
             transitions: true,
@@ -29,8 +44,8 @@ const App = React.createClass({
             touchHandleWidth: 20,
             dragToggleDistance: 20,
             styles: styles,
-        };
-    },
+        }
+    }
 
     onSetOpen(open) {
         if (open) {
@@ -38,39 +53,7 @@ const App = React.createClass({
         } else {
             this.props.drawerActions.hideDrawer();
         }
-    },
-
-    menuButtonClick(ev) {
-        ev.preventDefault();
-        this.onSetOpen(!this.state.open);
-    },
-
-    renderPropCheckbox(prop) {
-        const toggleMethod = (ev) => {
-            const newState = {};
-            newState[prop] = ev.target.checked;
-            this.setState(newState);
-        };
-
-        return (
-            <p key={prop} >
-                <input type="checkbox" onChange={toggleMethod} checked={this.state[prop]} id={prop} />
-                <label htmlFor={prop}> {prop}</label>
-            </p>);
-    },
-
-    renderPropNumber(prop) {
-        const setMethod = (ev) => {
-            const newState = {};
-            newState[prop] = parseInt(ev.target.value, 10);
-            this.setState(newState);
-        };
-
-        return (
-            <p key={prop}>
-                {prop} <input type="number" onChange={setMethod} value={this.state[prop]} />
-            </p>);
-    },
+    }
 
     render() {
         const sidebar = <SidebarContent {...this.props} />;
@@ -88,6 +71,7 @@ const App = React.createClass({
             transitions: this.state.transitions,
             onSetOpen: this.onSetOpen,
             styles: styles,
+            props: this.props,
         };
 
         return (
@@ -96,7 +80,6 @@ const App = React.createClass({
             </Sidebar>
 
         );
-    },
-});
+    }
+}
 
-export default App;

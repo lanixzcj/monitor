@@ -37,12 +37,18 @@ function columnClassNameFormat(fieldValue, row, rowIdx, colIdx) {
     }
 }
 
-function dropdownFormatter(cell, row) {
+function dropdownFormatter(cell, row, enumObject) {
     let menuItem;
     if (row.is_trusted) {
-        menuItem = <MenuItem eventKey={1.2}>从信任列表中移除</MenuItem>;
+        menuItem = <MenuItem eventKey={1.2} onClick= {
+            () => {
+                enumObject.removeTrustedHost(row.mac_address);
+            }}>从信任列表中移除</MenuItem>;
     } else {
-        menuItem = <MenuItem eventKey={1.2}>加入信任列表</MenuItem>;
+        menuItem = <MenuItem eventKey={1.2} onClick= {
+            () => {
+                enumObject.addTrustedHost(row.mac_address);
+            }}>加入信任列表</MenuItem>;
     }
 
     return (
@@ -53,58 +59,37 @@ function dropdownFormatter(cell, row) {
     );
 }
 
-const cellEditProp = {
-    mode: 'click'
-};
+function statusFormatter(cell, row, enumObject) {
+    return (
+        <a href="#" onClick= {
+            () => {
+                enumObject(row.hostname);
+            }}>
+            <i className='glyphicon glyphicon-stats' />
+        </a>
+    );
+}
 
 export default class MonTable extends Component {
     constructor(props) {
         super(props);
-        // this.showDrawera = this.showDrawera.bind(this);
     }
+
     componentDidMount() {
-        this.props.loadArticles();
-        // this.props.showDrawer();
-
+        console.log(this.props);
+        this.props.loadHosts();
     }
-
-    showDrawera = ev =>  {
-        ev.preventDefault();
-        this.props.showDrawer();
-    };
-
-    statusFormatter(cell, row, enumObject) {
-        return (
-            <a href="#" onClick= {
-                () => {
-                    enumObject(row.hostname);
-                }}>
-                <i className='glyphicon glyphicon-stats' />
-            </a>
-        );
-    }
-
-    handleDelete(record) {
-        // Modal.confirm({
-        //   title: '提示',
-        //   content: '确认要删除该文章吗？'
-        // }).then(() => {
-        //   this.props.deleteArticle(record);
-        // });
-    }
-
-
 
     render() {
         return (
-            <BootstrapTable data={this.props.articles} bordered={ false } options={ {noDataText: '没有找到匹配的记录'} }>
-                <TableHeaderColumn dataField='hostname' dataAlign='center' isKey={ true }>ID/主机名</TableHeaderColumn>
-                <TableHeaderColumn dataField='monitor' dataAlign='center' dataFormat={ this.statusFormatter} formatExtraData={ this.props.showDrawer }>监控</TableHeaderColumn>
+            <BootstrapTable data={this.props.hosts} bordered={ false } options={ {noDataText: '没有找到匹配的记录'} }>
+                <TableHeaderColumn dataField='hostname' dataAlign='center' >ID/主机名</TableHeaderColumn>
+                <TableHeaderColumn dataField='monitor' dataAlign='center' dataFormat={ statusFormatter} formatExtraData={ this.props.showDrawer }>监控</TableHeaderColumn>
                 <TableHeaderColumn dataField='stat' dataAlign='center'  dataFormat={ statFormatter } formatExtraData={ statType }
                                    columnClassName={ columnClassNameFormat }>状态</TableHeaderColumn>
                 <TableHeaderColumn dataField='ip' dataAlign='center' >IP地址</TableHeaderColumn>
-                <TableHeaderColumn dataField='mac_address' dataAlign='center' >MAC地址</TableHeaderColumn>
-                <TableHeaderColumn dataField='operate' dataAlign='center'  columnClassName='my-class' dataFormat={ dropdownFormatter }>操作</TableHeaderColumn>
+                <TableHeaderColumn dataField='mac_address' dataAlign='center' isKey={ true } >MAC地址</TableHeaderColumn>
+                <TableHeaderColumn dataField='operate' dataAlign='center'  columnClassName='my-class' dataFormat={ dropdownFormatter } formatExtraData={ this.props }>操作</TableHeaderColumn>
             </BootstrapTable>
         );
     }

@@ -28,7 +28,7 @@ export default class DeviceMonitor extends Component {
             )
         }
         let used = this.props.data.used ? this.props.data.used : 0;
-        let total = this.props.data.total ? this.props.data.used : 100;
+        let total = this.props.data.total ? this.props.data.total : 100;
         let per = this.props.data.used_per ? this.props.data.used_per : 0;
         let label;
         if (used == undefined) {

@@ -6,6 +6,7 @@ import MonitorModal from '../../components/Home/MonitorModal';
 import {tableActions, modalActions, drawerActions, monActions} from './HomeRedux';
 import './Home.css';
 import Sidebar from '../../layouts/Drawer';
+import ModalContent from '../Modal/ModalContent'
 
 
 @connect(
@@ -25,7 +26,9 @@ export default class Home extends Component {
     render() {
         return (
             <div>
-                <MonitorModal {...this.props.modal} {...this.props.modalActions} />
+                <MonitorModal {...this.props.modal} {...this.props.modalActions} >
+
+                </MonitorModal>
                 <MonTable showDrawer={this.props.drawerActions.showDrawer}
                           showModal={this.props.modalActions.showModal}
                           {...this.props.table} {...this.props.tableActions} />

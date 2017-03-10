@@ -4,6 +4,8 @@ import {bindRedux} from 'redux-form-utils';
 const {state: formState, reducer: formReducer} = bindRedux(config);
 
 const initialState = {
+    saved: false,
+    result: true,
     visible: false,
     host: '',
     deviceStrategy: {},
@@ -12,31 +14,32 @@ const initialState = {
     ...formState,
 };
 
-export function addArticle() {
-    return (dispatch, getState) => {
-        const {title, desc, date} = getState().article.dialog.form;
-        return dispatch({
-            url: '/api/article.json',
-            method: 'POST',
-            params: {
-                title: title.value,
-                desc: desc.value,
-                date: date.value
-            }
-        });
-    };
+export function changeDeviceStrategy(host, deviceThreshold) {
+    return {
+        url: `http://192.168.3.106:8000/strategy/device/${host}`,
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            'threshold': deviceThreshold
+        }),
+        types: [`CHANGE_DEVICE`, `CHANGE_DEVICE_SUCCESS`, `CHANGE_DEVICE_ERROR`],
+    }
 }
 
 export function loadDeviceStrategy(host) {
     return {
         url: `http://192.168.3.106:8000/strategy/device/${host}`,
-        types: [`LOAD_DEVICE`, `LOAD_DEVICE_SUCCESS`, `LOAD_DEVICE_ERROR`],
+
     };
 }
 
 export function showModal(host) {
     return {
-        type: 'SHOW_MODAL',
+        url: `http://192.168.3.106:8000/strategy/device/${host}`,
+        types: [`LOAD_DEVICE`, `LOAD_DEVICE_SUCCESS`, `LOAD_DEVICE_ERROR`],
         payload: {
             host: host
         }
@@ -55,6 +58,7 @@ export default function modal(state = initialState, action) {
             return {
                 ...state,
                 visible: true,
+                saved: false,
                 host: action.payload.host,
             };
         }
@@ -62,6 +66,7 @@ export default function modal(state = initialState, action) {
         case 'HIDE_MODAL': {
             return {
                 ...state,
+                saved: false,
                 visible: false,
             };
         }
@@ -69,6 +74,8 @@ export default function modal(state = initialState, action) {
         case 'LOAD_DEVICE': {
             return {
                 ...state,
+                saved: false,
+                host: action.payload.host,
                 loading: true,
                 error: false
             };
@@ -77,7 +84,9 @@ export default function modal(state = initialState, action) {
         case 'LOAD_DEVICE_SUCCESS': {
             return {
                 ...state,
+                saved: false,
                 deviceStrategy: action.payload,
+                visible: true,
                 loading: false,
                 error: false
             };
@@ -86,10 +95,42 @@ export default function modal(state = initialState, action) {
         case 'LOAD_DEVICE_ERROR': {
             return {
                 ...state,
+                saved: false,
+                visible: true,
                 loading: false,
                 error: true
             };
         }
+
+        case 'CHANGE_DEVICE': {
+            return {
+                ...state,
+                saved: false,
+                loading: true,
+                error: false
+            };
+        }
+
+        case 'CHANGE_DEVICE_SUCCESS': {
+            return {
+                ...state,
+                saved: true,
+                result: true,
+                loading: false,
+                error: false
+            };
+        }
+
+        case 'CHANGE_DEVICE_ERROR': {
+            return {
+                ...state,
+                saved: true,
+                result: false,
+                loading: false,
+                error: true
+            };
+        }
+
 
         default:
             return formReducer(state, action);

@@ -110,7 +110,7 @@ def trusted_hosts(request):
             print host_list()
             return Response(host_list(), status=status.HTTP_200_OK)
         except ObjectDoesNotExist:
-            return Response(host_list(), status=status.HTTP_404_NOT_FOUND)
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 def home(request):
@@ -253,6 +253,52 @@ def host_graphs(request):
     }
 
     return render(request, 'data_process/host.html', context)
+
+
+@csrf_exempt
+def device_strategy(request, host):
+    try:
+        host_info = Host.objects.get(hostname=host)
+    except ObjectDoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        threshold = host_info.hostthreshold
+        device = host_info.deviceinfo
+    except ObjectDoesNotExist:
+        threshold = HostThreshold(hostname=host_info)
+        threshold.save()
+        device = DeviceInfo(hostname=host_info)
+        device.save()
+    if request.method == "GET":
+        threshold_info = {}
+        threshold_info['bytes_in'] = threshold.bytes_in
+        threshold_info['bytes_in_max'] = settings.BYTES_IN
+        threshold_info['bytes_out'] = threshold.bytes_out
+        threshold_info['bytes_out_max'] = settings.BYTES_OUT
+        threshold_info['cpu_used'] = threshold.cpu_used
+        threshold_info['mem_used'] = threshold.mem_used
+        threshold_info['disk_used'] = threshold.disk_used
+        threshold_info['disk_total'] = device.disk_total
+        threshold_info['mem_total'] = device.mem_total
+
+        return HttpResponse(demjson.encode(threshold_info), status=status.HTTP_200_OK)
+
+    elif request.method == "POST":
+        threshold_changed = demjson.decode(request.body)['threshold']
+        disk_used = threshold_changed.get('disk_used', 0)
+        cpu_used = threshold_changed.get('cpu_used', 0)
+        mem_used = threshold_changed.get('mem_used', 0)
+        bytes_in = threshold_changed.get('bytes_in', 0)
+        bytes_out = threshold_changed.get('bytes_out', 0)
+        threshold.disk_used = disk_used
+        threshold.cpu_used = cpu_used
+        threshold.mem_used = mem_used
+        threshold.bytes_in = bytes_in
+        threshold.bytes_out = bytes_out
+        threshold.save()
+
+        return HttpResponse(demjson.encode(threshold_changed), status=status.HTTP_200_OK)
 
 
 def safe_strategy(request):

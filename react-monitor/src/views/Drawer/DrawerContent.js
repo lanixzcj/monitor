@@ -12,7 +12,7 @@ import {drawerActions, monActions} from './DrawerRedux';
 
 const styles = {
     sidebar: {
-        width: 600,
+        width: 1000,
         height: '100%',
     },
     sidebarLink: {
@@ -113,6 +113,10 @@ export default class SidebarContent extends Component {
         const time = this.props.drawer.time;
         const style = this.props.style ? {...styles.sidebar, ...this.props.style} : styles.sidebar;
 
+        const options = {
+            search: true,
+            exportCSV: true,
+        };
         return (
             <MaterialTitlePanel title={title} style={style}>
                 <div style={styles.content}>
@@ -126,23 +130,23 @@ export default class SidebarContent extends Component {
                             <DeviceMonitor  data={this.props.all.all_data.deviceinfo} {...this.props.monActions}/>
                         </Tab>
                         <Tab eventKey={2} title="进程">
-                            <MonTable  data={this.props.all.all_data.processinfo} {...this.props.monActions}
+                            <MonTable options={options}  data={this.props.all.all_data.processinfo} {...this.props.monActions}
                                        headers={ processHeaders}/>
                         </Tab>
                         <Tab eventKey={3} title="文件">
-                            <MonTable  data={this.props.all.all_data.fileinfo} {...this.props.monActions}
+                            <MonTable options={options}  data={this.props.all.all_data.fileinfo} {...this.props.monActions}
                                        headers={ fileHeaders}/>
                         </Tab>
                         <Tab eventKey={4} title="移动介质">
-                            <MonTable  data={this.props.all.all_data.mediainfo} {...this.props.monActions}
+                            <MonTable options={options}  data={this.props.all.all_data.mediainfo} {...this.props.monActions}
                                        headers={ mediaHeaders}/>
                         </Tab>
                         <Tab eventKey={5} title="IP包">
-                            <MonTable  data={this.props.all.all_data.ip_packet} {...this.props.monActions}
+                            <MonTable options={options}  data={this.props.all.all_data.ip_packet} {...this.props.monActions}
                                        headers={ ipHeaders}/>
                         </Tab>
                         <Tab eventKey={6} title="预警历史">
-                            <MonTable  data={this.props.all.all_data.warninginfo} {...this.props.monActions}
+                            <MonTable options={options}  data={this.props.all.all_data.warninginfo} {...this.props.monActions}
                                        headers={ warningHeaders}/>
                         </Tab>
                     </Tabs>

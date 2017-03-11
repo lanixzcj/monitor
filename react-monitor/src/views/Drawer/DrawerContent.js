@@ -12,7 +12,7 @@ import {drawerActions, monActions} from './DrawerRedux';
 
 const styles = {
     sidebar: {
-        width: 1000,
+        width: 800,
         height: '100%',
     },
     sidebarLink: {

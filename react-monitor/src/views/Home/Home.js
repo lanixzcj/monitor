@@ -7,7 +7,8 @@ import {tableActions, modalActions, drawerActions, monActions} from './HomeRedux
 import './Home.css';
 import Sidebar from '../../layouts/Drawer';
 import ModalContent from '../Modal/ModalContent'
-
+import ReactModal from 'react-modal'
+import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 
 @connect(
     state => ({
@@ -29,6 +30,7 @@ export default class Home extends Component {
                 <MonitorModal {...this.props.modal} {...this.props.modalActions} >
 
                 </MonitorModal>
+
                 <MonTable showDrawer={this.props.drawerActions.showDrawer}
                           showModal={this.props.modalActions.showModal}
                           {...this.props.table} {...this.props.tableActions} />

@@ -33,8 +33,10 @@ export default class MonTable extends Component {
     render() {
         let data = this.props.data ? this.props.data : [];
         const options = this.props.options ? this.props.options : {};
+        options.noDataText = '没有找到匹配的记录';
+        const extra = this.props.extra ? this.props.extra : {};
         return (
-            <BootstrapTable {...options} data={data} bordered={ false } options={ {noDataText: '没有找到匹配的记录'} }>
+            <BootstrapTable {...extra} data={data} bordered={ false } options={ options }>
                 {renderColHeader(this.props.headers)}
             </BootstrapTable>
         );

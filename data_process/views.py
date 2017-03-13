@@ -20,9 +20,11 @@ import demjson
 from tasks import send_safe_strategy
 from django.conf import settings
 import monitor_view
+import strategy_view
 import socket
 from pytz import timezone
 from django.core.mail import send_mail
+from pprint import pprint
 
 
 # Create your views here.
@@ -39,6 +41,16 @@ def test(request):
 
     return response
 
+
+def get_user(request):
+    user = {
+        'user': str(request.user),
+        'isAuthenticated': bool(request.user.is_authenticated)
+    }
+    print pprint(vars(request))
+    response = HttpResponse(content=demjson.encode(user))
+
+    return response
 
 def host_list():
     alive_hosts = cache.get('alive_hosts', dict())
@@ -116,6 +128,7 @@ def trusted_hosts(request):
 def home(request):
     # send_mail('测试', '该主机数据超过阀值', 'monitor_platform@163.com',
     #           ['494651913@qq.com'], fail_silently=False)
+    pprint(vars(request.user))
     alive_hosts = cache.get('alive_hosts', dict())
     print alive_hosts
     unsafe_hosts = cache.get('last_unsafe_ho1sts', dict())
@@ -213,6 +226,14 @@ def monitor_data(request, monitor_type, host):
     return HttpResponse()
 
 
+@csrf_exempt
+def strategy_data(request, strategy_type, host):
+    if hasattr(strategy_view, strategy_type):
+        return getattr(strategy_view, strategy_type)(request, host)
+
+    return HttpResponse()
+
+
 def get_monitor_data(request, monitor_info):
     if hasattr(monitor_view, monitor_info):
         print monitor_info
@@ -222,10 +243,10 @@ def get_monitor_data(request, monitor_info):
 
 
 @csrf_exempt
-def strategy_method(request, strategy_method):
-    if hasattr(monitor_view, strategy_method):
-        print strategy_method
-        return getattr(monitor_view, strategy_method)(request)
+def strategy_method(request, method):
+    if hasattr(monitor_view, method):
+        print method
+        return getattr(monitor_view, method)(request)
 
     return HttpResponse()
 

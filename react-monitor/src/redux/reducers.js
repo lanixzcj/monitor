@@ -5,5 +5,5 @@ import modal from '../views/Modal/ModalRedux'
 export default {
     hosts,
     monitors,
-    // modal,
+    modal,
 };

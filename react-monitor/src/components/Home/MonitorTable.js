@@ -6,12 +6,23 @@ import './Table.css';
 
 function renderColHeader(headers) {
     let array = new Array();
+    array.push(
+        <TableHeaderColumn key='ID' dataField='id' autoValue hidden isKey>ID</TableHeaderColumn>
+    );
     for (let col in headers) {
-        let isKey = col == 'time';
-        let width = col == 'time' ? '180px' : '';
+        let isKey;
+        let width;
+        let name;
+        if (typeof headers[col] == 'string') {
+            name = headers[col];
+            width = col == 'time' ? '180px' : '';
+        } else if (typeof headers[col] == 'object') {
+            name = headers[col].name;
+        }
+
         array.push(
             <TableHeaderColumn key={col} dataField={col} dataAlign='center' dataSort={ true }
-                               width={width} isKey={isKey}>{headers[col]}</TableHeaderColumn>
+               editable={headers[col].editable}  width={width} >{name}</TableHeaderColumn>
         );
     }
 

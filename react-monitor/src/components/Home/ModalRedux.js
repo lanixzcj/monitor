@@ -9,6 +9,7 @@ const initialState = {
     visible: false,
     host: '',
     deviceStrategy: {},
+    strategy: {},
     loading: true,
     error: false,
     ...formState,
@@ -29,6 +30,36 @@ export function changeDeviceStrategy(host, deviceThreshold) {
     }
 }
 
+export function addIpPacket(host, ip_strategy) {
+    return {
+        url: `http://192.168.3.106:8000/strategy/ip_packet/${host}`,
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(
+            ip_strategy
+        ),
+        types: [`ADD_IP_PACKET`, `ADD_IP_PACKET_SUCCESS`, `ADD_IP_PACKET_ERROR`],
+    }
+}
+
+export function removeIpPacket(host, strategy_ids) {
+    return {
+        url: `http://192.168.3.106:8000/strategy/ip_packet/${host}`,
+        method: 'DELETE',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(
+            strategy_ids
+        ),
+        types: [`DELETE_IP_PACKET`, `DELETE_IP_PACKET_SUCCESS`, `DELETE_IP_PACKET_ERROR`],
+    }
+}
+
 export function loadDeviceStrategy(host) {
     return {
         url: `http://192.168.3.106:8000/strategy/device/${host}`,
@@ -38,7 +69,7 @@ export function loadDeviceStrategy(host) {
 
 export function showModal(host) {
     return {
-        url: `http://192.168.3.106:8000/strategy/device/${host}`,
+        url: `http://192.168.3.106:8000/strategy/all/${host}`,
         types: [`LOAD_DEVICE`, `LOAD_DEVICE_SUCCESS`, `LOAD_DEVICE_ERROR`],
         payload: {
             host: host
@@ -85,7 +116,7 @@ export default function modal(state = initialState, action) {
             return {
                 ...state,
                 saved: false,
-                deviceStrategy: action.payload,
+                strategy: action.payload,
                 visible: true,
                 loading: false,
                 error: false
@@ -131,6 +162,15 @@ export default function modal(state = initialState, action) {
             };
         }
 
+        case 'ADD_IP_PACKET_SUCCESS': {
+            return {
+                ...state,
+                saved: false,
+                visible: true,
+                loading: false,
+                error: false
+            }
+        }
 
         default:
             return formReducer(state, action);

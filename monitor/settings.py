@@ -114,6 +114,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'monitor.wsgi.application'
 
+SESSION_ENGIN = 'django.contrib.sessions.backends.signed_cookies'
 
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,

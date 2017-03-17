@@ -7,3 +7,4 @@ migrations/
 node_modules
 *.log
 build
+static_dist

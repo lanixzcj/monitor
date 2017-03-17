@@ -5,7 +5,7 @@ import React, {Component, PropTypes} from 'react';
 // import { Table, Modal } from 'antd';
 import {Image, ListGroup, ListGroupItem, ProgressBar, Row, Col} from 'react-bootstrap';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
-import './Table.css';
+import '../../components/Table.css';
 
 
 export default class DeviceMonitor extends Component {

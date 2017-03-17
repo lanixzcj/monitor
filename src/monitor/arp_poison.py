@@ -2,7 +2,7 @@ from scapy.layers.l2 import *
 from django.conf import settings
 import socket
 
-interface = "eth0"
+interface = settings.INTERFACE
 packet_count = 1000
 gateway_ip = settings.GATEWAY_IP
 # set our interface

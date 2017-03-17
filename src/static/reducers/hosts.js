@@ -12,7 +12,7 @@ import {
 } from '../constants';
 
 const initialState = {
-    data: null,
+    data: [],
     isLoading: false,
     loaded: false,
 };

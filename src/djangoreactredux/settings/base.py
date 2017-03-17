@@ -122,7 +122,8 @@ GRAPH_SIZE = {
 }
 
 # gateway ip
-GATEWAY_IP = '192.168.1.1'
+GATEWAY_IP = '192.168.3.254'
+INTERFACE = 'ens33'
 
 # net threshold(KB)
 BYTES_IN = 2000

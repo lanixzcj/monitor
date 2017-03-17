@@ -29,45 +29,53 @@ function columnClassNameFormat(fieldValue, row, rowIdx, colIdx) {
 }
 
 function dropdownFormatter(cell, row, enumObject) {
-    let menuItem;
+    let menuItem = new Array();
+    if (row.hostname !== undefined && row.hostname.length != 0) {
+        menuItem.push(<MenuItem key={1.1} eventKey={1.1} onClick={
+            () => {
+                enumObject.showModal(row.hostname);
+            }
+        }>配置安全策略</MenuItem>);
+    }
     if (row.is_trusted) {
-        menuItem = <MenuItem eventKey={1.2} onClick= {
+        menuItem.push(<MenuItem key={1.2} eventKey={1.2} onClick= {
             () => {
                 enumObject.removeTrustedHost(row.mac_address);
-            }}>从信任列表中移除</MenuItem>;
+            }}>从信任列表中移除</MenuItem>);
     } else {
-        menuItem = <MenuItem eventKey={1.2} onClick= {
+        menuItem.push(<MenuItem key={1.2} eventKey={1.2} onClick= {
             () => {
                 enumObject.addTrustedHost(row.mac_address);
-            }}>加入信任列表</MenuItem>;
+            }}>加入信任列表</MenuItem>);
     }
 
     return (
         <DropdownButton bsStyle='default' title='更多' key={1} id={`dropdown-basic-${row.id}`}>
-            <MenuItem eventKey={1.1} onClick={
-                () => {
-                    enumObject.showModal(row.hostname);
-                }
-            }>配置安全策略</MenuItem>
             { menuItem }
         </DropdownButton>
     );
 }
 
 function statusFormatter(cell, row, enumObject) {
-    return (
-        <a href="#" onClick= {
+    let dom;
+    if (row.hostname == undefined || row.hostname.length == 0) {
+        dom = <div></div>
+    } else {
+        dom = <a href="#" onClick= {
             () => {
                 enumObject(row.hostname);
             }}>
             <i className='glyphicon glyphicon-stats' />
         </a>
+    }
+    return (
+        dom
     );
 }
 
 export default class MonTable extends Component {
     static propTypes = {
-        hosts: React.PropTypes.array,
+        hosts: React.PropTypes.object,
         showDrawer: React.PropTypes.func,
         showModal: React.PropTypes.func,
         loadHosts: React.PropTypes.func,
@@ -86,8 +94,14 @@ export default class MonTable extends Component {
     }
 
     render() {
+        let noDataText;
+        if (this.props.hosts.data.isLoading) {
+            noDataText = '正在加载...';
+        } else {
+            noDataText = '没有找到匹配的记录';
+        }
         return (
-            <BootstrapTable  data={this.props.hosts} bordered={ false } options={ {noDataText: '没有找到匹配的记录'} }>
+            <BootstrapTable  data={this.props.hosts.data} bordered={ false } options={ {noDataText: noDataText} }>
                 <TableHeaderColumn dataField='hostname' dataAlign='center' >ID/主机名</TableHeaderColumn>
                 <TableHeaderColumn dataField='monitor' dataAlign='center' dataFormat={ statusFormatter} formatExtraData={ this.props.showDrawer }>监控</TableHeaderColumn>
                 <TableHeaderColumn dataField='stat' dataAlign='center'  dataFormat={ statFormatter } formatExtraData={ statType }

@@ -12,6 +12,10 @@ import ReactModal from 'react-modal'
 import {InsertModalFooter, InsertModalHeader} from 'react-bootstrap-table'
 
 export default class MonitorModal extends Component {
+    static contextTypes = {
+        showAlert: React.PropTypes.func,
+    };
+
     constructor(props) {
         super(props);
 
@@ -26,7 +30,7 @@ export default class MonitorModal extends Component {
             disk_used: this.diskSlider.state.value,
             mem_used: this.memSlider.state.value,
         };
-        this.props.changeAction(this.props.host, threshold);
+        this.props.changeAction(this.props.host, threshold, this.context.showAlert);
     };
 
     render() {

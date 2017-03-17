@@ -7,7 +7,7 @@ import {ButtonGroup, Button, Tab, Tabs} from 'react-bootstrap'
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import MonTable from '../../components/MonitorTable'
-import DeviceMonitor from '../../components/deviceMonitor'
+import DeviceMonitor from './DeviceMonitor'
 import * as monitorActions from '../../actions/monitorData';
 
 const styles = {

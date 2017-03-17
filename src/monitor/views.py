@@ -52,7 +52,9 @@ def get_user(request):
 
     return response
 
+
 def host_list():
+    start = time.time()
     alive_hosts = cache.get('alive_hosts', dict())
     unsafe_hosts = cache.get('last_unsafe_hosts', dict())
     trust_hosts = TrustHost.objects.all()
@@ -98,11 +100,11 @@ def host_list():
         host = dict(dict(mac_address=item[0]), **item[1])
         hosts_list.append(host)
 
+    print time.time() - start, 'ss'
     return hosts_list
 
 
 def home_host_info(request):
-    print request.user.is_authenticated
     return HttpResponse(content=demjson.encode(host_list()))
 
 

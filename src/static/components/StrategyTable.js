@@ -34,11 +34,46 @@ export default class MonTable extends Component {
         super(props);
     }
 
+    customFooter = () => {
+        return (
+            <InsertModalFooter
+                saveBtnText="保存"
+                closeBtnText="取消"
+            />
+        )
+    };
+
+    customHeader = () => {
+        return (
+            <InsertModalHeader
+                title="添加"
+            />
+        )
+    };
+
     render() {
+
+        const selectRowProp = {
+            mode: 'checkbox',
+        };
+        const defaultExtra = {
+            insertRow: true,
+            deleteRow: true,
+            search: true,
+            selectRow: selectRowProp,
+            remote: true
+        };
+
+        const defaultOptions = {
+            insertModalHeader: this.customHeader,
+            insertModalFooter: this.customFooter,
+        };
+
         let data = this.props.data ? this.props.data : [];
-        const options = this.props.options ? this.props.options : {};
-        options.noDataText = '没有找到匹配的记录';
-        const extra = this.props.extra ? this.props.extra : {};
+        const options = {...defaultOptions, ...this.props.options,
+            onAddRow: this.props.onAddRow, onDeleteRow: this.props.onDeleteRow,
+            noDataText: '没有找到匹配的记录'};
+        const extra = {...defaultExtra, ...this.props.extra};
         return (
             <BootstrapTable {...extra} data={data} bordered={ false } options={ options }>
                 {renderColHeader(this.props.headers)}

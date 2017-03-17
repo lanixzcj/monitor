@@ -24,3 +24,14 @@ export const LOAD_STRATEGY_ERROR = 'LOAD_STRATEGY_ERROR';
 export const CHANGE_DEVICE_STRATEGY_REQUEST = 'CHANGE_DEVICE_STRATEGY_REQUEST';
 export const CHANGE_DEVICE_STRATEGY_SUCCESS = 'CHANGE_DEVICE_STRATEGY_SUCCESS';
 export const CHANGE_DEVICE_STRATEGY_ERROR = 'CHANGE_DEVICE_STRATEGY_ERROR';
+
+export function createConstantsWithNamedType(name = '') {
+    return {
+        addRequest: `ADD_${name}_REQUEST`,
+        addSuccess: `ADD_${name}_SUCCESS`,
+        addError: `ADD_${name}_ERROR`,
+        deleteRequest: `DELETE_${name}_REQUEST`,
+        deleteSuccess: `DELETE_${name}_SUCCESS`,
+        deleteError: `DELETE_${name}_ERROR`,
+    }
+}

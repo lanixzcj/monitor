@@ -32,13 +32,17 @@ export default class MonitorModal extends Component {
     }
 
     render() {
+        const strategy = this.props.strategy;
+        let files;
+        let ip_packet;
 
-        const strategy = this.props.strategy ? this.props.strategy : {};
-
-        let files = strategy.data.files ? strategy.data.files : [];
-        let ip_packet = strategy.data.ip_packet ? strategy.data.ip_packet : [];
+        if (strategy.data) {
+            files = strategy.data.files ? strategy.data.files : [];
+            ip_packet = strategy.data.ip_packet ? strategy.data.ip_packet : [];
+        }
 
         return (
+            this.props.strategy.data == null ? <div></div> :
             <div className={ `modal-content react-bs-table-insert-modal`}>
                 <div className={ `modal-header react-bs-table-inser-modal-header`}>
                 <span>

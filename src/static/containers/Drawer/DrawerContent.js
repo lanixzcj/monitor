@@ -9,6 +9,7 @@ import {bindActionCreators} from 'redux';
 import MonTable from '../../components/MonitorTable'
 import DeviceMonitor from './DeviceMonitor'
 import * as monitorActions from '../../actions/monitorData';
+import Perf from 'react-addons-perf';
 
 const styles = {
     sidebar: {
@@ -105,21 +106,38 @@ function renderButtons(values, current) {
     })
 )
 export default class SidebarContent extends Component {
-    static propTypes = {
-        style: React.PropTypes.object,
-    };
+    constructor(props) {
+        super(props);
 
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.monitor.host != this.props.monitor.host ||
-            nextProps.monitor.time != this.props.monitor.time ) {
-            this.props.monitorActions.loadAllMonitors(nextProps.monitor.host, nextProps.monitor.time);
+        this.state = {
+            time: 'hour'
         }
     }
 
+    // componentWillReceiveProps(nextProps) {
+    //     if (nextProps.monitor.host != this.props.monitor.host ||
+    //         nextProps.monitor.time != this.props.monitor.time ) {
+    //         this.props.monitorActions.loadAllMonitors(nextProps.monitor.host, nextProps.monitor.time);
+    //     }
+    // }
+
+    shouldComponentUpdate(nextProps) {
+        return !(nextProps.monitor.data == null);
+    }
+    //
+    // componentWillUpdate() {
+    //     Perf.start();
+    // }
+    //
+    // componentDidUpdate() {
+    //     Perf.stop();
+    //     // Perf.printWasted();
+    // }
 
     render() {
-        const title = this.props.monitor.host;
-        const time = this.props.monitor.time;
+        console.log(this.props)
+        const title = this.props.host;
+        const time = this.state.time;
         const style = this.props.style ? {...styles.sidebar, ...this.props.style} : styles.sidebar;
         const rootStyle = style ? {...styles.root, ...style} : styles.root;
 
@@ -128,42 +146,44 @@ export default class SidebarContent extends Component {
             exportCSV: true,
         };
         return (
-
-
             <div style={rootStyle}>
                 <div style={styles.header}>{title}</div>
                 <div style={styles.content}>
                     <ButtonGroup onClick={ (e) => {
-                        this.props.monitorActions.changeTimeRange(e.target.value);
+                        this.setState({time: e.target.value});
+                        this.props.monitorActions.loadAllMonitors(this.props.host, e.target.value);
                     }}>
                         {renderButtons(values, time)}
                     </ButtonGroup>
-                    <Tabs defaultActiveKey={1} id="uncontrolled-tab-example">
-                        <Tab eventKey={1} title="设备信息">
-                            <DeviceMonitor  host={this.props.monitor.host} time={this.props.monitor.time}
-                                data={this.props.monitor.data.deviceinfo} {...this.props.monActions}/>
-                        </Tab>
-                        <Tab eventKey={2} title="进程">
+                    {this.props.monitor.data == null ? <div></div> :
+                    <Tabs defaultActiveKey={1} id="uncontrolled-tab-example" mountOnEnter>
+
+                        <Tab eventKey={1} mountOnEnter unmountOnExit title="进程">
                             <MonTable options={options}  data={this.props.monitor.data.processinfo} {...this.props.monActions}
                                       headers={ processHeaders}/>
                         </Tab>
-                        <Tab eventKey={3} title="文件">
+                        <Tab eventKey={2} mountOnEnter unmountOnExit title="文件">
                             <MonTable options={options}  data={this.props.monitor.data.fileinfo} {...this.props.monActions}
                                       headers={ fileHeaders}/>
                         </Tab>
-                        <Tab eventKey={4} title="移动介质">
+                        <Tab eventKey={3} mountOnEnter unmountOnExit title="移动介质">
                             <MonTable options={options}  data={this.props.monitor.data.mediainfo} {...this.props.monActions}
                                       headers={ mediaHeaders}/>
                         </Tab>
-                        <Tab eventKey={5} title="IP包">
+                        <Tab eventKey={4} mountOnEnter unmountOnExit title="IP包">
                             <MonTable options={options}  data={this.props.monitor.data.ip_packet} {...this.props.monActions}
                                       headers={ ipHeaders}/>
                         </Tab>
-                        <Tab eventKey={6} title="预警历史">
+                        <Tab eventKey={5} mountOnEnter title="设备信息">
+                            <DeviceMonitor  host={this.props.monitor.host} time={this.props.monitor.time}
+                                            data={this.props.monitor.data.deviceinfo} {...this.props.monActions}/>
+                        </Tab>
+
+                        <Tab eventKey={6} mountOnEnter unmountOnExit title="预警历史">
                             <MonTable options={options}  data={this.props.monitor.data.warninginfo} {...this.props.monActions}
                                       headers={ warningHeaders}/>
                         </Tab>
-                    </Tabs>
+                    </Tabs>}
                 </div>
             </div>
         );

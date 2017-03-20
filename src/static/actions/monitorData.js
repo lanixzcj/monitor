@@ -10,7 +10,6 @@ import {
     LOAD_MONITOR_DATA_SUCCESS,
     LOAD_MONITOR_DATA_ERROR,
 
-    CHANGE_TIME_RANGE
 } from '../constants';
 
 export function loadDataRequest() {
@@ -37,15 +36,6 @@ export function loadDataError(error, message) {
             statusText: message
         }
     };
-}
-
-export function changeTimeRange(time) {
-    return {
-        type: CHANGE_TIME_RANGE,
-        payload: {
-            time
-        }
-    }
 }
 
 export function loadAllMonitors(host, time='hour') {

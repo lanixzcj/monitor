@@ -9,12 +9,14 @@ import {
 
     CHANGE_DEVICE_STRATEGY_REQUEST,
     CHANGE_DEVICE_STRATEGY_SUCCESS,
-    CHANGE_DEVICE_STRATEGY_ERROR
+    CHANGE_DEVICE_STRATEGY_ERROR,
+
+    INIT_STRATEGY_DATA,
 } from '../constants';
 import {createConstantsWithNamedType} from '../constants'
 
 const initialState = {
-    data: {},
+    data: null,
     isLoading: false,
 };
 
@@ -51,44 +53,69 @@ export default createReducer(initialState, {
             isLoading: false,
         });
     },
+    [INIT_STRATEGY_DATA]: (state, payload) => {
+        return Object.assign({}, state, {
+            isLoading: false,
+            data: null
+        });
+    },
 });
+
+const initialStateStrategy = {
+    host: null,
+    data: [],
+    isLoading: false,
+};
 
 export function createReducerWithType(name = '') {
     const constants = createConstantsWithNamedType(name);
-    return createReducer(initialState, {
+    return createReducer(initialStateStrategy, {
         [constants.addRequest]: (state, payload) => {
             return Object.assign({}, state, {
+                host: payload.host,
                 isLoading: true,
             });
         },
         [constants.addSuccess]: (state, payload) => {
             return Object.assign({}, state, {
+                host: payload.host,
                 isLoading: false,
                 data: payload.data
             });
         },
         [constants.addError]: (state, payload) => {
             return Object.assign({}, state, {
+                host: null,
                 isLoading: false,
                 data: []
             });
         },
         [constants.deleteRequest]: (state, payload) => {
             return Object.assign({}, state, {
+                host: payload.host,
                 isLoading: true,
             });
         },
         [constants.deleteSuccess]: (state, payload) => {
             return Object.assign({}, state, {
+                host: payload.host,
                 isLoading: false,
                 data: payload.data
             });
         },
         [constants.deleteError]: (state, payload) => {
             return Object.assign({}, state, {
+                host: null,
                 isLoading: false,
                 data: []
             });
-        }
+        },
+        [INIT_STRATEGY_DATA]: (state, payload) => {
+            return Object.assign({}, state, {
+                host: null,
+                isLoading: false,
+                data: []
+            });
+        },
     })
 }

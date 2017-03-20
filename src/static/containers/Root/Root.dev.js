@@ -5,6 +5,7 @@ import { Router } from 'react-router';
 import routes from '../../routes';
 import DevTools from './DevTools';
 
+
 export default class Root extends React.Component {
 
     static propTypes = {
@@ -17,10 +18,13 @@ export default class Root extends React.Component {
             <div>
                 <Provider store={this.props.store}>
                     <div>
+
                         <Router history={this.props.history}>
                             {routes}
+
                         </Router>
                         <DevTools />
+
                     </div>
                 </Provider>
             </div>

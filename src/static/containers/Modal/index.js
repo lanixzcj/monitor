@@ -27,7 +27,6 @@ export default class MonitorModal extends Component {
     }
 
     render() {
-        console.log()
         return (
             <div>
 
@@ -37,7 +36,7 @@ export default class MonitorModal extends Component {
                     shouldCloseOnOverlayClick={true}
                     onRequestClose={this.props.modalActions.hideModal}
                 >
-                    <MonitorContent showAlert={this.props.showAlert} host={this.props.modal.host}/>
+                    <MonitorContent hideModal={this.props.modalActions.hideModal} host={this.props.modal.host}/>
                 </ReactModal>
 
             </div>

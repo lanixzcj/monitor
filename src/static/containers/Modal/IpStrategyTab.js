@@ -13,6 +13,17 @@ import {InsertModalFooter, InsertModalHeader} from 'react-bootstrap-table'
 import DeviceTab from './DeviceStrategyTab'
 import StrategyTable from '../../components/StrategyTable'
 
+
+function ipValidator(value, row) {
+    const ip =  /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])(\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])){3}$/;
+
+    if (ip.test(value)) {
+        return true
+    } else {
+        return '请输入正确的ip';
+    }
+}
+
 const ipHeaders = {
     rule: {
         name: '规则链',
@@ -21,7 +32,12 @@ const ipHeaders = {
             options: {values: [ 'INPUT', 'FORWARD', 'OUTPUT']}
         }
     },
-    ip: 'IP',
+    ip: {
+        name: 'IP',
+        editable: {
+            validator: ipValidator,
+        }
+    },
 };
 
 
@@ -34,20 +50,17 @@ const ipHeaders = {
     })
 )
 export default class MonitorModal extends Component {
-    static contextTypes = {
-        showAlert: React.PropTypes.func,
-    };
 
     constructor(props) {
         super(props);
     }
 
     onAddRow = (row, name) => {
-        this.props.strategyActions.addStrategy('ip_packet', this.props.host, row, this.context.showAlert)
+        this.props.strategyActions.addStrategy('ip_packet', this.props.host, row)
     };
 
     onDeleteRow = (row, name) => {
-        this.props.strategyActions.removeStrategy('ip_packet', this.props.host, row, this.context.showAlert);
+        this.props.strategyActions.removeStrategy('ip_packet', this.props.host, row);
     };
 
     render() {

@@ -3,6 +3,7 @@ import React, {Component, PropTypes} from 'react';
 import {Table, DropdownButton, MenuItem} from 'react-bootstrap';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import './Table.css';
+import {toastr} from 'react-redux-toastr'
 
 function renderColHeader(headers) {
     let array = new Array();
@@ -61,7 +62,6 @@ export default class MonTable extends Component {
             deleteRow: true,
             search: true,
             selectRow: selectRowProp,
-            remote: true
         };
 
         const defaultOptions = {
@@ -75,7 +75,7 @@ export default class MonTable extends Component {
             noDataText: '没有找到匹配的记录'};
         const extra = {...defaultExtra, ...this.props.extra};
         return (
-            <BootstrapTable {...extra} data={data} bordered={ false } options={ options }>
+            <BootstrapTable pagination {...extra} data={data} bordered={ false } options={ options }>
                 {renderColHeader(this.props.headers)}
             </BootstrapTable>
         );

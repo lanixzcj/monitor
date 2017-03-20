@@ -51,14 +51,14 @@ export default class Drawer extends Component {
 
     onSetOpen(open) {
         if (open) {
-            this.props.drawerActions.showDrawer(this.props.host);
+            this.props.drawerActions.showDrawer(this.props.drawer.host);
         } else {
             this.props.drawerActions.hideDrawer();
         }
     }
 
     render() {
-        const sidebar = <SidebarContent />;
+        const sidebar = <SidebarContent host={this.props.drawer.host} />;
 
         const sidebarProps = {
             sidebar: sidebar,

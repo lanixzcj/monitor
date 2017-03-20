@@ -114,6 +114,7 @@ class WarningHistory(models.Model):
 
 class IpPacketSerializer(serializers.ModelSerializer):
     class Meta:
+        model = IpPacket
         fields = ('time', 'host', 'send_mac_address', 'recv_mac_address',
                   'send_ip', 'send_port', 'recv_ip', 'recv_port')
 

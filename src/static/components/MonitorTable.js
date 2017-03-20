@@ -40,7 +40,7 @@ export default class MonTable extends Component {
         options.noDataText = '没有找到匹配的记录';
         const extra = this.props.extra ? this.props.extra : {};
         return (
-            <BootstrapTable {...extra} data={data} bordered={ false } options={ options }>
+            <BootstrapTable pagination {...extra} data={data} bordered={ false } options={ options }>
                 {renderColHeader(this.props.headers)}
             </BootstrapTable>
         );

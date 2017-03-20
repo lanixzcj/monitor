@@ -28,20 +28,17 @@ const fileHeaders = {
     })
 )
 export default class MonitorModal extends Component {
-    static contextTypes = {
-        showAlert: React.PropTypes.func,
-    };
 
     constructor(props) {
         super(props);
     }
 
     onAddRow = (row, name) => {
-        this.props.strategyActions.addStrategy('file', this.props.host, row, this.context.showAlert)
+        this.props.strategyActions.addStrategy('file', this.props.host, row)
     };
 
     onDeleteRow = (row, name) => {
-        this.props.strategyActions.removeStrategy('file', this.props.host, row, this.context.showAlert);
+        this.props.strategyActions.removeStrategy('file', this.props.host, row);
     };
 
     render() {

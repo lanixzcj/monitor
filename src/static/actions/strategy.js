@@ -15,6 +15,8 @@ import {
     CHANGE_DEVICE_STRATEGY_ERROR
 } from '../constants';
 import {createConstantsWithNamedType} from '../constants'
+import {toastr} from 'react-redux-toastr'
+import { showLoading, hideLoading } from 'react-redux-loading-bar'
 
 export function loadStrategyRequest() {
     return {
@@ -44,6 +46,7 @@ export function loadStrategyError(error, message) {
 
 export function loadStrategy(host) {
     return (dispatch) => {
+        // dispatch(showLoading());
         dispatch(loadStrategyRequest());
         return fetch(`${SERVER_URL}/api/v1/monitor/strategy/all/${host}`, {
 
@@ -52,6 +55,7 @@ export function loadStrategy(host) {
             .then(parseJSON)
             .then((response) => {
                 dispatch(loadStrategySuccess(response));
+                // dispatch(hideLoading());
             })
             .catch((error) => {
                 if (error && typeof error.response !== 'undefined' && error.response.status === 401) {
@@ -66,6 +70,7 @@ export function loadStrategy(host) {
                     // Most likely connection issues
                     dispatch(loadStrategyError('Connection Error', 'An error occurred while sending your data!'));
                 }
+                // dispatch(hideLoading());
 
                 return Promise.resolve(); // TODO: we need a promise here because of the tests, find a better way
             });
@@ -97,7 +102,7 @@ export function changeDeviceError(error, message) {
     }; 
 }
 
-export function changeDeviceStrategy(host, deviceThreshold, showAlert) {
+export function changeDeviceStrategy(host, deviceThreshold) {
     return (dispatch) => {
         dispatch(changeDeviceRequest());
         return fetch(`${SERVER_URL}/api/v1/monitor/strategy/device/${host}`, {
@@ -114,7 +119,7 @@ export function changeDeviceStrategy(host, deviceThreshold, showAlert) {
             .then(parseJSON)
             .then((response) => {
                 dispatch(changeDeviceSuccess());
-                showAlert(true, '保存成功');
+                toastr.success('保存成功', `成功保存${host}设备阈值`);
             })
             .catch((error) => {
                 if (error && typeof error.response !== 'undefined' && error.response.status === 401) {
@@ -129,27 +134,31 @@ export function changeDeviceStrategy(host, deviceThreshold, showAlert) {
                     // Most likely connection issues
                     dispatch(changeDeviceError('Connection Error', 'An error occurred while sending your data!'));
                 }
+                toastr.error('保存失败', '');
 
-                showAlert(false, '保存失败');
                 return Promise.resolve(); // TODO: we need a promise here because of the tests, find a better way
             });
     };
 }
 
-export function addRequest(name = '') {
+export function addRequest(name = '', host) {
     const constants = createConstantsWithNamedType(name);
     return {
         type: constants.addRequest,
+        payload : {
+            host
+        }
     }
 }
 
-export function addSuccess(name = '', data) {
+export function addSuccess(name = '', data, host) {
     const constants = createConstantsWithNamedType(name);
 
     return {
         type: constants.addSuccess,
         payload : {
-            data
+            data,
+            host
         }
     }
 }
@@ -165,20 +174,24 @@ export function addError(name = '', error, message) {
     }
 }
 
-export function deleteRequest(name = '') {
+export function deleteRequest(name = '', host) {
     const constants = createConstantsWithNamedType(name);
     return {
         type: constants.deleteRequest,
+        payload : {
+            host
+        }
     }
 }
 
-export function deleteSuccess(name = '', data) {
+export function deleteSuccess(name = '', data, host) {
     const constants = createConstantsWithNamedType(name);
 
     return {
         type: constants.deleteSuccess,
         payload : {
-            data
+            data,
+            host
         }
     }
 }
@@ -194,9 +207,9 @@ export function deleteError(name = '', error, message) {
     }
 }
 
-export function addStrategy(name, host, strategy, showAlert) {
+export function addStrategy(name, host, strategy) {
     return (dispatch) => {
-        dispatch(addRequest(name));
+        dispatch(addRequest(name, host));
         return fetch(`${SERVER_URL}/api/v1/monitor/strategy/${name}/${host}`, {
             method: 'POST',
             headers: {
@@ -210,8 +223,8 @@ export function addStrategy(name, host, strategy, showAlert) {
             .then(checkHttpStatus)
             .then(parseJSON)
             .then((data) => {
-                dispatch(addSuccess(name, data));
-                showAlert(true, '添加成功');
+                dispatch(addSuccess(name, data, host));
+                toastr.success('添加成功', `成功添加${host}安全策略`);
             })
             .catch((error) => {
                 if (error && typeof error.response !== 'undefined' && error.response.status === 401) {
@@ -226,16 +239,16 @@ export function addStrategy(name, host, strategy, showAlert) {
                     // Most likely connection issues
                     dispatch(addError(name, 'Connection Error', 'An error occurred while sending your data!'));
                 }
-                showAlert(true, '添加失败');
+                toastr.error('添加失败', '');
 
                 return Promise.resolve(); // TODO: we need a promise here because of the tests, find a better way
             });
     };
 }
 
-export function removeStrategy(name, host, strategy_ids, showAlert) {
+export function removeStrategy(name, host, strategy_ids) {
     return (dispatch) => {
-        dispatch(deleteRequest(name));
+        dispatch(deleteRequest(name, host));
         return fetch(`${SERVER_URL}/api/v1/monitor/strategy/${name}/${host}`, {
             method: 'DELETE',
             headers: {
@@ -249,8 +262,8 @@ export function removeStrategy(name, host, strategy_ids, showAlert) {
             .then(checkHttpStatus)
             .then(parseJSON)
             .then((data) => {
-                dispatch(deleteSuccess(name, data));
-                showAlert(true, '删除成功');
+                dispatch(deleteSuccess(name, data, host));
+                toastr.success('删除成功', `成功删除${host}安全策略`);
             })
             .catch((error) => {
                 if (error && typeof error.response !== 'undefined' && error.response.status === 401) {
@@ -265,7 +278,7 @@ export function removeStrategy(name, host, strategy_ids, showAlert) {
                     // Most likely connection issues
                     dispatch(deleteError(name, 'Connection Error', 'An error occurred while sending your data!'));
                 }
-                showAlert(true, '删除失败');
+                toastr.error('删除失败', '');
 
                 return Promise.resolve(); // TODO: we need a promise here because of the tests, find a better way
             });

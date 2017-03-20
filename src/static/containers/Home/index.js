@@ -9,9 +9,11 @@ import AlertContainer from 'react-alert';
 import { bindActionCreators } from 'redux';
 import MonTable from '../../components/Table'
 import MonitorModal from '../Modal/index'
+import 'react-redux-toastr/src/styles/index.scss'
 import * as hostsActions from '../../actions/hosts';
 import * as drawerActions from '../../actions/drawer'
 import * as modalActions from '../../actions/modal'
+import ReduxToastr from 'react-redux-toastr'
 
 @connect(
     state => ({
@@ -34,46 +36,23 @@ export default class HomeView extends React.Component {
         userName: ''
     };
 
-    static childContextTypes = {
-        showAlert: React.PropTypes.func,
-    };
-
-    getChildContext() {
-        return {
-            showAlert: this.showAlert,
-        }
-    }
-
     constructor(props) {
         super(props);
-
-        this.alertOptions = {
-            offset: 14,
-            position: 'bottom right',
-            theme: 'dark',
-            time: 5000,
-            transition: 'scale'
-        };
-
     }
-
-    showAlert = (result, message) => {
-        result ? this.msg.show(message, {
-                time: 2000,
-                type: 'success',
-            }) : this.msg.show(message, {
-                time: 2000,
-                type: 'error',
-            })
-    };
-
 
 
     render() {
 
         return (
             <div className="container">
-                <AlertContainer ref={ref => this.msg = ref} {...this.alertOptions} />
+
+                <ReduxToastr
+                    timeOut={2000}
+                    newestOnTop={false}
+                    preventDuplicates={false}
+                    position="top-right"
+                    transitionIn="bounceIn"
+                    transitionOut="bounceOut"/>
                 <MonitorModal />
 
                 <MonTable {...this.props.modalActions} {...this.props.hostsActions} {...this.props.drawerActions} hosts={this.props.hosts}/>

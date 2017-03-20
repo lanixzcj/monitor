@@ -4,19 +4,26 @@
 import {
     SHOW_DRAWER,
     HIDE_DRAWER,
+
+    INIT_MONITOR_DATA,
 } from '../constants';
 
+import {loadAllMonitors} from './monitorData';
+
 export function showDrawer(host) {
-    return {
-        type: SHOW_DRAWER,
-        payload: {
-            host
-        }
+    return (dispatch) => {
+        dispatch({
+            type: SHOW_DRAWER,
+            payload: {
+                host
+            }});
+        dispatch(loadAllMonitors(host));
     };
 }
 
 export function hideDrawer() {
-    return {
-        type: HIDE_DRAWER,
+    return (dispatch) => {
+        dispatch({type: HIDE_DRAWER});
+        dispatch({type: INIT_MONITOR_DATA});
     };
 }

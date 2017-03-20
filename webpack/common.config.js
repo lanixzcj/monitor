@@ -73,7 +73,7 @@ const common = {
         }),
         new HtmlWebpackPlugin({
             template: path.join(__dirname, '../src/static/index.html'),
-            hash: true,
+            hash: false,
             filename: 'index.html',
             inject: 'body'
         }),

@@ -8,6 +8,8 @@ import { checkHttpStatus, parseJSON } from '../utils';
 import {
     SHOW_MODAL,
     HIDE_MODAL,
+
+    INIT_STRATEGY_DATA,
 } from '../constants';
 
 export function showModal(host) {
@@ -20,7 +22,8 @@ export function showModal(host) {
 }
 
 export function hideModal() {
-    return {
-        type: HIDE_MODAL,
+    return (dispatch) => {
+        dispatch({type: HIDE_MODAL});
+        dispatch({type: INIT_STRATEGY_DATA});
     };
 }

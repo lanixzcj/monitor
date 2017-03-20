@@ -12,8 +12,7 @@ import * as monitorActions from '../../actions/monitorData';
 
 const styles = {
     sidebar: {
-        width: 800,
-        height: '100%',
+        width: 700,
     },
     sidebarLink: {
         display: 'block',
@@ -45,7 +44,9 @@ const styles = {
 
 const ipHeaders = {
     time: '时间',
-    app_name: '应用名称',
+    send_mac_address: '发送MAC地址',
+    recv_mac_address: '接收MAC地址',
+    send_ip: '发送ip',
     send_port: '发送端口',
     recv_ip: '接收ip',
     recv_port: '接收端口',
@@ -115,6 +116,7 @@ export default class SidebarContent extends Component {
         }
     }
 
+
     render() {
         const title = this.props.monitor.host;
         const time = this.props.monitor.time;
@@ -138,7 +140,8 @@ export default class SidebarContent extends Component {
                     </ButtonGroup>
                     <Tabs defaultActiveKey={1} id="uncontrolled-tab-example">
                         <Tab eventKey={1} title="设备信息">
-                            <DeviceMonitor  data={this.props.monitor.data.deviceinfo} {...this.props.monActions}/>
+                            <DeviceMonitor  host={this.props.monitor.host} time={this.props.monitor.time}
+                                data={this.props.monitor.data.deviceinfo} {...this.props.monActions}/>
                         </Tab>
                         <Tab eventKey={2} title="进程">
                             <MonTable options={options}  data={this.props.monitor.data.processinfo} {...this.props.monActions}

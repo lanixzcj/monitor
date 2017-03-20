@@ -27,6 +27,7 @@ export default class MonitorModal extends Component {
     }
 
     render() {
+        console.log()
         return (
             <div>
 

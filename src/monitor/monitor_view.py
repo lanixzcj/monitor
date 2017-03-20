@@ -377,6 +377,7 @@ def deviceinfo(request, host, start):
 
 
 def all(request, host, start):
+    print host
     all = {
         'ip_packet': get_monitor_json('ip_packet', host, start),
         'mediainfo': get_monitor_json('mediainfo', host, start),

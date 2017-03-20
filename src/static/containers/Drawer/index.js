@@ -17,7 +17,11 @@ const styles = {
     },
     content: {
         padding: '16px',
+        backgroundColor: 'white',
     },
+    sidebar: {
+        background: '#fff'
+    }
 };
 
 
@@ -41,8 +45,6 @@ export default class Drawer extends Component {
             touch: true,
             shadow: true,
             pullRight: true,
-            touchHandleWidth: 20,
-            dragToggleDistance: 20,
             styles: styles,
         }
     }

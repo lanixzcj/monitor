@@ -21,7 +21,9 @@ export default class DeviceMonitor extends Component {
 
     render() {
         // console.log(this.props);
-        let url = `http://192.168.3.106:8000/image/?h=${this.props.host}&m=cpu&r=${this.props.time}`;
+        let cpu = `http://localhost:8000/api/v1/monitor/image/?h=${this.props.host}&m=cpu&r=${this.props.time}`;
+        let mem = `http://localhost:8000/api/v1/monitor/image/?h=${this.props.host}&m=mem&r=${this.props.time}`;
+        let net = `http://localhost:8000/api/v1/monitor/image/?h=${this.props.host}&m=net&r=${this.props.time}`;
         if (!this.props.data) {
             return (
                 <div></div>
@@ -41,15 +43,15 @@ export default class DeviceMonitor extends Component {
             <ListGroup>
                 <ListGroupItem><strong>网络监控</strong></ListGroupItem>
                 <ListGroupItem className='text-center'>
-                    <Image src={ url }/>
+                    <Image src={ net }/>
                 </ListGroupItem>
                 <ListGroupItem><strong>CPU监控</strong></ListGroupItem>
                 <ListGroupItem className='text-center'>
-                    <Image src={ url }/>
+                    <Image src={ cpu}/>
                 </ListGroupItem>
                 <ListGroupItem><strong>内存监控</strong></ListGroupItem>
                 <ListGroupItem className='text-center'>
-                    <Image src={ url }/>
+                    <Image src={ mem }/>
                 </ListGroupItem>
                 <ListGroupItem><strong>磁盘使用率</strong></ListGroupItem>
                 <ListGroupItem >

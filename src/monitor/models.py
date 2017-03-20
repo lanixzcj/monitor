@@ -55,7 +55,9 @@ class UserAction(models.Model):
 class IpPacket(models.Model):
     time = models.DateTimeField()
     host = models.ForeignKey(Host, on_delete=models.CASCADE)
-    app_name = models.CharField(max_length=30)
+    send_mac_address = models.CharField(max_length=30)
+    recv_mac_address = models.CharField(max_length=30)
+    send_ip = models.GenericIPAddressField(default='0.0.0.0')
     send_port = models.IntegerField()
     recv_ip = models.GenericIPAddressField(default='0.0.0.0')
     recv_port = models.IntegerField()
@@ -112,8 +114,8 @@ class WarningHistory(models.Model):
 
 class IpPacketSerializer(serializers.ModelSerializer):
     class Meta:
-        model = IpPacket
-        fields = ('time', 'host', 'app_name', 'send_port', 'recv_ip', 'recv_port')
+        fields = ('time', 'host', 'send_mac_address', 'recv_mac_address',
+                  'send_ip', 'send_port', 'recv_ip', 'recv_port')
 
 
 class ProcessSerializer(serializers.ModelSerializer):

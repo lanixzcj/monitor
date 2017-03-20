@@ -89,13 +89,13 @@ export default class MonTable extends Component {
         super(props);
     }
 
-    componentDidMount() {
+    componentWillMount() {
         this.props.loadHosts();
     }
 
     render() {
         let noDataText;
-        if (this.props.hosts.data.isLoading) {
+        if (this.props.hosts.isLoading) {
             noDataText = '正在加载...';
         } else {
             noDataText = '没有找到匹配的记录';

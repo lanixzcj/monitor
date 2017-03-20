@@ -11,8 +11,9 @@ from pytz import timezone
 
 
 def process_json(data, client_address):
+    print data
     json_dict = demjson.decode(data)
-
+    print json_dict
     host = json_dict['host'] if 'host' in json_dict else None
     if host:
         hostinfo_save_into_cache(host, client_address[0])
@@ -24,7 +25,7 @@ def process_json(data, client_address):
             for key, value in metrics.items():
                 if value['is_in_rrd']:
                     metrics_save_into_rrd(host, key, value)
-                if key == 'ip_test':
+                if key == 'net_pack':
                     save_ip_packet(host, value)
 
 
@@ -105,8 +106,10 @@ def save_ip_packet(host, metric):
 
         ip_packet = IpPacket.objects.create(host=db_host,
                                             time=ip_time,
-                                            app_name=value['app_name'],
-                                            send_port=value['port'],
-                                            recv_ip=value['recv_ip'],
-                                            recv_port=value['recv_port'])
+                                            send_mac_address=value['source_MAC'],
+                                            recv_mac_address=value['des_MAC'],
+                                            send_ip=value['source_IP'],
+                                            send_port=value['source_port'],
+                                            recv_ip=value['des_IP'],
+                                            recv_port=value['des_port'])
         ip_packet.save()

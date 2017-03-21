@@ -40,7 +40,6 @@ export default class MonitorModal extends Component {
             files = strategy.data.files ? strategy.data.files : [];
             ip_packet = strategy.data.ip_packet ? strategy.data.ip_packet : [];
         }
-
         return (
             this.props.strategy.data == null ? <div></div> :
             <div className={ `modal-content react-bs-table-insert-modal`}>
@@ -57,7 +56,7 @@ export default class MonitorModal extends Component {
                 <Modal.Body>
                     <Tabs defaultActiveKey={1} id="uncontrolled-tab-example">
                         <Tab eventKey={1} title="设备信息">
-                            <DeviceTab {...strategy.data.device} host={this.props.host}
+                            <DeviceTab isLoading={strategy.isLoading} {...strategy.data.device} host={this.props.host}
                                        changeAction={this.props.strategyActions.changeDeviceStrategy}/>
                         </Tab>
                         <Tab eventKey={3} title="文件">

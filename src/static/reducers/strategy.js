@@ -44,8 +44,13 @@ export default createReducer(initialState, {
         });
     },
     [CHANGE_DEVICE_STRATEGY_SUCCESS]: (state, payload) => {
+        let data = state.data;
+        if (data != null) {
+            data.device = payload.data;
+        }
         return Object.assign({}, state, {
             isLoading: false,
+            data: data,
         });
     },
     [CHANGE_DEVICE_STRATEGY_ERROR]: (state, payload) => {

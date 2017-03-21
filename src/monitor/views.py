@@ -320,6 +320,10 @@ def device_strategy(request, host):
         threshold.bytes_in = bytes_in
         threshold.bytes_out = bytes_out
         threshold.save()
+        threshold_changed['bytes_in_max'] = settings.BYTES_IN
+        threshold_changed['bytes_out_max'] = settings.BYTES_OUT
+        threshold_changed['disk_total'] = device.disk_total
+        threshold_changed['mem_total'] = device.mem_total
 
         return HttpResponse(demjson.encode(threshold_changed), status=status.HTTP_200_OK)
 

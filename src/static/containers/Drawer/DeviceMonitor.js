@@ -5,6 +5,7 @@ import React, {Component, PropTypes} from 'react';
 // import { Table, Modal } from 'antd';
 import {Image, ListGroup, ListGroupItem, ProgressBar, Row, Col} from 'react-bootstrap';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
+import { SERVER_URL } from '../../utils/config';
 import '../../components/Table.css';
 
 
@@ -21,9 +22,9 @@ export default class DeviceMonitor extends Component {
 
     render() {
         // console.log(this.props);
-        let cpu = `http://localhost:8000/api/v1/monitor/image/?h=${this.props.host}&m=cpu&r=${this.props.time}`;
-        let mem = `http://localhost:8000/api/v1/monitor/image/?h=${this.props.host}&m=mem&r=${this.props.time}`;
-        let net = `http://localhost:8000/api/v1/monitor/image/?h=${this.props.host}&m=net&r=${this.props.time}`;
+        let cpu = `${SERVER_URL}/api/v1/monitor/image/?h=${this.props.host}&m=cpu&r=${this.props.time}`;
+        let mem = `${SERVER_URL}/api/v1/monitor/image/?h=${this.props.host}&m=mem&r=${this.props.time}`;
+        let net = `${SERVER_URL}/api/v1/monitor/image/?h=${this.props.host}&m=net&r=${this.props.time}`;
         if (!this.props.data) {
             return (
                 <div></div>

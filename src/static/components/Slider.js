@@ -19,7 +19,7 @@ export default class MonSlider extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if (!this.state.isDragging) {
+        if (!this.state.isDragging && !nextProps.isLoading) {
             this.setState({
                 value: nextProps.value
             })

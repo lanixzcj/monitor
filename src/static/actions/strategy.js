@@ -77,9 +77,12 @@ export function loadStrategy(host) {
     };
 }
 
-export function changeDeviceRequest() {
+export function changeDeviceRequest(data) {
     return {
         type: CHANGE_DEVICE_STRATEGY_REQUEST,
+        payload: {
+            data
+        }
     };
 }
 
@@ -104,7 +107,7 @@ export function changeDeviceError(error, message) {
 
 export function changeDeviceStrategy(host, deviceThreshold) {
     return (dispatch) => {
-        dispatch(changeDeviceRequest());
+        dispatch(changeDeviceRequest(deviceThreshold));
         return fetch(`${SERVER_URL}/api/v1/monitor/strategy/device/${host}`, {
             method: 'POST',
             headers: {
@@ -118,7 +121,7 @@ export function changeDeviceStrategy(host, deviceThreshold) {
             .then(checkHttpStatus)
             .then(parseJSON)
             .then((response) => {
-                dispatch(changeDeviceSuccess());
+                dispatch(changeDeviceSuccess(response));
                 toastr.success('保存成功', `成功保存${host}设备阈值`);
             })
             .catch((error) => {

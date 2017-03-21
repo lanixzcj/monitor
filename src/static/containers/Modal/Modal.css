@@ -1,5 +1,6 @@
-.toast-top-right {
-
+/*there are some problems in insetModal, so disable bootstrap-table toastr*/
+#toast-container  {
+    visibility: hidden;
 }
 
 .ReactModal__Content.modal-dialog {

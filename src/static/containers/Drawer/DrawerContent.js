@@ -152,7 +152,7 @@ export default class SidebarContent extends Component {
                     <ButtonGroup onClick={ (e) => {
                         this.setState({time: e.target.value});
                         this.props.monitorActions.loadAllMonitors(this.props.host, e.target.value);
-                    }}>
+                    }} style={{padding: '0 0 20px 0'}}>
                         {renderButtons(values, time)}
                     </ButtonGroup>
                     {this.props.monitor.data == null ? <div></div> :
@@ -175,7 +175,7 @@ export default class SidebarContent extends Component {
                                       headers={ ipHeaders}/>
                         </Tab>
                         <Tab eventKey={5} mountOnEnter title="设备信息">
-                            <DeviceMonitor  host={this.props.monitor.host} time={this.props.monitor.time}
+                            <DeviceMonitor  host={this.props.host} time={this.state.time}
                                             data={this.props.monitor.data.deviceinfo} {...this.props.monActions}/>
                         </Tab>
 

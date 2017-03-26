@@ -19,9 +19,11 @@
   "author": "Luis Rodrigues <luis.rodrigues@seedstarslabs.com>",
   "license": "MIT",
   "dependencies": {
+    "antd": "^2.8.2",
     "autoprefixer": "6.7.6",
     "babel-core": "6.23.1",
     "babel-loader": "6.3.2",
+    "babel-plugin-import": "^1.1.1",
     "babel-plugin-react-display-name": "2.0.0",
     "babel-plugin-react-transform": "2.0.2",
     "babel-plugin-transform-decorators-legacy": "1.3.4",

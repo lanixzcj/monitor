@@ -2,7 +2,7 @@ import React, {Component, PropTypes} from 'react';
 // import { Table, Modal } from 'antd';
 import {Table, DropdownButton, MenuItem} from 'react-bootstrap';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
-import './Table.css';
+import '../styles/components/Table.css';
 import {toastr} from 'react-redux-toastr'
 
 function renderColHeader(headers) {

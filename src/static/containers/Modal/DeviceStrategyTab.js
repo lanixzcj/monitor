@@ -5,7 +5,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import * as strategyActions from '../../actions/strategy';
 import Slider from '../../components/Slider'
-import './Modal.css'
+import '../../styles/components/Modal.css'
 import AlertContainer from 'react-alert';
 import MonTable from '../../components/MonitorTable'
 import ReactModal from 'react-modal'

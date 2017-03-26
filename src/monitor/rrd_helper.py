@@ -9,6 +9,17 @@ from django.conf import settings
 lock = threading.Lock()
 
 
+def xport(host):
+    rrd_dir = settings.RRD_DIR
+
+    try:
+        print rrdtool.xport("DEF:a=%s/%s/cpu_wio.rrd:sum:AVERAGE" % (rrd_dir, host),
+                            'XPORT:a:"out bytes"', '--json')
+    except rrdtool.OperationalError, e:
+        print str(e)
+
+
+
 def get_grapn_command(graph_type, title, color, max_title_size, def_name):
     def_pos = def_name + '_pos'
     def_last = def_name + '_last'

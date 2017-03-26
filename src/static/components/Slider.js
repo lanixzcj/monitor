@@ -3,7 +3,7 @@
  */
 import React, {Component, PropTypes} from 'react';
 import {Image, ListGroup, ListGroupItem, ProgressBar, Row, Col} from 'react-bootstrap';
-import './Slider.css';
+import '../styles/components/Slider.css';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 

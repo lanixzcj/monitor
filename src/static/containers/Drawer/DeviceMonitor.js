@@ -6,7 +6,7 @@ import React, {Component, PropTypes} from 'react';
 import {Image, ListGroup, ListGroupItem, ProgressBar, Row, Col} from 'react-bootstrap';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import { SERVER_URL } from '../../utils/config';
-import '../../components/Table.css';
+import '../../styles/components/Table.css';
 
 
 export default class DeviceMonitor extends Component {

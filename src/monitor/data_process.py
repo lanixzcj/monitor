@@ -11,9 +11,7 @@ from pytz import timezone
 
 
 def process_json(data, client_address):
-    print data
     json_dict = demjson.decode(data)
-    print json_dict
     host = json_dict['host'] if 'host' in json_dict else None
     if host:
         hostinfo_save_into_cache(host, client_address[0])
@@ -27,6 +25,8 @@ def process_json(data, client_address):
                     metrics_save_into_rrd(host, key, value)
                 if key == 'net_pack':
                     save_ip_packet(host, value)
+                if key == 'cpu_info':
+                    print value
 
 
 def hostinfo_save_into_cache(host, ip):
@@ -97,19 +97,20 @@ def save_ip_packet(host, metric):
     hostname = host['hostname'] if 'hostname' in host else None
     db_host = Host.objects.get(hostname=hostname)
 
-    value_list = metric['value']
+    print metric
+    value = metric[u'value']
 
-    for value in value_list:
-        ip_time = value['time'] if 'time' in value else None
-        ip_time = string.atof(ip_time)
-        ip_time = datetime.datetime.fromtimestamp(ip_time, tz=timezone('Asia/Shanghai'))
+    ip_time = value[u'time'] if u'time' in value else None
+    print ip_time
+    ip_time = string.atof(ip_time)
+    ip_time = datetime.datetime.fromtimestamp(ip_time, tz=timezone('Asia/Shanghai'))
 
-        ip_packet = IpPacket.objects.create(host=db_host,
-                                            time=ip_time,
-                                            send_mac_address=value['source_MAC'],
-                                            recv_mac_address=value['des_MAC'],
-                                            send_ip=value['source_IP'],
-                                            send_port=value['source_port'],
-                                            recv_ip=value['des_IP'],
-                                            recv_port=value['des_port'])
-        ip_packet.save()
+    ip_packet = IpPacket.objects.create(host=db_host,
+                                        time=ip_time,
+                                        send_mac_address=value[u'source_MAC'],
+                                        recv_mac_address=value[u'des_MAC'],
+                                        send_ip=value[u'source_IP'],
+                                        send_port=value[u'source_port'],
+                                        recv_ip=value[u'des_IP'],
+                                        recv_port=value[u'des_port'])
+    ip_packet.save()

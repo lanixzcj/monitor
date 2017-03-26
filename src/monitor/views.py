@@ -54,6 +54,7 @@ def get_user(request):
 
 
 def host_list():
+    # rrd_helper.xport('can-B150M-D3H')
     start = time.time()
     alive_hosts = cache.get('alive_hosts', dict())
     unsafe_hosts = cache.get('last_unsafe_hosts', dict())

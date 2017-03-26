@@ -15,6 +15,7 @@ import * as drawerActions from '../../actions/drawer'
 import * as modalActions from '../../actions/modal'
 import ReduxToastr from 'react-redux-toastr'
 
+
 @connect(
     state => ({
         hosts: state.hosts,
@@ -56,6 +57,7 @@ export default class HomeView extends React.Component {
                 <MonitorModal />
 
                 <MonTable {...this.props.modalActions} {...this.props.hostsActions} {...this.props.drawerActions} hosts={this.props.hosts}/>
+
             </div>
         );
     }

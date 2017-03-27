@@ -44,6 +44,7 @@ export default createReducer(initialState, {
         return Object.assign({}, state, {
             isLoading: false,
             data: null,
+            host: null,
         });
     },
 });

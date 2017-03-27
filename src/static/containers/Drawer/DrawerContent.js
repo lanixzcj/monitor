@@ -2,18 +2,20 @@
  * Created by lan on 3/5/17.
  */
 import React, {Component} from 'react';
-import {ButtonGroup, Button, Tab, Tabs} from 'react-bootstrap'
+// import {Tab, Tabs} from 'react-bootstrap'
 
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import MonTable from '../../components/MonitorTable'
 import DeviceMonitor from './DeviceMonitor'
 import * as monitorActions from '../../actions/monitorData';
-import Perf from 'react-addons-perf';
+import { Button, Radio, Tabs } from 'antd';
+const ButtonGroup = Button.Group;
+const TabPane = Tabs.TabPane;
 
 const styles = {
     sidebar: {
-        width: 700,
+        // width: 700,
     },
     sidebarLink: {
         display: 'block',
@@ -90,10 +92,9 @@ const warningHeaders = {
 const values = [['hour', '小时'], ['2h', '2小时'],
     ['4h', '4小时'], ['day', '一天'], ['week', '一周'], ['month', '一月'], ['year', '一年']];
 
-function renderButtons(values, current) {
+function renderButtons(values) {
     return values.map((value) => {
-        let isActive = value[0] == current;
-        return <Button key={value[0]} value={value[0]} active={isActive}>{value[1]}</Button>
+        return <Radio.Button key={value[0]} value={value[0]}>{value[1]}</Radio.Button>
     })
 }
 
@@ -103,7 +104,7 @@ function renderButtons(values, current) {
     }),
     dispatch => ({
         monitorActions: bindActionCreators(monitorActions, dispatch)
-    })
+    }), null, { withRef: true }
 )
 export default class SidebarContent extends Component {
     constructor(props) {
@@ -135,7 +136,6 @@ export default class SidebarContent extends Component {
     // }
 
     render() {
-        console.log(this.props)
         const title = this.props.host;
         const time = this.state.time;
         const style = this.props.style ? {...styles.sidebar, ...this.props.style} : styles.sidebar;
@@ -146,43 +146,44 @@ export default class SidebarContent extends Component {
             exportCSV: true,
         };
         return (
-            <div style={rootStyle}>
+            <div >
                 <div style={styles.header}>{title}</div>
                 <div style={styles.content}>
-                    <ButtonGroup onClick={ (e) => {
+                    <Radio.Group onChange={ (e) => {
+                        console.log('s')
                         this.setState({time: e.target.value});
                         this.props.monitorActions.loadAllMonitors(this.props.host, e.target.value);
-                    }} style={{padding: '0 0 20px 0'}}>
-                        {renderButtons(values, time)}
-                    </ButtonGroup>
+                    }} style={{padding: '0 0 20px 0'}} value={time}>
+                        {renderButtons(values)}
+                    </Radio.Group>
                     {this.props.monitor.data == null ? <div></div> :
-                    <Tabs defaultActiveKey={1} id="uncontrolled-tab-example" mountOnEnter>
-
-                        <Tab eventKey={1} mountOnEnter unmountOnExit title="进程">
-                            <MonTable options={options}  data={this.props.monitor.data.processinfo} {...this.props.monActions}
-                                      headers={ processHeaders}/>
-                        </Tab>
-                        <Tab eventKey={2} mountOnEnter unmountOnExit title="文件">
-                            <MonTable options={options}  data={this.props.monitor.data.fileinfo} {...this.props.monActions}
-                                      headers={ fileHeaders}/>
-                        </Tab>
-                        <Tab eventKey={3} mountOnEnter unmountOnExit title="移动介质">
-                            <MonTable options={options}  data={this.props.monitor.data.mediainfo} {...this.props.monActions}
-                                      headers={ mediaHeaders}/>
-                        </Tab>
-                        <Tab eventKey={4} mountOnEnter unmountOnExit title="IP包">
-                            <MonTable options={options}  data={this.props.monitor.data.ip_packet} {...this.props.monActions}
-                                      headers={ ipHeaders}/>
-                        </Tab>
-                        <Tab eventKey={5} mountOnEnter title="设备信息">
+                    <Tabs defaultActiveKey="1" id="uncontrolled-tab-example">
+                        <TabPane key="1" tab="设备信息">
                             <DeviceMonitor  host={this.props.host} time={this.state.time}
                                             data={this.props.monitor.data.deviceinfo} {...this.props.monActions}/>
-                        </Tab>
+                        </TabPane>
+                        <TabPane key="2" tab="进程">
+                            <MonTable options={options}  data={this.props.monitor.data.processinfo} {...this.props.monActions}
+                                      headers={ processHeaders}/>
+                        </TabPane>
+                        <TabPane key="3" tab="文件">
+                            <MonTable options={options}  data={this.props.monitor.data.fileinfo} {...this.props.monActions}
+                                      headers={ fileHeaders}/>
+                        </TabPane>
+                        <TabPane key="4" tab="移动介质">
+                            <MonTable options={options}  data={this.props.monitor.data.mediainfo} {...this.props.monActions}
+                                      headers={ mediaHeaders}/>
+                        </TabPane>
+                        <TabPane key="5" tab="IP包">
+                            <MonTable options={options}  data={this.props.monitor.data.ip_packet} {...this.props.monActions}
+                                      headers={ ipHeaders}/>
+                        </TabPane>
 
-                        <Tab eventKey={6} mountOnEnter unmountOnExit title="预警历史">
+
+                        <TabPane key="6" tab="预警历史">
                             <MonTable options={options}  data={this.props.monitor.data.warninginfo} {...this.props.monActions}
                                       headers={ warningHeaders}/>
-                        </Tab>
+                        </TabPane>
                     </Tabs>}
                 </div>
             </div>

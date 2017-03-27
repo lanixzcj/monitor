@@ -4,6 +4,7 @@
 import React, {Component, PropTypes} from 'react';
 // import { Table, Modal } from 'antd';
 import {Image, ListGroup, ListGroupItem, ProgressBar, Row, Col} from 'react-bootstrap';
+import { Progress } from 'antd';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import { SERVER_URL } from '../../utils/config';
 import '../../styles/components/Table.css';
@@ -57,11 +58,8 @@ export default class DeviceMonitor extends Component {
                 <ListGroupItem><strong>磁盘使用率</strong></ListGroupItem>
                 <ListGroupItem >
                     <Row>
-                        <Col md={8}>
-                            <ProgressBar active now={per} label={`${per}%`}/>
-                        </Col>
-                        <Col md={4}>
-                            {label}
+                        <Col md={10}>
+                            <Progress percent={per} status="active" format={() => label}/>
                         </Col>
                     </Row>
 

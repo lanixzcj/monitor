@@ -17,7 +17,7 @@ export function showDrawer(host) {
             payload: {
                 host
             }});
-        dispatch(loadAllMonitors(host));
+        // dispatch(loadAllMonitors(host));
     };
 }
 

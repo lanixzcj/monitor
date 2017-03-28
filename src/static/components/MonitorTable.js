@@ -8,11 +8,9 @@ const { Column, ColumnGroup } = Table;
 function renderColHeader(headers) {
     let array = new Array();
     for (let col in headers) {
-        let width;
         let name;
         if (typeof headers[col] == 'string') {
             name = headers[col];
-            width = col == 'time' ? '180px' : '';
         } else if (typeof headers[col] == 'object') {
             name = headers[col].name;
         }

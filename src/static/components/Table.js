@@ -1,7 +1,5 @@
 import React, {Component, PropTypes} from 'react';
 import { Table, Icon ,Dropdown, Button, Menu} from 'antd';
-const { Column, ColumnGroup, } = Table;
-import {DropdownButton, MenuItem} from 'react-bootstrap';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import '../styles/components/Table.css';
 
@@ -29,49 +27,6 @@ function columnClassNameFormat(fieldValue, row, rowIdx, colIdx) {
             return ''
     }
 }
-
-function dropdownFormatter(cell, row, enumObject) {
-    let menuItem = new Array();
-    if (row.hostname !== undefined && row.hostname.length != 0) {
-        menuItem.push(<MenuItem key={1.1} eventKey={1.1} onClick={
-            () => {
-                enumObject.showModal(row.hostname);
-            }
-        }>配置安全策略</MenuItem>);
-    }
-    if (row.is_trusted) {
-        menuItem.push(<MenuItem key={1.2} eventKey={1.2} onClick= {
-            () => {
-                enumObject.removeTrustedHost(row.mac_address);
-            }}>从信任列表中移除</MenuItem>);
-    } else {
-        menuItem.push(<MenuItem key={1.2} eventKey={1.2} onClick= {
-            () => {
-                enumObject.addTrustedHost(row.mac_address);
-            }}>加入信任列表</MenuItem>);
-    }
-
-    return (
-        <DropdownButton bsStyle='default' title='更多' key={1} id={`dropdown-basic-${row.id}`}>
-            { menuItem }
-        </DropdownButton>
-    );
-}
-
-function statusFormatter(cell, row, enumObject) {
-    return (
-        (row.hostname == undefined || row.hostname.length == 0) ?
-            <div> </div> :
-            <a href="#" onClick= {
-                () => {
-                    enumObject(row.hostname);
-                }}>
-                <i className='glyphicon glyphicon-stats' />
-            </a>
-    );
-}
-
-
 
 export default class MonTable extends Component {
     static propTypes = {
@@ -126,7 +81,7 @@ export default class MonTable extends Component {
                     () => {
                         this.props.showDrawer(row.hostname);
                     }}>
-                    <i className='glyphicon glyphicon-stats' />
+                    <Icon type="area-chart"/>
                 </a>
         );
     };
@@ -171,22 +126,6 @@ export default class MonTable extends Component {
     }
 
     render() {
-        let noDataText;
-        if (this.props.hosts.isLoading) {
-            noDataText = '正在加载...';
-        } else {
-            noDataText = '没有找到匹配的记录';
-        }
-        {/*<BootstrapTable  data={this.props.hosts.data} bordered={ false } options={ {noDataText: noDataText} }>*/}
-        {/*<TableHeaderColumn dataField='hostname' dataAlign='center' >ID/主机名</TableHeaderColumn>*/}
-        {/*<TableHeaderColumn dataField='monitor' dataAlign='center' dataFormat={ statusFormatter} formatExtraData={ this.props.showDrawer }>监控</TableHeaderColumn>*/}
-        {/*<TableHeaderColumn dataField='stat' dataAlign='center'  dataFormat={ statFormatter } formatExtraData={ statType }*/}
-        {/*columnClassName={ columnClassNameFormat }>状态</TableHeaderColumn>*/}
-        {/*<TableHeaderColumn dataField='ip' dataAlign='center' >IP地址</TableHeaderColumn>*/}
-        {/*<TableHeaderColumn dataField='mac_address' dataAlign='center' isKey={ true } >MAC地址</TableHeaderColumn>*/}
-        {/*<TableHeaderColumn dataField='operate' dataAlign='center'  columnClassName='my-dropdown-content' dataFormat={ dropdownFormatter } formatExtraData={ this.props }>操作</TableHeaderColumn>*/}
-        {/*</BootstrapTable>*/}
-
         return (
             <Table columns={this.columns} loading={this.props.hosts.isLoading} dataSource={this.props.hosts.data} rowKey="mac_address">
 

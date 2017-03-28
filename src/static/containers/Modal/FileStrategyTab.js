@@ -13,10 +13,11 @@ import {InsertModalFooter, InsertModalHeader} from 'react-bootstrap-table'
 import DeviceTab from './DeviceStrategyTab'
 import StrategyTable from '../../components/StrategyTable'
 
-const fileHeaders = {
-    file : '文件名',
-    permission: '权限',
-};
+
+const fileHeaders = [
+    {field: 'file', name: '文件名'},
+    {field: 'permission', name: '权限'},
+];
 
 
 @connect(

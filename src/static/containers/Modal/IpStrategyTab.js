@@ -24,21 +24,10 @@ function ipValidator(value, row) {
     }
 }
 
-const ipHeaders = {
-    rule: {
-        name: '规则链',
-        editable: {
-            type: 'select',
-            options: {values: [ 'INPUT', 'FORWARD', 'OUTPUT']}
-        }
-    },
-    ip: {
-        name: 'IP',
-        editable: {
-            validator: ipValidator,
-        }
-    },
-};
+const ipHeaders = [
+    {field: 'rule', name: '规则链', type: 'select'},
+    {field: 'ip', name: 'IP'},
+];
 
 
 @connect(

@@ -56,7 +56,8 @@ export default class HomeView extends React.Component {
                     transitionOut="bounceOut"/>
                 <MonitorModal />
 
-                <MonTable {...this.props.modalActions} {...this.props.hostsActions} {...this.props.drawerActions} hosts={this.props.hosts}/>
+                <MonTable {...this.props.modalActions} {...this.props.hostsActions}
+                          {...this.props.drawerActions} hosts={this.props.hosts}/>
 
             </div>
         );

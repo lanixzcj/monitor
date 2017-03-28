@@ -15,7 +15,7 @@ import {
     CHANGE_DEVICE_STRATEGY_ERROR
 } from '../constants';
 import {createConstantsWithNamedType} from '../constants'
-import {toastr} from 'react-redux-toastr'
+import { notification } from 'antd'
 import { showLoading, hideLoading } from 'react-redux-loading-bar'
 
 export function loadStrategyRequest() {
@@ -122,7 +122,7 @@ export function changeDeviceStrategy(host, deviceThreshold) {
             .then(parseJSON)
             .then((response) => {
                 dispatch(changeDeviceSuccess(response));
-                toastr.success('保存成功', `成功保存${host}设备阈值`);
+                notification['success']({message: '保存成功', description: `成功保存${host}设备阈值`});
             })
             .catch((error) => {
                 if (error && typeof error.response !== 'undefined' && error.response.status === 401) {
@@ -137,7 +137,7 @@ export function changeDeviceStrategy(host, deviceThreshold) {
                     // Most likely connection issues
                     dispatch(changeDeviceError('Connection Error', 'An error occurred while sending your data!'));
                 }
-                toastr.error('保存失败', '');
+                notification['error']({message: '保存失败'});
 
                 return Promise.resolve(); // TODO: we need a promise here because of the tests, find a better way
             });
@@ -227,7 +227,7 @@ export function addStrategy(name, host, strategy) {
             .then(parseJSON)
             .then((data) => {
                 dispatch(addSuccess(name, data, host));
-                toastr.success('添加成功', `成功添加${host}安全策略`);
+                notification['success']({message: '添加成功', description: `成功添加${host}安全策略`});
             })
             .catch((error) => {
                 if (error && typeof error.response !== 'undefined' && error.response.status === 401) {
@@ -242,7 +242,7 @@ export function addStrategy(name, host, strategy) {
                     // Most likely connection issues
                     dispatch(addError(name, 'Connection Error', 'An error occurred while sending your data!'));
                 }
-                toastr.error('添加失败', '');
+                notification['error']({message: '添加失败'});
 
                 return Promise.resolve(); // TODO: we need a promise here because of the tests, find a better way
             });
@@ -266,7 +266,7 @@ export function removeStrategy(name, host, strategy_ids) {
             .then(parseJSON)
             .then((data) => {
                 dispatch(deleteSuccess(name, data, host));
-                toastr.success('删除成功', `成功删除${host}安全策略`);
+                notification['success']({message: '删除成功', description: `成功删除${host}安全策略`});
             })
             .catch((error) => {
                 if (error && typeof error.response !== 'undefined' && error.response.status === 401) {
@@ -281,7 +281,7 @@ export function removeStrategy(name, host, strategy_ids) {
                     // Most likely connection issues
                     dispatch(deleteError(name, 'Connection Error', 'An error occurred while sending your data!'));
                 }
-                toastr.error('删除失败', '');
+                notification['error']({message: '删除失败'});
 
                 return Promise.resolve(); // TODO: we need a promise here because of the tests, find a better way
             });

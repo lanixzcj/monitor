@@ -2,13 +2,12 @@
  * Created by lan on 17-3-7.
  */
 import React, {Component, PropTypes} from 'react';
-// import { Table, Modal } from 'antd';
-import {Image, ListGroup, ListGroupItem, ProgressBar, Row, Col} from 'react-bootstrap';
 import { Progress } from 'antd';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import { SERVER_URL } from '../../utils/config';
 import '../../styles/components/Table.css';
-
+import { Collapse, Row, Col } from 'antd';
+const Panel = Collapse.Panel;
 
 export default class DeviceMonitor extends Component {
     constructor(props) {
@@ -42,30 +41,26 @@ export default class DeviceMonitor extends Component {
         }
 
         return (
-            <ListGroup>
-                <ListGroupItem><strong>网络监控</strong></ListGroupItem>
-                <ListGroupItem className='text-center'>
-                    <Image src={ net }/>
-                </ListGroupItem>
-                <ListGroupItem><strong>CPU监控</strong></ListGroupItem>
-                <ListGroupItem className='text-center'>
-                    <Image src={ cpu}/>
-                </ListGroupItem>
-                <ListGroupItem><strong>内存监控</strong></ListGroupItem>
-                <ListGroupItem className='text-center'>
-                    <Image src={ mem }/>
-                </ListGroupItem>
-                <ListGroupItem><strong>磁盘使用率</strong></ListGroupItem>
-                <ListGroupItem >
-                    <Row>
-                        <Col md={10}>
-                            <Progress percent={per} status="active" format={() => label}/>
-                        </Col>
-                    </Row>
-
-                </ListGroupItem>
-            </ListGroup>
-
+            <div>
+                <Collapse bordered={false} defaultActiveKey={['1', '2', '3', '4']}>
+                    <Panel header="网络监控" key="1" className="text-center">
+                        <iamge src={ net }/>
+                    </Panel>
+                    <Panel header="CPU监控" key="2" className="text-center">
+                        <iamge src={ cpu}/>
+                    </Panel>
+                    <Panel header="内存监控" key="3" className="text-center">
+                        <image src={ mem }/>
+                    </Panel>
+                    <Panel header="硬盘监控" key="4">
+                        <Row>
+                            <Col span={20}>
+                                <Progress percent={per} status="active" format={() => label}/>
+                            </Col>
+                        </Row>
+                    </Panel>
+                </Collapse>
+            </div>
 
         );
     }

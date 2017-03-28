@@ -71,6 +71,8 @@ function statusFormatter(cell, row, enumObject) {
     );
 }
 
+
+
 export default class MonTable extends Component {
     static propTypes = {
         hosts: React.PropTypes.object,
@@ -130,29 +132,33 @@ export default class MonTable extends Component {
     };
 
     renderDropdown = (text, row, index) => {
+        const handleMenuClick = (e) => {
+            switch (e.key) {
+                case '1':
+                    this.props.showModal(row.hostname);
+                    break;
+                case '2':
+                    this.props.removeTrustedHost(row.mac_address);
+                    break;
+                case '3':
+                    this.props.addTrustedHost(row.mac_address);
+                    break;
+                default: break;
+            }
+        };
         let menuItem = new Array();
         if (row.hostname !== undefined && row.hostname.length != 0) {
-            menuItem.push(<Menu.Item key='1.1' eventKey='1.1' onClick={
-                () => {
-                    this.props.showModal(row.hostname);
-                }
-            }>配置安全策略</Menu.Item>);
+            menuItem.push(<Menu.Item key={`1`}>配置安全策略</Menu.Item>);
         }
         if (row.is_trusted) {
-            menuItem.push(<Menu.Item key='1.2' eventKey='1.2' onClick= {
-                () => {
-                    this.props.removeTrustedHost(row.mac_address);
-                }}>从信任列表中移除</Menu.Item>);
+            menuItem.push(<Menu.Item key={`2`}>从信任列表中移除</Menu.Item>);
         } else {
-            menuItem.push(<Menu.Item key='1.3' eventKey='1.3' onClick= {
-                () => {
-                    this.props.addTrustedHost(row.mac_address);
-                }}>加入信任列表</Menu.Item>);
+            menuItem.push(<Menu.Item key={`3`}>加入信任列表</Menu.Item>);
         }
-        const menu = <Menu>{menuItem}</Menu>;
+        const menu = <Menu onClick={handleMenuClick}>{menuItem}</Menu>;
 
         return (
-            <Dropdown overlay={menu} key={`${index}`} id={`dropdown-basic-${index}`}>
+            <Dropdown overlay={menu} key={`${index}`} >
                 <Button style={{ marginLeft: 8 }}>
                 更多 <Icon type="down" />
                 </Button>
@@ -180,10 +186,9 @@ export default class MonTable extends Component {
         {/*<TableHeaderColumn dataField='mac_address' dataAlign='center' isKey={ true } >MAC地址</TableHeaderColumn>*/}
         {/*<TableHeaderColumn dataField='operate' dataAlign='center'  columnClassName='my-dropdown-content' dataFormat={ dropdownFormatter } formatExtraData={ this.props }>操作</TableHeaderColumn>*/}
         {/*</BootstrapTable>*/}
+
         return (
-
-
-            <Table columns={this.columns} dataSource={this.props.hosts.data} rowKey="mac_address">
+            <Table columns={this.columns} loading={this.props.hosts.isLoading} dataSource={this.props.hosts.data} rowKey="mac_address">
 
             </Table>
         );

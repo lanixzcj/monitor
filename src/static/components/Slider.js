@@ -4,16 +4,17 @@
 import React, {Component, PropTypes} from 'react';
 import {Image, ListGroup, ListGroupItem, ProgressBar, Row, Col} from 'react-bootstrap';
 import '../styles/components/Slider.css';
-import Slider from 'rc-slider';
+import { Slider } from 'antd';
 import 'rc-slider/assets/index.css';
 
 
 export default class MonSlider extends Component {
     constructor(props) {
         super(props);
+        const value = this.props.value === undefined ? 0 : this.props.value;
 
         this.state = {
-            value: 0,
+            value: value,
             isDragging: false,
         }
     }

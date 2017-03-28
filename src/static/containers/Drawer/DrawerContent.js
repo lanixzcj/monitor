@@ -150,7 +150,6 @@ export default class SidebarContent extends Component {
                 <div style={styles.header}>{title}</div>
                 <div style={styles.content}>
                     <Radio.Group onChange={ (e) => {
-                        console.log('s')
                         this.setState({time: e.target.value});
                         this.props.monitorActions.loadAllMonitors(this.props.host, e.target.value);
                     }} style={{padding: '0 0 20px 0'}} value={time}>
@@ -164,25 +163,25 @@ export default class SidebarContent extends Component {
                         </TabPane>
                         <TabPane key="2" tab="进程">
                             <MonTable options={options}  data={this.props.monitor.data.processinfo} {...this.props.monActions}
-                                      headers={ processHeaders}/>
+                                      headers={ processHeaders} isLoading={this.props.monitor.isLoading}/>
                         </TabPane>
                         <TabPane key="3" tab="文件">
                             <MonTable options={options}  data={this.props.monitor.data.fileinfo} {...this.props.monActions}
-                                      headers={ fileHeaders}/>
+                                      headers={ fileHeaders} isLoading={this.props.monitor.isLoading}/>
                         </TabPane>
                         <TabPane key="4" tab="移动介质">
                             <MonTable options={options}  data={this.props.monitor.data.mediainfo} {...this.props.monActions}
-                                      headers={ mediaHeaders}/>
+                                      headers={ mediaHeaders} isLoading={this.props.monitor.isLoading}/>
                         </TabPane>
                         <TabPane key="5" tab="IP包">
                             <MonTable options={options}  data={this.props.monitor.data.ip_packet} {...this.props.monActions}
-                                      headers={ ipHeaders}/>
+                                      headers={ ipHeaders} isLoading={this.props.monitor.isLoading}/>
                         </TabPane>
 
 
                         <TabPane key="6" tab="预警历史">
                             <MonTable options={options}  data={this.props.monitor.data.warninginfo} {...this.props.monActions}
-                                      headers={ warningHeaders}/>
+                                      headers={ warningHeaders} isLoading={this.props.monitor.isLoading}/>
                         </TabPane>
                     </Tabs>}
                 </div>

@@ -1,5 +1,6 @@
 import React, {Component, PropTypes} from 'react';
-import {Modal, Button, Tab, Tabs, ListGroup, ListGroupItem, ProgressBar, Row, Col} from 'react-bootstrap';
+import ReactDOM from 'react-dom'
+import {Button, Tab, ListGroup, ListGroupItem, ProgressBar, Row, Col} from 'react-bootstrap';
 import ReactBootstrapSlider from 'react-bootstrap-slider';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -12,10 +13,13 @@ import ReactModal from 'react-modal'
 import {InsertModalFooter, InsertModalHeader} from 'react-bootstrap-table'
 import DeviceTab from './DeviceStrategyTab'
 import MonitorContent from './ModalContent'
+import { Modal, Tabs } from 'antd';
+const ButtonGroup = Button.Group;
+const TabPane = Tabs.TabPane;
 
 @connect(
     state => ({
-        modal: state.modal
+        modal: state.modal,
     }),
     dispatch => ({
         modalActions: bindActionCreators(modalActions, dispatch),
@@ -30,14 +34,16 @@ export default class MonitorModal extends Component {
         return (
             <div>
 
-                <ReactModal className='react-bs-insert-modal modal-dialog'
-                    isOpen={this.props.modal.visible}
-                    contentLabel="Minimal Modal Example"
-                    shouldCloseOnOverlayClick={true}
-                    onRequestClose={this.props.modalActions.hideModal}
+                <Modal
+                    visible={this.props.modal.visible}
+                    title={`配置${this.props.modal.host}安全策略`}
+                    onCancel={this.props.modalActions.hideModal}
+                    footer={null}
+                    afterClose={this.unmountContent}
                 >
-                    <MonitorContent hideModal={this.props.modalActions.hideModal} host={this.props.modal.host}/>
-                </ReactModal>
+                    {!this.props.modal.visible ? <div></div> :
+                        <MonitorContent host={this.props.modal.host}/>}
+                </Modal>
 
             </div>
 

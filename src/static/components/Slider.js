@@ -3,7 +3,7 @@
  */
 import React, {Component, PropTypes} from 'react';
 import '../styles/components/Slider.css';
-import { Slider } from 'antd';
+import { Slider, Row, Col } from 'antd';
 import 'rc-slider/assets/index.css';
 
 
@@ -38,8 +38,8 @@ export default class MonSlider extends Component {
         let {min, max, step, units, label} = {...defaultProp, ...this.props};
         return (
             <Row>
-                <Col md={3}>{label}</Col>
-                <Col md={5}>
+                <Col span={6}>{label}</Col>
+                <Col span={10}>
                     <Slider
                         min={min}
                         max={max}
@@ -56,7 +56,7 @@ export default class MonSlider extends Component {
                         onAfterChange={()=>{this.setState({isDragging: false})}}
                     />
                 </Col>
-                <Col md={4}>当前值为:{this.state.value}{units}</Col>
+                <Col span={8}>当前值为:{this.state.value}{units}</Col>
             </Row>
         );
     }

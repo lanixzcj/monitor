@@ -4,3 +4,19 @@ html {
   font-size: 100%;
   font-family: $font-family-regular;
 }
+
+.text-success {
+    color: $color-success;
+}
+
+.text-warning {
+  color: $color-warning;
+}
+
+.text-danger {
+  color: $color-danger;
+}
+
+.text-center {
+  text-align: center;
+}

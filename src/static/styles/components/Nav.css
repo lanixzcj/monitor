@@ -1,13 +1,25 @@
-.login {
+.pullRight {
     float: right;
     margin-right: 20px;
 }
 
+.pullLeft {
+    float: left;
+    margin-left: 20px;
+}
+
+.logo {
+    font-size: 16px;
+}
+
 .setting, .setting:hover {
     height: 40px;
-    float: right;
-    margin-right: 20px;
     text-decoration: none;
+    color: rgba(0, 0, 0, 0.65);
+}
+
+.setting:hover {
+    color: #108ee9;
 }
 
 .setting-menu a, .setting-menu a:hover {

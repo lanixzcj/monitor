@@ -5,7 +5,7 @@ from django.core.cache import cache
 from celery.schedules import crontab
 
 # set the default Django settings module for the 'celery' program.
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "djangoreactredux.settings.dev")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "monitor_settings.settings.dev")
 
 app = Celery('monitor')
 

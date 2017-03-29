@@ -1,14 +1,6 @@
 from __future__ import unicode_literals
 
-import six
 from django.db import models
-from django.utils import timezone
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
-from django.contrib.auth.models import Permission, Group
-from django.contrib.contenttypes.models import ContentType
-# Create your models here.
-from django.utils.encoding import python_2_unicode_compatible
-from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
 
 

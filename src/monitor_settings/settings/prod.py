@@ -1,4 +1,4 @@
-from djangoreactredux.settings.base import *  # NOQA (ignore all errors on this line)
+from monitor_settings.settings.base import *  # NOQA (ignore all errors on this line)
 
 
 DEBUG = False
@@ -13,7 +13,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'djangoreactredux_prod',
-        'USER': 'djangoreactredux',
+        'USER': 'monitor_settings',
         'PASSWORD': 'password',
         'HOST': 'postgres',
         'PORT': 5432,

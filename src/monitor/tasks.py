@@ -29,6 +29,7 @@ class MyStreamRequestHandler(StreamRequestHandler):
                 break
 
 
+# 监听县城
 @shared_task
 def server_thread():
     addr = '', 8650
@@ -37,6 +38,7 @@ def server_thread():
     server.serve_forever()
 
 
+# 清理任务
 @shared_task
 def clean_up():
     hosts = cache.get('alive_hosts', dict())
@@ -49,6 +51,7 @@ def clean_up():
     cache.set('alive_hosts', hosts, 300)
 
 
+# 扫描网段任务
 @shared_task
 def scanning_host():
     start = time.time()

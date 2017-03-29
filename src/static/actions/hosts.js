@@ -134,7 +134,7 @@ export function removeTrustedHost(mac_address) {
 export function loadHosts() {
     return (dispatch) => {
         dispatch(loadHostRequest());
-        return fetch(`${SERVER_URL}/api/v1/monitor/ss/`, {
+        return fetch(`${SERVER_URL}/api/v1/monitor/hosts/`, {
 
         })
             .then(checkHttpStatus)

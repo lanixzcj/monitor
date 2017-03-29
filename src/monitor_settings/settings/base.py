@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-"""Django settings for djangoreactredux project."""
+"""Django settings for monitor_settings project."""
 
 import os
 
@@ -48,9 +48,9 @@ TEMPLATES = [
     },
 ]
 
-ROOT_URLCONF = 'djangoreactredux.urls'
+ROOT_URLCONF = 'monitor_settings.urls'
 
-WSGI_APPLICATION = 'djangoreactredux.wsgi.application'
+WSGI_APPLICATION = 'monitor_settings.wsgi.application'
 
 LANGUAGE_CODE = 'en-us'
 

@@ -22,19 +22,12 @@ admin.site.site_header = u'网络监控平台'
 
 
 urlpatterns = [
-    url(r'^$', server_view.home),
     url(r'^trusted_hosts/', server_view.trusted_hosts),
-    url(r'^ss/', server_view.home_host_info),
+    url(r'^hosts/', server_view.home_host_info),
     url(r'^user/$', server_view.get_user),
     url(r'^monitor/(?P<monitor_type>[\w_-]+)/(?P<host>[\w_-]+)', server_view.monitor_data),
-    url(r'^strategy/device/(?P<host>[\w_-]+)', server_view.device_strategy),
     url(r'^strategy/(?P<strategy_type>[\w_-]+)/(?P<host>[\w_-]+)', server_view.strategy_data),
-    url(r'^hostgraph/$', server_view.host_graphs),
-    url(r'^hostgraph/(?P<monitor_info>\w+)$', server_view.get_monitor_data),
-    url(r'^safe_strategy/$', server_view.safe_strategy),
-    url(r'^safe_strategy/(?P<strategy_method>\w+)$', server_view.strategy_method),
     url(r'^(?:hostgraph/)?image/$', server_view.image),
     url(r'^admin/', admin.site.urls),
     url(r'^login/$', server_view.login),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]

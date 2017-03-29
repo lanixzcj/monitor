@@ -1,8 +1,7 @@
+# -*- coding: UTF-8 -*-
 import string
-
 import demjson
 import rrd_helper
-import time
 import datetime
 from django.core.cache import cache
 from models import Host, HostThreshold, IpPacket, DeviceInfo
@@ -29,6 +28,7 @@ def process_json(data, client_address):
                     print value
 
 
+# 记录在线主机列表
 def hostinfo_save_into_cache(host, ip):
     hostname = host['hostname'] if 'hostname' in host else None
     # ip = host['ip'] if 'ip' in host else None
@@ -46,6 +46,7 @@ def hostinfo_save_into_cache(host, ip):
     cache.set('alive_hosts', hosts, 300)
 
 
+# 主机存入数据库
 def hostinfo_save_into_db(host, ip):
     hostname = host['hostname'] if 'hostname' in host else None
     mac_address = host['mac_address'].strip() if 'mac_address' in host else None
@@ -68,6 +69,7 @@ def hostinfo_save_into_db(host, ip):
         deviceinfo.save()
 
 
+# 监控数据存入rrd
 def metrics_save_into_rrd(host, name, metric):
     hostname = host['hostname'] if 'hostname' in host else None
     localtime = host['localtime'] if 'localtime' in host else None
@@ -93,6 +95,7 @@ def metrics_save_into_rrd(host, name, metric):
         deviceinfo.save()
 
 
+# 保存网络包到数据库
 def save_ip_packet(host, metric):
     hostname = host['hostname'] if 'hostname' in host else None
     db_host = Host.objects.get(hostname=hostname)

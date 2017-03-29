@@ -16,7 +16,6 @@ import {
 } from '../constants';
 import {createConstantsWithNamedType} from '../constants'
 import { notification } from 'antd'
-import { showLoading, hideLoading } from 'react-redux-loading-bar'
 
 export function loadStrategyRequest() {
     return {

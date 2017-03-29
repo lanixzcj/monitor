@@ -23,9 +23,6 @@ const VENDOR = [
     'classnames',
     'redux',
     'react-router-redux',
-    'jquery',
-    'bootstrap-loader',
-    'font-awesome-webpack!./styles/font-awesome.config.prod.js'
 ];
 
 const basePath = path.resolve(__dirname, '../src/static/');
@@ -80,11 +77,6 @@ const common = {
         new webpack.DefinePlugin({
             'process.env': { NODE_ENV: TARGET === 'dev' ? '"development"' : '"production"' },
             '__DEVELOPMENT__': TARGET === 'dev'
-        }),
-        new webpack.ProvidePlugin({
-            '$': 'jquery',
-            'jQuery': 'jquery',
-            'window.jQuery': 'jquery'
         }),
         new CleanWebpackPlugin([PATHS.build], {
             root: process.cwd()

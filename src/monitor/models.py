@@ -115,32 +115,32 @@ class WarningHistory(models.Model):
 class IpPacketSerializer(serializers.ModelSerializer):
     class Meta:
         model = IpPacket
-        fields = ('time', 'host', 'send_mac_address', 'recv_mac_address',
+        fields = ('id', 'time', 'host', 'send_mac_address', 'recv_mac_address',
                   'send_ip', 'send_port', 'recv_ip', 'recv_port')
 
 
 class ProcessSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProcessInfo
-        fields = ('time', 'host', 'process_name', 'process_id', 'user', 'boottime', 'runtime', 'used_ports')
+        fields = ('id', 'time', 'host', 'process_name', 'process_id', 'user', 'boottime', 'runtime', 'used_ports')
 
 
 class FileSerializer(serializers.ModelSerializer):
     class Meta:
         model = FileInfo
-        fields = ('time', 'host', 'file_name', 'user', 'operate_type', 'modify_size')
+        fields = ('id', 'time', 'host', 'file_name', 'user', 'operate_type', 'modify_size')
 
 
 class MediaSerializer(serializers.ModelSerializer):
     class Meta:
         model = MediaInfo
-        fields = ('time', 'host', 'media_name', 'io_type', 'media_size', 'operate_file')
+        fields = ('id', 'time', 'host', 'media_name', 'io_type', 'media_size', 'operate_file')
 
 
 class WarningHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = WarningHistory
-        fields = ('time', 'host', 'warning_type', 'warning_content', 'warning_level')
+        fields = ('id', 'time', 'host', 'warning_type', 'warning_content', 'warning_level')
 
 
 class IpPacketsRules(models.Model):

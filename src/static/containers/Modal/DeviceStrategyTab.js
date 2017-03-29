@@ -1,11 +1,7 @@
 import React, {Component, PropTypes} from 'react';
 import { Button } from 'antd';
 import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
-import * as strategyActions from '../../actions/strategy';
 import Slider from '../../components/Slider'
-import '../../styles/components/Modal.css'
-import {InsertModalFooter, InsertModalHeader} from 'react-bootstrap-table'
 import { Collapse } from 'antd';
 const Panel = Collapse.Panel;
 

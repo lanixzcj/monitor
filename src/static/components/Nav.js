@@ -1,9 +1,11 @@
 import React from 'react';
 import {Link} from 'react-router';
-import {Nav, NavDropdown, NavItem, Navbar, MenuItem, Button} from 'react-bootstrap'
+import { Menu, Icon ,Button, Dropdown} from 'antd';
 import fetch from 'isomorphic-fetch';
 import { SERVER_URL } from '../utils/config';
 import { checkHttpStatus, parseJSON } from '../utils';
+import '../styles/components/Nav.css'
+
 
 export default class MonNav extends React.Component {
     constructor(props) {
@@ -39,28 +41,37 @@ export default class MonNav extends React.Component {
     }
 
     render() {
-        let userDom = <NavItem href="/admin/login/?next=/">登录</NavItem>;
+        let userDom = <a className="login" href="/admin/login/?next=/"><Button >登录</Button></a>;
         if (this.state.user && this.state.isAuthenticated && !this.state.fetching) {
-            userDom = <NavDropdown eventKey={3} title={this.state.user} id="basic-nav-dropdown">
-                        <MenuItem eventKey={3.1} href="/admin/">设置</MenuItem>
-                        <MenuItem eventKey={3.2} href="/admin/logout/">登出</MenuItem>
-                    </NavDropdown>;
+            const menu = (
+                <Menu className="setting-menu">
+                    <Menu.Item>
+                        <a  href="/admin/">设置</a>
+                    </Menu.Item>
+                    <Menu.Item>
+                        <a href="/admin/logout/">登出</a>
+                    </Menu.Item>
+                </Menu>
+            );
+            userDom = <Dropdown overlay={menu}>
+                            <a className="ant-dropdown-link setting" href="#">
+                                {this.state.user} <Icon type="down" />
+                            </a>
+                        </Dropdown>;
         }
 
         return (
-            <Navbar>
-                <Navbar.Header>
-                    <Navbar.Brand>
-                        <a href="#">网络监控平台</a>
-                    </Navbar.Brand>
-                </Navbar.Header>
-                <Nav>
-                    <NavItem eventKey={1} href="#">首页</NavItem>
-                </Nav>
-                <Nav pullRight>
-                    {userDom}
-                </Nav>
-            </Navbar>
+            <div style={{padding: '0px 50px'}}>
+                <Menu
+                    mode="horizontal"
+                    style={{float: 'left'}}
+                >
+                    <Menu.Item key="home" href="/">
+                        首页
+                    </Menu.Item>
+                </Menu>
+                {userDom}
+            </div>
         );
     }
 }

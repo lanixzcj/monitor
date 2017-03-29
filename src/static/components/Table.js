@@ -1,6 +1,5 @@
 import React, {Component, PropTypes} from 'react';
 import { Table, Icon ,Dropdown, Button, Menu} from 'antd';
-import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import '../styles/components/Table.css';
 
 

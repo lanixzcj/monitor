@@ -1,30 +1,14 @@
 import React, {Component, PropTypes} from 'react';
 // import { Table, Modal } from 'antd';
-import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import '../styles/components/Table.css';
 import { Table, Icon } from 'antd';
 const { Column, ColumnGroup } = Table;
 
-function renderColHeader(headers) {
-    let array = new Array();
-    for (let col in headers) {
-        let name;
-        if (typeof headers[col] == 'string') {
-            name = headers[col];
-        } else if (typeof headers[col] == 'object') {
-            name = headers[col].name;
-        }
-
-        array.push(
-            <Column
-                title={name}
-                dataIndex={col}
-                key={col}
-            />
-        );
-    }
-
-    return array;
+function renderColHeader(columns) {
+    return columns.map((column, i) => {
+        const {field, name} = column;
+        return <Column title={name} dataIndex={field} key={field}/>
+    });
 }
 
 
@@ -39,7 +23,7 @@ export default class MonTable extends Component {
         options.noDataText = '没有找到匹配的记录';
         const extra = this.props.extra ? this.props.extra : {};
         return (
-            <Table dataSource={data} loading={this.props.isLoading}>
+            <Table dataSource={data} loading={this.props.isLoading} rowKey="id">
                 {renderColHeader(this.props.headers)}
             </Table>
         );

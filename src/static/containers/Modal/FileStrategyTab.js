@@ -1,16 +1,8 @@
 import React, {Component, PropTypes} from 'react';
-import {Modal, Button, Tab, Tabs, ListGroup, ListGroupItem, ProgressBar, Row, Col} from 'react-bootstrap';
-import ReactBootstrapSlider from 'react-bootstrap-slider';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import * as strategyActions from '../../actions/strategy';
-import Slider from '../../components/Slider'
-import '../../styles/components/Modal.css'
-import AlertContainer from 'react-alert';
-import MonTable from '../../components/MonitorTable'
-import ReactModal from 'react-modal'
-import {InsertModalFooter, InsertModalHeader} from 'react-bootstrap-table'
-import DeviceTab from './DeviceStrategyTab'
+import {Spin} from 'antd'
 import StrategyTable from '../../components/StrategyTable'
 
 
@@ -48,9 +40,11 @@ export default class MonitorModal extends Component {
         files = data instanceof Array && data.length != 0
             ? data : files;
         return (
-            <StrategyTable data={files} onAddRow={this.onAddRow}
-                           onDeleteRow={this.onDeleteRow}
-                      headers={ fileHeaders}/>
+            <Spin spinning={this.props.fileStrategy.isLoading}>
+                <StrategyTable data={files} onAddRow={this.onAddRow}
+                               onDeleteRow={this.onDeleteRow}
+                               headers={ fileHeaders}/>
+            </Spin>
         );
     }
 }

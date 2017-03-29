@@ -1,32 +1,15 @@
 import React, {Component, PropTypes} from 'react';
-import {Modal, Button, Tab, Tabs, ListGroup, ListGroupItem, ProgressBar, Row, Col} from 'react-bootstrap';
-import ReactBootstrapSlider from 'react-bootstrap-slider';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import * as strategyActions from '../../actions/strategy';
-import Slider from '../../components/Slider'
-import '../../styles/components/Modal.css'
-import AlertContainer from 'react-alert';
-import MonTable from '../../components/MonitorTable'
-import ReactModal from 'react-modal'
-import {InsertModalFooter, InsertModalHeader} from 'react-bootstrap-table'
-import DeviceTab from './DeviceStrategyTab'
 import StrategyTable from '../../components/StrategyTable'
 
 
-function ipValidator(value, row) {
-    const ip =  /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])(\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])){3}$/;
-
-    if (ip.test(value)) {
-        return true
-    } else {
-        return '请输入正确的ip';
-    }
-}
-
 const ipHeaders = [
-    {field: 'rule', name: '规则链', type: 'select'},
-    {field: 'ip', name: 'IP'},
+    {field: 'rule', name: '规则链', type: 'select',
+        options: {values: ['INPUT', 'FORWARD', 'OUTPUT']}},
+    {field: 'ip', name: 'IP',
+        options: {pattern: /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])(\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])){3}$/}},
 ];
 
 

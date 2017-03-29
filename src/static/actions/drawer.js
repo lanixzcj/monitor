@@ -8,7 +8,6 @@ import {
     INIT_MONITOR_DATA,
 } from '../constants';
 
-import {loadAllMonitors} from './monitorData';
 
 export function showDrawer(host) {
     return (dispatch) => {
@@ -17,7 +16,6 @@ export function showDrawer(host) {
             payload: {
                 host
             }});
-        // dispatch(loadAllMonitors(host));
     };
 }
 

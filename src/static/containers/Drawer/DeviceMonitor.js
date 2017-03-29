@@ -3,7 +3,6 @@
  */
 import React, {Component, PropTypes} from 'react';
 import { Progress } from 'antd';
-import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import { SERVER_URL } from '../../utils/config';
 import '../../styles/components/Table.css';
 import { Collapse, Row, Col } from 'antd';
@@ -44,13 +43,13 @@ export default class DeviceMonitor extends Component {
             <div>
                 <Collapse bordered={false} defaultActiveKey={['1', '2', '3', '4']}>
                     <Panel header="网络监控" key="1" className="text-center">
-                        <iamge src={ net }/>
+                        <img src={ net }/>
                     </Panel>
                     <Panel header="CPU监控" key="2" className="text-center">
-                        <iamge src={ cpu}/>
+                        <img src={ cpu}/>
                     </Panel>
                     <Panel header="内存监控" key="3" className="text-center">
-                        <image src={ mem }/>
+                        <img src={ mem }/>
                     </Panel>
                     <Panel header="硬盘监控" key="4">
                         <Row>

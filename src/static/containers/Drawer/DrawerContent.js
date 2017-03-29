@@ -2,7 +2,6 @@
  * Created by lan on 3/5/17.
  */
 import React, {Component} from 'react';
-// import {Tab, Tabs} from 'react-bootstrap'
 
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -45,49 +44,49 @@ const styles = {
     },
 };
 
-const ipHeaders = {
-    time: '时间',
-    send_mac_address: '发送MAC地址',
-    recv_mac_address: '接收MAC地址',
-    send_ip: '发送ip',
-    send_port: '发送端口',
-    recv_ip: '接收ip',
-    recv_port: '接收端口',
-};
+const ipHeaders = [
+    {field: 'time', name: '时间'},
+    {field: 'send_mac_address', name: '发送MAC地址'},
+    {field: 'recv_mac_address', name: '接收MAC地址'},
+    {field: 'send_ip', name: '发送端口'},
+    {field: 'send_port', name: '时间'},
+    {field: 'recv_ip', name: '接收IP'},
+    {field: 'recv_port', name: '接收端口'},
+];
 
-const fileHeaders = {
-    time: '时间',
-    file_name: '文件名',
-    user: '用户',
-    operate_type: '操作类型',
-    modify_size: '修改大小(KB)',
-};
+const fileHeaders = [
+    {field: 'time', name: '时间'},
+    {field: 'file_name', name: '文件名'},
+    {field: 'user', name: '用户'},
+    {field: 'operate_type', name: '操作类型'},
+    {field: 'modyfy_size', name: '修改大小(KB)'},
+];
 
-const mediaHeaders = {
-    time: '时间',
-    media_name: '介质名',
-    media_size: '介质大小(MB)',
-    io_type: '操作类型',
-    operate_file: '所操作的文件名',
-};
+const mediaHeaders = [
+    {field: 'time', name: '时间'},
+    {field: 'media_name', name: '介质名'},
+    {field: 'media_size', name: '介质大小(KB)'},
+    {field: 'io_type', name: '操作类型'},
+    {field: 'operate_file', name: '所操作的文件名'},
+];
 
-const processHeaders = {
-    time: '时间',
-    process_name: '进程名称',
-    process_id: '进程id',
-    user: '用户',
-    boottime: '启动时间',
-    runtime: '运行时间',
-    used_ports: '占用端口'
-};
+const processHeaders = [
+    {field: 'time', name: '时间'},
+    {field: 'process_name', name: '进程名称'},
+    {field: 'process_id', name: '进程id'},
+    {field: 'user', name: '用户'},
+    {field: 'boottime', name: '启动时间'},
+    {field: 'runtime', name: '运行时间'},
+    {field: 'used_ports', name: '占用端口'},
+];
 
 
-const warningHeaders = {
-    time: '时间',
-    warning_type: '预警类别',
-    warning_content: '预警内容',
-    warning_level: '预警等级',
-};
+const warningHeaders = [
+    {field: 'time', name: '时间'},
+    {field: 'warning_type', name: '预警类别'},
+    {field: 'warning_content', name: '预警内容(KB)'},
+    {field: 'warning_level', name: '预警等级'},
+];
 
 const values = [['hour', '小时'], ['2h', '2小时'],
     ['4h', '4小时'], ['day', '一天'], ['week', '一周'], ['month', '一月'], ['year', '一年']];

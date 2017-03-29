@@ -2,7 +2,6 @@
  * Created by lan on 17-3-8.
  */
 import React, {Component, PropTypes} from 'react';
-import {Image, ListGroup, ListGroupItem, ProgressBar, Row, Col} from 'react-bootstrap';
 import '../styles/components/Slider.css';
 import { Slider } from 'antd';
 import 'rc-slider/assets/index.css';

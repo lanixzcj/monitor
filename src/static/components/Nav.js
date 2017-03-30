@@ -66,7 +66,7 @@ export default class MonNav extends React.Component {
         return (
             <div style={{padding: '0px 50px'}}>
                 <div className="pullLeft">
-                    <Link to="/">监控平台 </Link> 
+                    <Link to="/" className="logo">监控平台 </Link>
                 </div>
                 <Menu
                     mode="horizontal"

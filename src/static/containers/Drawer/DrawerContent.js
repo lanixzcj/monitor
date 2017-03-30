@@ -48,8 +48,8 @@ const ipHeaders = [
     {field: 'time', name: '时间'},
     {field: 'send_mac_address', name: '发送MAC地址'},
     {field: 'recv_mac_address', name: '接收MAC地址'},
-    {field: 'send_ip', name: '发送端口'},
-    {field: 'send_port', name: '时间'},
+    {field: 'send_ip', name: '发送IP'},
+    {field: 'send_port', name: '发送端口'},
     {field: 'recv_ip', name: '接收IP'},
     {field: 'recv_port', name: '接收端口'},
 ];

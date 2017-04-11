@@ -18,7 +18,8 @@ class JSONResponse(HttpResponse):
 
 
 @csrf_exempt
-def device_strategy(request, host):
+def device(request, host):
+    print host
     try:
         host_info = Host.objects.get(hostname=host)
     except ObjectDoesNotExist:

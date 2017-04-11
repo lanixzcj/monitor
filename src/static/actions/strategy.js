@@ -107,6 +107,7 @@ export function changeDeviceError(error, message) {
 export function changeDeviceStrategy(host, deviceThreshold) {
     return (dispatch) => {
         dispatch(changeDeviceRequest(deviceThreshold));
+        console.log(`${SERVER_URL}/api/v1/monitor/strategy/device/${host}`)
         return fetch(`${SERVER_URL}/api/v1/monitor/strategy/device/${host}`, {
             method: 'POST',
             headers: {

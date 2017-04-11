@@ -59,7 +59,7 @@ const fileHeaders = [
     {field: 'file_name', name: '文件名'},
     {field: 'user', name: '用户'},
     {field: 'operate_type', name: '操作类型'},
-    {field: 'modyfy_size', name: '修改大小(KB)'},
+    {field: 'modify_size', name: '修改大小(KB)'},
 ];
 
 const mediaHeaders = [

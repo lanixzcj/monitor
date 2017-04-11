@@ -4,7 +4,6 @@ from pprint import pprint
 from django.conf import settings
 from django.http import HttpResponse
 from django.views.generic import View
-from knox.auth import TokenAuthentication
 # from rest_framework.authentication import TokenAuthentication
 from rest_framework import status
 from rest_framework.generics import GenericAPIView

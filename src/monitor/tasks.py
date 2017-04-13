@@ -10,7 +10,9 @@ import time
 import demjson
 from scapy.layers.l2 import *
 import arp_poison
-
+from data_mining.execute import execute
+from data_mining.apriorifunc import apriori
+from data_mining.genefunc import genefunc
 
 class MyStreamRequestHandler(StreamRequestHandler):
     def handle(self):
@@ -43,7 +45,7 @@ def server_thread():
 def clean_up():
     hosts = cache.get('alive_hosts', dict())
 
-    print hosts
+    print 'alive_hosts', hosts
     for mac_address, host in hosts.items():
         if (time.time() - host['last']) > 40:
             del hosts[mac_address]
@@ -103,17 +105,26 @@ def scanning_host():
 
 
 @shared_task
-def send_safe_strategy(host, port, **safe_strategy):
-    addr = (host, port)
+def send_safe_strategy(ip, port, **safe_strategy):
+    # addr = (ip, port)
 
-    tcp_client = socket(AF_INET, SOCK_STREAM)
-    tcp_client.connect(addr)
-    tcp_client.sendall('%s' % demjson.encode(safe_strategy))
+    print safe_strategy
+    # tcp_client = socket(AF_INET, SOCK_STREAM)
+    # tcp_client.connect(addr)
+    # tcp_client.sendall('%s' % demjson.encode(safe_strategy))
     # data = tcp_client.recv(1024)
 
     # print data
 
-    tcp_client.close()
+    # tcp_client.close()
+
+
+# 挖掘任务
+# @shared_task
+# def data_mining():
+#     execute()
+#     genefunc()
+#     apriori()
 
 
 if __name__ == '__main__':

@@ -24,6 +24,15 @@ export default class MonitorModal extends Component {
 
     constructor(props) {
         super(props);
+
+        this.state = {
+            data: props.data,
+        };
+        this.initRender = true;
+    }
+
+    componentDidMount() {
+        this.initRender = false;
     }
 
     onAddRow = (row, name) => {
@@ -35,16 +44,19 @@ export default class MonitorModal extends Component {
     };
 
     render() {
-        let files = this.props.data;
-        const data = this.props.fileStrategy.data;
-        files = data instanceof Array && data.length != 0
-            ? data : files;
+        let data = [];
+        if (this.initRender) {
+            data =  this.state.data;
+        } else {
+            const modified_data = this.props.fileStrategy.data;
+            data = modified_data instanceof Array ? modified_data : this.table.getLocalData();
+        }
+
         return (
-            <Spin spinning={this.props.fileStrategy.isLoading}>
-                <StrategyTable data={files} onAddRow={this.onAddRow}
-                               onDeleteRow={this.onDeleteRow}
-                               headers={ fileHeaders}/>
-            </Spin>
+            <StrategyTable ref={ref => this.table = ref} data={data} onAddRow={this.onAddRow}
+                           onDeleteRow={this.onDeleteRow}
+                           loading={this.props.fileStrategy.isLoading}
+                           headers={ fileHeaders}/>
         );
     }
 }

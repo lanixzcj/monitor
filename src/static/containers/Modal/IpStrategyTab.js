@@ -22,9 +22,17 @@ const ipHeaders = [
     })
 )
 export default class MonitorModal extends Component {
-
     constructor(props) {
         super(props);
+
+        this.state = {
+            data: props.data,
+        };
+        this.initRender = true;
+    }
+
+    componentDidMount() {
+        this.initRender = false;
     }
 
     onAddRow = (row, name) => {
@@ -36,13 +44,19 @@ export default class MonitorModal extends Component {
     };
 
     render() {
-        let files = this.props.data;
-        const data = this.props.ipStrategy.data;
-        files = data instanceof Array && data.length != 0
-            ? data : files;
+        let data = [];
+        if (this.initRender) {
+            data =  this.state.data;
+        } else {
+            const modified_data = this.props.ipStrategy.data;
+            data = modified_data instanceof Array ? modified_data : this.table.getLocalData();
+        }
+
+
         return (
-            <StrategyTable data={files} onAddRow={this.onAddRow}
+            <StrategyTable ref={ref => this.table = ref} data={data} onAddRow={this.onAddRow}
                            onDeleteRow={this.onDeleteRow}
+                           loading={this.props.ipStrategy.isLoading}
                       headers={ ipHeaders}/>
         );
     }

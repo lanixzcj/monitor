@@ -4,7 +4,7 @@ import demjson
 import rrd_helper
 import datetime
 from django.core.cache import cache
-from models import Host, HostThreshold, IpPacket, DeviceInfo
+from models import Host, HostThreshold, IpPacket, DeviceInfo, ProcessInfo
 from django.core.exceptions import ObjectDoesNotExist
 from pytz import timezone
 
@@ -20,12 +20,16 @@ def process_json(data, client_address):
 
         if metrics:
             for key, value in metrics.items():
+                if key == 'bytes_out' or key == 'bytes_in':
+                    alarm(value, value)
                 if value['is_in_rrd']:
                     metrics_save_into_rrd(host, key, value)
                 if key == 'net_pack':
                     save_ip_packet(host, value)
+                if key == 'process_info':
+                    save_process_packet(host, value)
                 if key == 'cpu_info':
-                    print value
+                    save_cpu_packet(host, value)
 
 
 # 记录在线主机列表
@@ -100,11 +104,9 @@ def save_ip_packet(host, metric):
     hostname = host['hostname'] if 'hostname' in host else None
     db_host = Host.objects.get(hostname=hostname)
 
-    print metric
     value = metric[u'value']
 
     ip_time = value[u'time'] if u'time' in value else None
-    print ip_time
     ip_time = string.atof(ip_time)
     ip_time = datetime.datetime.fromtimestamp(ip_time, tz=timezone('Asia/Shanghai'))
 
@@ -117,3 +119,41 @@ def save_ip_packet(host, metric):
                                         recv_ip=value[u'des_IP'],
                                         recv_port=value[u'des_port'])
     ip_packet.save()
+
+
+# 保存网络包到数据库
+def save_process_packet(host, metric):
+    hostname = host['hostname'] if 'hostname' in host else None
+    db_host = Host.objects.get(hostname=hostname)
+
+    value = metric[u'value']
+
+    time = value[u'time'] if u'time' in value else None
+    time = string.atof(time)
+    time = datetime.datetime.fromtimestamp(time, tz=timezone('Asia/Shanghai'))
+    fields = ('id', 'time', 'host', 'command', 'process_id', 'user', 'boottime',
+              'runtime', 'state', 'cpu_used', 'mem_used')
+    ip_packet = IpPacket.objects.create(host=db_host,
+                                        time=time,
+                                        command=value[u'command'],
+                                        propcess_id=value[u'pid'],
+                                        state=value[u'state'],
+                                        cpu_used=value[u'cpu_usage'],
+                                        mem_usage=value[u'mem_usage'],
+                                        boottime=value[u'launch_time'],
+                                        runtime=value[u'running_time']),
+    ip_packet.save()
+
+
+# 保存cpu信息
+def save_cpu_packet(host, metric):
+    cpu_info = metric[u'value']
+
+    idle = cpu_info['cpu_idle']
+    alarm('cpu_usage', 1-idle)
+    for key, value in cpu_info.items():
+        metrics_save_into_rrd(host, key, value)
+
+
+def alarm(type, value):
+    pass

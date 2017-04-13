@@ -56,7 +56,7 @@ const ipHeaders = [
 
 const fileHeaders = [
     {field: 'time', name: '时间'},
-    {field: 'file_name', name: '文件名'},
+    {field: 'file_name', name: '文件名', sorter: (a, b) => a.filename - b.filename},
     {field: 'user', name: '用户'},
     {field: 'operate_type', name: '操作类型'},
     {field: 'modify_size', name: '修改大小(KB)'},
@@ -72,12 +72,13 @@ const mediaHeaders = [
 
 const processHeaders = [
     {field: 'time', name: '时间'},
-    {field: 'process_name', name: '进程名称'},
     {field: 'process_id', name: '进程id'},
     {field: 'user', name: '用户'},
     {field: 'boottime', name: '启动时间'},
     {field: 'runtime', name: '运行时间'},
-    {field: 'used_ports', name: '占用端口'},
+    {field: 'cpu_used', name: 'CPU使用'},
+    {field: 'mem_used', name: '内存使用'},
+    {field: 'command', name: 'COMMAND'},
 ];
 
 

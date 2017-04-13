@@ -42,11 +42,8 @@ export default class MonTable extends Component {
     };
 
     render() {
-        console.log(this.state.searchText)
         let data = this.props.data ? this.props.data : [];
-        const options = this.props.options ? this.props.options : {};
-        options.noDataText = '没有找到匹配的记录';
-        const extra = this.props.extra ? this.props.extra : {};
+
         return (
             <div>
                 <Row>

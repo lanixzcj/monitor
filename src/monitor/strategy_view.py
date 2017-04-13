@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 from django.http import HttpResponse
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -8,6 +9,8 @@ from django.views.decorators.csrf import csrf_exempt
 import demjson
 from django.conf import settings
 from rest_framework.renderers import JSONRenderer
+from tasks import send_safe_strategy
+from django.conf import settings
 
 
 class JSONResponse(HttpResponse):
@@ -96,11 +99,15 @@ def ip_packet(request, host):
         ip = strategy['ip']
         try:
             host_info = Host.objects.get(hostname=host)
+            if IpPacketsRules.objects.filter(host=host_info, rule_chain=rule, ip=ip).count() > 0:
+                return Response(data=u'已添加该策略', status=status.HTTP_400_BAD_REQUEST)
             ip_packets = IpPacketsRules.objects.create(host=host_info,
                                                        rule_chain=rule, ip=ip)
             ip_packets.save()
 
-            return JSONResponse(get_ippackets_rules(request, host), status=status.HTTP_201_CREATED)
+            ip_packets_info = get_ippackets_rules(request, host)
+            send_safe_strategy.delay(host_info.ip, settings.CLIENT_PORT, net=ip_packets_info)
+            return JSONResponse(ip_packets_info, status=status.HTTP_201_CREATED)
         except ObjectDoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -113,7 +120,9 @@ def ip_packet(request, host):
                 ip_packets = IpPacketsRules.objects.filter(host__exact=host_info,
                                                            id=id)
                 ip_packets.delete()
-            return JSONResponse(get_ippackets_rules(request, host), status=status.HTTP_200_OK)
+                ip_packets_info = get_ippackets_rules(request, host)
+                send_safe_strategy.delay(host_info.ip, settings.CLIENT_PORT, net=ip_packets_info)
+            return JSONResponse(ip_packets_info, status=status.HTTP_200_OK)
         except ObjectDoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 

@@ -68,7 +68,7 @@ export default createReducer(initialState, {
 
 const initialStateStrategy = {
     host: null,
-    data: [],
+    data: null,
     isLoading: false,
 };
 
@@ -92,7 +92,7 @@ export function createReducerWithType(name = '') {
             return Object.assign({}, state, {
                 host: null,
                 isLoading: false,
-                data: []
+                data: null
             });
         },
         [constants.deleteRequest]: (state, payload) => {
@@ -112,14 +112,14 @@ export function createReducerWithType(name = '') {
             return Object.assign({}, state, {
                 host: null,
                 isLoading: false,
-                data: []
+                data: null
             });
         },
         [INIT_STRATEGY_DATA]: (state, payload) => {
             return Object.assign({}, state, {
                 host: null,
                 isLoading: false,
-                data: []
+                data: null
             });
         },
     })

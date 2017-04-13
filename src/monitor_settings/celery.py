@@ -1,13 +1,13 @@
 from __future__ import absolute_import, unicode_literals
 import os
+import django
 from celery import Celery
 from django.core.cache import cache
 from celery.schedules import crontab
 
 # set the default Django settings module for the 'celery' program.
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "monitor_settings.settings.dev")
-
-app = Celery('monitor')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "monitor_settings.settings.base")
+app = Celery('monitor_settings')
 
 # Using a string here means the worker don't have to serialize
 # the configuration object to child processes.
@@ -28,6 +28,12 @@ app.conf.beat_schedule = {
         'schedule': 20.0,
         'args': ()
     },
+    # 'data_mining_thread': {
+    #     'task': 'monitor.tasks.data_mining',
+    #     # 'schedule': crontab(minute=0, hour=0),
+    #     'schedule': 1200,
+    #     'args': ()
+    # },
 }
 
 

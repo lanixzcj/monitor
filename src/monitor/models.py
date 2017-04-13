@@ -58,15 +58,17 @@ class IpPacket(models.Model):
 class ProcessInfo(models.Model):
     time = models.DateTimeField()
     host = models.ForeignKey(Host, on_delete=models.CASCADE)
-    process_name = models.CharField(max_length=30)
+    command = models.CharField(max_length=64)
+    state = models.CharField(max_length=10)
+    mem_used = models.FloatField(default=0)
+    cpu_used = models.FloatField(default=0)
     process_id = models.IntegerField()
     user = models.CharField(max_length=30)
-    boottime = models.DateTimeField()
-    runtime = models.DurationField()
-    used_ports = models.CharField(max_length=100)
+    boottime = models.CharField(max_length=30)
+    runtime = models.CharField(max_length=30)
 
     def __unicode__(self):
-        return self.process_name
+        return self.user
 
 
 class FileInfo(models.Model):
@@ -114,7 +116,8 @@ class IpPacketSerializer(serializers.ModelSerializer):
 class ProcessSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProcessInfo
-        fields = ('id', 'time', 'host', 'process_name', 'process_id', 'user', 'boottime', 'runtime', 'used_ports')
+        fields = ('id', 'time', 'host', 'command', 'process_id', 'user', 'boottime',
+                  'runtime', 'state', 'cpu_used', 'mem_used')
 
 
 class FileSerializer(serializers.ModelSerializer):

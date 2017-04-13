@@ -51,7 +51,7 @@ export default class DeviceMonitor extends Component {
                     <Panel header="内存监控" key="3" className="text-center">
                         <img src={ mem }/>
                     </Panel>
-                    <Panel header="硬盘监控" key="4">
+                    <Panel header="硬盘监控" key="4" className="text-center">
                         <Row>
                             <Col span={20}>
                                 <Progress percent={per} status="active" format={() => label}/>

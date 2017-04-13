@@ -230,7 +230,12 @@ export function addStrategy(name, host, strategy) {
                 notification['success']({message: '添加成功', description: `成功添加${host}安全策略`});
             })
             .catch((error) => {
-                if (error && typeof error.response !== 'undefined' && error.response.status === 401) {
+                if (error && typeof error.response !== 'undefined' && error.response.status === 400) {
+                    return error.response.json().then((data) => {
+                        notification['error']({message: data});
+                        dispatch(addError(name, 400, data));
+                    });
+                } else if (error && typeof error.response !== 'undefined' && error.response.status === 401) {
                     // Invalid authentication credentials
                     return error.response.json().then((data) => {
                         dispatch(addError(name, 401, data.non_field_errors[0]));

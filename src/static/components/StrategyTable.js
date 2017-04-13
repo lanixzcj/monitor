@@ -59,6 +59,8 @@ export default class MonTable extends Component {
         console.log(selectedRowKeys)
     };
 
+    getLocalData = () => this.table.getLocalData();
+
     render() {
 
         const selectRowProp = {
@@ -77,10 +79,6 @@ export default class MonTable extends Component {
         };
 
         let data = this.props.data ? this.props.data : [];
-        const options = {...defaultOptions, ...this.props.options,
-            onAddRow: this.props.onAddRow, onDeleteRow: this.props.onDeleteRow,
-            noDataText: '没有找到匹配的记录'};
-        const extra = {...defaultExtra, ...this.props.extra};
 
         const { selectedRowKeys } = this.state;
 
@@ -102,8 +100,8 @@ export default class MonTable extends Component {
                     </Popconfirm>
 
                 </Button.Group>
-                <Table rowSelection={rowSelection} dataSource={data} bordered={true} rowKey="id"
-                       pagination={{defaultPageSize: 5,}}>
+                <Table ref={ref => this.table = ref} rowSelection={rowSelection} dataSource={data} bordered={true} rowKey="id"
+                       pagination={{defaultPageSize: 5,}} loading={this.props.loading}>
                     {renderColHeader(this.props.headers) }
                 </Table>
             </div>

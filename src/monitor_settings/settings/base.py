@@ -91,13 +91,6 @@ REST_FRAMEWORK = {
     ),
 }
 
-# ############ REST KNOX ########################
-REST_KNOX = {
-    'SECURE_HASH_ALGORITHM': 'cryptography.hazmat.primitives.hashes.SHA512',
-    'AUTH_TOKEN_CHARACTER_LENGTH': 64,
-    'USER_SERIALIZER': 'knox.serializers.UserSerializer'
-}
-
 # TIME_RANGE
 
 TIME_RANGE = {
@@ -119,6 +112,10 @@ GRAPH_SIZE = {
     'xlarge': (650, 300),
     'default': (400, 125)
 }
+
+
+# client accept port
+CLIENT_PORT = 8649
 
 # gateway ip
 GATEWAY_IP = '192.168.3.254'

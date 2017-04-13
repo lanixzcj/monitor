@@ -13,6 +13,10 @@ import arp_poison
 from data_mining.execute import execute
 from data_mining.apriorifunc import apriori
 from data_mining.genefunc import genefunc
+from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
+from django.template import loader
+
 
 class MyStreamRequestHandler(StreamRequestHandler):
     def handle(self):
@@ -106,17 +110,15 @@ def scanning_host():
 
 @shared_task
 def send_safe_strategy(ip, port, **safe_strategy):
-    # addr = (ip, port)
+    addr = (ip, port)
 
-    print safe_strategy
-    # tcp_client = socket(AF_INET, SOCK_STREAM)
-    # tcp_client.connect(addr)
-    # tcp_client.sendall('%s' % demjson.encode(safe_strategy))
-    # data = tcp_client.recv(1024)
+    print safe_strategy, ip, port
+    tcp_client = socket(AF_INET, SOCK_STREAM)
+    tcp_client.connect(addr)
+    tcp_client.sendall('%s' % demjson.encode(safe_strategy))
+    print tcp_client.connected
 
-    # print data
-
-    # tcp_client.close()
+    tcp_client.close()
 
 
 # 挖掘任务
@@ -125,6 +127,28 @@ def send_safe_strategy(ip, port, **safe_strategy):
 #     execute()
 #     genefunc()
 #     apriori()
+
+
+# 发送预警邮件
+@shared_task
+def send_email():
+    alarm_info = cache.get('alarm_info', dict())
+
+    html_content = loader.render_to_string('email.html')
+
+    # msg = EmailMultiAlternatives('Subject here',
+    #     html_content,
+    #     'monitor_platform@163.com',
+    #     ['494651913@qq.com'])
+    # msg.content_subtype = "html"
+    # msg.send()
+    send_mail(
+        'Subject here',
+        'Here is the message.',
+        'monitor_platform@163.com',
+        ['494651913@qq.com'],
+        fail_silently=False,
+    )
 
 
 if __name__ == '__main__':

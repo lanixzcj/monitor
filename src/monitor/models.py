@@ -50,9 +50,9 @@ class IpPacket(models.Model):
     send_mac_address = models.CharField(max_length=30)
     recv_mac_address = models.CharField(max_length=30)
     send_ip = models.GenericIPAddressField(default='0.0.0.0')
-    send_port = models.IntegerField()
+    send_port = models.IntegerField(default=0)
     recv_ip = models.GenericIPAddressField(default='0.0.0.0')
-    recv_port = models.IntegerField()
+    recv_port = models.IntegerField(default=0)
 
 
 class ProcessInfo(models.Model):

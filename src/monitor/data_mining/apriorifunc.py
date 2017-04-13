@@ -70,13 +70,13 @@ class Large:
         self.sup = []
 
 def getConnection():
-    conn = pymysql.connect(host='localhost',db='monitor_', user='root', passwd='root', port=3306, charset='utf8')#之后可以放到配置文件中读取
+    conn = pymysql.connect(host='localhost',db='supervision', user='root', passwd='root', port=3306, charset='utf8')#之后可以放到配置文件中读取
     return conn
 #特殊挖掘情况保存频繁集
 def saveProcessLar(Lar,target):
     conn=getConnection()
     cur=conn.cursor()
-    sql="select count(*) from information_schema.columns where table_schema='monitor_' and table_name='data_process_processinfo_middle';"
+    sql="select count(*) from information_schema.columns where table_schema='supervision' and table_name='data_process_processinfo_middle';"
     cur.execute(sql)
     res = cur.fetchall()
     num=res[0][0]-6#减去id support user,begintime,endtime和createtime
@@ -678,7 +678,7 @@ def get_data_process_processinfo_rules(date,begin_time,end_time):
     cur.execute(sql)
     ###
     users=[]
-    sql="SELECT DISTINCT `user` FROM monitor_.data_process_processinfo;"
+    sql="SELECT DISTINCT `user` FROM supervision.data_process_processinfo;"
     cur.execute(sql)
     res = cur.fetchall()
     for row in res:
@@ -690,7 +690,7 @@ def get_data_process_processinfo_rules(date,begin_time,end_time):
         processlist[2] = []
         processlist[3] = []
         for dd in range(ITEMNUM):
-            sql = "SELECT `process_name` FROM monitor_.data_process_processinfo where `begintime`>='%s' and `endtime`<='%s' and `user`='%s';"%(begin_dates[dd],end_dates[dd],user)
+            sql = "SELECT `process_name` FROM supervision.data_process_processinfo where `begintime`>='%s' and `endtime`<='%s' and `user`='%s';"%(begin_dates[dd],end_dates[dd],user)
             cur.execute(sql)
             res = cur.fetchall()
             for row in res:
@@ -749,7 +749,7 @@ def get_data_process_processinfo_rules(date,begin_time,end_time):
     sql+="CREATE TABLE data_process_processinfo_result LIKE data_process_processinfo_middle  ;"
     sql+="ALTER TABLE data_process_processinfo_result ADD `type` int(11);"
     cur.execute(sql)
-    sql="select count(*) from information_schema.columns where table_schema='monitor_' and table_name='data_process_processinfo_middle';"
+    sql="select count(*) from information_schema.columns where table_schema='supervision' and table_name='data_process_processinfo_middle';"
     cur.execute(sql)
     res = cur.fetchall()
     num=res[0][0]-6#减去id support user,begintime,endtime和createtime

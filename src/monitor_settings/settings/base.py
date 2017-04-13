@@ -34,7 +34,7 @@ INSTALLED_APPS = (
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -178,6 +178,7 @@ CACHES = {
         'LOCATION': 'localhost:6379',
     },
 }
+
 
 # email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

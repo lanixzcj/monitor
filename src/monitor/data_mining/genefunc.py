@@ -46,7 +46,7 @@ class Code:
 #初始化群体
 
 def getConnection():
-    conn = pymysql.connect(host='localhost',db='monitor_', user='root', passwd='root', port=3306, charset='utf8')#之后可以放到配置文件中读取
+    conn = pymysql.connect(host='localhost',db='supervision', user='root', passwd='root', port=3306, charset='utf8')#之后可以放到配置文件中读取
     return conn
 def evpop(codes, ref):
     pop = []

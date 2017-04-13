@@ -1,7 +1,7 @@
 # coding=utf-8
 import pymysql
 def getConnection():
-    conn = pymysql.connect(host='localhost',db='monitor_', user='root', passwd='root', port=3306, charset='utf8')#之后可以放到配置文件中读取
+    conn = pymysql.connect(host='localhost',db='supervision', user='root', passwd='root', port=3306, charset='utf8')#之后可以放到配置文件中读取
     return conn
 def createtable(target,field):
     conn = getConnection()
@@ -130,7 +130,7 @@ def createtable(target,field):
 def preexecute(target,field):
     conn = pymysql.connect(host='localhost', user='root', passwd='root', port=3306, charset='utf8')
     cur = conn.cursor()
-    cur.execute("USE monitor_")
+    cur.execute("USE supervision")
     curstr="INSERT INTO "
     curstr+=target+"_codes"
     curstr+="( `name`,`column`) VALUES ( '%s','%d')" % ("凌晨",0)

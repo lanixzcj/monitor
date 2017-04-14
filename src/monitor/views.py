@@ -17,27 +17,10 @@ from django.conf import settings
 import monitor_view
 import strategy_view
 from pprint import pprint
-from data_process import judge
-from django.core.mail import EmailMultiAlternatives
-from django.template import loader
 
 
 def get_user(request):
-    host = {
-        'mac_address': 's',
-        'hostname': 'can',
-        'ip': 'sss'
-    }
-    # judge(host, 'cpu_usage', 99)
-    html_content = loader.render_to_string('email.html')
 
-    # msg = EmailMultiAlternatives('Subject here',
-    #     html_content,
-    #     'monitor_platform@163.com',
-    #     ['494651913@qq.com'])
-    # msg.content_subtype = "html"
-    # msg.send()
-    print html_content
     user = {
         'user': str(request.user),
         'isAuthenticated': bool(request.user.is_authenticated)

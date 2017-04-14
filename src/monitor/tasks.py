@@ -113,10 +113,19 @@ def send_safe_strategy(ip, port, **safe_strategy):
     addr = (ip, port)
 
     print safe_strategy, ip, port
-    tcp_client = socket(AF_INET, SOCK_STREAM)
-    tcp_client.connect(addr)
-    tcp_client.sendall('%s' % demjson.encode(safe_strategy))
-    print tcp_client.connected
+    tcp_client = socket.socket(AF_INET, SOCK_STREAM)
+    tcp_client.settimeout(10)
+
+    try:
+        tcp_client.connect(addr)
+        tcp_client.sendall('%s' % demjson.encode(safe_strategy))
+        print 'send strategy succeed'
+    except (KeyboardInterrupt, SystemExit):
+        raise
+    except socket.timeout:
+        print 'send strategy timeout.'
+    except:
+        traceback.print_exc()
 
     tcp_client.close()
 
@@ -134,22 +143,30 @@ def send_safe_strategy(ip, port, **safe_strategy):
 def send_email():
     alarm_info = cache.get('alarm_info', dict())
 
-    html_content = loader.render_to_string('email.html')
+    for mac_address, alarm in alarm_info.items():
+        mac = mac_address
+        hostname = alarm['hostname']
+        ip = alarm['ip']
+        queue = alarm['alarm_queue']
 
-    # msg = EmailMultiAlternatives('Subject here',
-    #     html_content,
-    #     'monitor_platform@163.com',
-    #     ['494651913@qq.com'])
-    # msg.content_subtype = "html"
-    # msg.send()
-    send_mail(
-        'Subject here',
-        'Here is the message.',
-        'monitor_platform@163.com',
-        ['494651913@qq.com'],
-        fail_silently=False,
-    )
+        try:
+            html_content = loader.render_to_string('email.html', context={
+                'hostname': hostname,
+                'IP': ip,
+                'MAC': mac,
+                'alarm_info': queue
+            })
+        except:
+            traceback.print_exc()
 
+        msg = EmailMultiAlternatives('预警邮件',
+                                     html_content,
+                                     'monitor_platform@163.com',
+                                     ['494651913@qq.com'])
+        msg.content_subtype = "html"
+        msg.send()
+
+    cache.set('alarm_info', dict())
 
 if __name__ == '__main__':
     # server_thread()

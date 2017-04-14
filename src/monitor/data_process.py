@@ -205,11 +205,11 @@ def judge(host, type, value):
         alarm_info[mac_address]['alarm_queue'] = []
 
     threshold_dict = {
-        'cpu_usage': [threshold.cpu_used, 'cpu', u'cpu使用率超过阈值, 当前值为%s, 阈值为%s'],
-        'mem_usage': [threshold.mem_used, 'mem',  u'内存使用率过阈值, 当前值为%s, 阈值为%s'],
-        'disk_usage': [threshold.disk_used, 'disk' u'硬盘使用超过阈值, 当前值为%s, 阈值为%s'],
-        'bytes_in': [threshold.bytes_in, 'bytes_in' u'下载速度超过阈值, 当前值为%s, 阈值为%s'],
-        'bytes_out': [threshold.bytes_out, 'bytes_out' u'上传速度超过阈值, 当前值为%s, 阈值为%s'],
+        'cpu_usage': [threshold.cpu_used, u'CPU', u'cpu使用率超过阈值, 当前值为%s, 阈值为%s'],
+        'mem_usage': [threshold.mem_used, u'内存',  u'内存使用率过阈值, 当前值为%s, 阈值为%s'],
+        'disk_usage': [threshold.disk_used, u'硬盘' u'硬盘使用超过阈值, 当前值为%s, 阈值为%s'],
+        'bytes_in': [threshold.bytes_in, u'网络' u'下载速度超过阈值, 当前值为%s, 阈值为%s'],
+        'bytes_out': [threshold.bytes_out, u'网络' u'上传速度超过阈值, 当前值为%s, 阈值为%s'],
     }
 
     if type in threshold_dict:
@@ -217,10 +217,9 @@ def judge(host, type, value):
 
         if threshold_info[0] != 0 and value > threshold_info[0]:
             alarm_info[mac_address]['alarm_queue'].append({
-                'time': time.time(),
-                'type': threshold_info[1],
+                'time': time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+                'type': threshold_info[1].encode("utf-8"),
                 'description': (threshold_info[2] % (value, threshold_info[0])).encode("utf-8"),
             })
 
-        print (threshold_info[2] % (value, threshold_info[0]))
     cache.set('alarm_info', alarm_info, 500)

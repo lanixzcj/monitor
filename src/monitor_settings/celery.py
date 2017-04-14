@@ -28,12 +28,16 @@ app.conf.beat_schedule = {
         'schedule': 20.0,
         'args': ()
     },
-    # 'data_mining_thread': {
-    #     'task': 'monitor.tasks.data_mining',
-    #     # 'schedule': crontab(minute=0, hour=0),
-    #     'schedule': 1200,
-    #     'args': ()
-    # },
+    'send_email': {
+        'task': 'monitor.tasks.send_email',
+        'schedule': 300.0,
+        'args': ()
+    },
+    'data_mining_thread': {
+        'task': 'monitor.tasks.data_mining',
+        'schedule': crontab(minute=0, hour=0),
+        'args': ()
+    },
 }
 
 

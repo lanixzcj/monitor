@@ -78,9 +78,7 @@ export default class MonNav extends React.Component {
                 </Menu>
 
                 <div className="pullRight">
-                    <Spin spinning={this.state.fetching}>
-                        {userDom}
-                    </Spin>
+                    {userDom}
                 </div>
 
             </div>

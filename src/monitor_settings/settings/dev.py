@@ -42,6 +42,11 @@ DATABASES = {
     }
 }
 
+DATABASE_ROUTERS = ['monitor_settings.database_router.DatabaseAppsRouter']
+DATABASE_APPS_MAPPING = {
+    'data_mining': 'supervision',
+}
+
 REST_FRAMEWORK['EXCEPTION_HANDLER'] = 'django_rest_logger.handlers.rest_exception_handler'  # NOQA (ignore all errors on this line)
 
 LOGGING = {

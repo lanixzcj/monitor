@@ -7,6 +7,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import MonTable from '../../components/MonitorTable'
 import DeviceMonitor from './DeviceMonitor'
+import DataMiningResult from './DataMiningResult'
 import * as monitorActions from '../../actions/monitorData';
 import { Button, Radio, Tabs } from 'antd';
 const ButtonGroup = Button.Group;
@@ -177,11 +178,12 @@ export default class SidebarContent extends Component {
                             <MonTable options={options}  data={this.props.monitor.data.ip_packet} {...this.props.monActions}
                                       headers={ ipHeaders} isLoading={this.props.monitor.isLoading}/>
                         </TabPane>
-
-
                         <TabPane key="6" tab="预警历史">
                             <MonTable options={options}  data={this.props.monitor.data.warninginfo} {...this.props.monActions}
                                       headers={ warningHeaders} isLoading={this.props.monitor.isLoading}/>
+                        </TabPane>
+                        <TabPane key="7" tab="监控数据挖掘">
+                            <DataMiningResult/>
                         </TabPane>
                     </Tabs>}
                 </div>

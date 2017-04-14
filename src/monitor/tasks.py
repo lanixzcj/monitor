@@ -1,21 +1,17 @@
 # -*- coding: UTF-8 -*-
-from celery import shared_task
-from celery import Celery
-import data_process
+import traceback
 from SocketServer import ThreadingTCPServer, StreamRequestHandler
 from socket import *
-from django.core.cache import cache
-import traceback
-import time
+
 import demjson
-from scapy.layers.l2 import *
-import arp_poison
-from data_mining.execute import execute
-from data_mining.apriorifunc import apriori
-from data_mining.genefunc import genefunc
-from django.core.mail import send_mail
+from celery import shared_task
+from django.core.cache import cache
 from django.core.mail import EmailMultiAlternatives
 from django.template import loader
+from scapy.layers.l2 import *
+
+import arp_poison
+import data_process
 
 
 class MyStreamRequestHandler(StreamRequestHandler):
@@ -128,14 +124,6 @@ def send_safe_strategy(ip, port, **safe_strategy):
         traceback.print_exc()
 
     tcp_client.close()
-
-
-# 挖掘任务
-# @shared_task
-# def data_mining():
-#     execute()
-#     genefunc()
-#     apriori()
 
 
 # 发送预警邮件

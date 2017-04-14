@@ -28,13 +28,13 @@ app.conf.beat_schedule = {
         'schedule': 20.0,
         'args': ()
     },
-    'send_email': {
+    'send_email_thread': {
         'task': 'monitor.tasks.send_email',
         'schedule': 300.0,
         'args': ()
     },
     'data_mining_thread': {
-        'task': 'monitor.tasks.data_mining',
+        'task': 'data_mining.tasks.data_mining',
         'schedule': crontab(minute=0, hour=0),
         'args': ()
     },

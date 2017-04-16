@@ -29,6 +29,7 @@ INSTALLED_APPS = (
     'accounts',
     'base',
     'monitor',
+    'data_mining'
 )
 
 TEMPLATES = [

@@ -13,6 +13,11 @@ from pytz import timezone
 def process_json(data, client_address):
     json_dict = demjson.decode(data)
     host = json_dict['host'] if 'host' in json_dict else None
+    mac_address = host['mac_address'].strip() if 'mac_address' in host else None
+
+    if mac_address is None or mac_address == '':
+        print 'Illegal host: null mac address.'
+        return
     if host:
         hostinfo_save_into_cache(host, client_address[0])
         hostinfo_save_into_db(host, client_address[0])
@@ -22,7 +27,7 @@ def process_json(data, client_address):
         if metrics:
             for key, value in metrics.items():
                 if key == 'bytes_out' or key == 'bytes_in':
-                    judge(host, value, value)
+                    judge(host, key, string.atof(value['value']))
                 if value['is_in_rrd']:
                     metrics_save_into_rrd(host, key, value)
                 if key == 'net_pack':
@@ -42,6 +47,11 @@ def hostinfo_save_into_cache(host, ip):
     hostname = host['hostname'] if 'hostname' in host else None
     # ip = host['ip'] if 'ip' in host else None
     mac_address = host['mac_address'].strip() if 'mac_address' in host else None
+
+    if mac_address is None or mac_address == '':
+        print 'Illegal host: null mac address.'
+        return
+
     localtime = host['localtime'] if 'localtime' in host else None
 
     hosts = cache.get('alive_hosts', dict())
@@ -112,7 +122,7 @@ def save_ip_packet(host, metric):
     value = metric[u'value']
 
     ip_time = value[u'time'] if u'time' in value else None
-    ip_time = string.atof(ip_time)
+    ip_time = string.atof(str(ip_time))
     ip_time = datetime.datetime.fromtimestamp(ip_time, tz=timezone('Asia/Shanghai'))
 
     ip_packet = IpPacket.objects.create(host=db_host,
@@ -141,11 +151,11 @@ def save_process_packet(host, metric):
     for process_info in value:
         process = ProcessInfo.objects.create(host=db_host,
                                              command=process_info[u'command'],
-                                             propcess_id=process_info[u'pid'],
+                                             process_id=process_info[u'pid'],
                                              state=process_info[u'state'],
                                              cpu_used=process_info[u'cpu_usage'],
-                                             mem_usage=process_info[u'mem_usage'],
-                                             boottime=process_info[u'launch_time'],
+                                             mem_used=process_info[u'mem_usage'],
+                                             boottime=process_info[u'lauch_time'],
                                              runtime=process_info[u'running_time'])
         process.save()
 
@@ -155,7 +165,8 @@ def save_cpu_packet(host, metric):
     cpu_info = metric[u'value']
 
     idle = cpu_info['cpu_idle']
-    judge(host, 'cpu_usage', 1 - idle)
+    current_value = 1 - string.atof(idle)
+    judge(host, 'cpu_usage', current_value)
     for key, value in cpu_info.items():
         metrics_save_into_rrd(host, key, value)
 
@@ -166,7 +177,8 @@ def save_mem_packet(host, metric):
 
     free = mem_info['mem_free']
     total = mem_info['mem_total']
-    judge(host, 'mem_usage', total - free)
+    current_value = string.atof(total) - string.atof(free)
+    judge(host, 'mem_usage', current_value)
     for key, value in mem_info.items():
         metrics_save_into_rrd(host, key, value)
 
@@ -177,12 +189,14 @@ def save_disk_packet(host, metric):
 
     free = disk_info['disk_free']
     total = disk_info['disk_total']
-    judge(host, 'disk_usage', total - free)
+    current_value = string.atof(total) - string.atof(free)
+    judge(host, 'disk_usage', current_value)
     for key, value in disk_info.items():
         metrics_save_into_rrd(host, key, value)
 
 
-def judge(host, type, value):
+def judge(host, metric_type, value):
+
     hostname = host['hostname'] if 'hostname' in host else None
     try:
         host_info = Host.objects.get(hostname=hostname)
@@ -205,15 +219,15 @@ def judge(host, type, value):
         alarm_info[mac_address]['alarm_queue'] = []
 
     threshold_dict = {
-        'cpu_usage': [threshold.cpu_used, u'CPU', u'cpu使用率超过阈值, 当前值为%s, 阈值为%s'],
-        'mem_usage': [threshold.mem_used, u'内存',  u'内存使用率过阈值, 当前值为%s, 阈值为%s'],
-        'disk_usage': [threshold.disk_used, u'硬盘' u'硬盘使用超过阈值, 当前值为%s, 阈值为%s'],
-        'bytes_in': [threshold.bytes_in, u'网络' u'下载速度超过阈值, 当前值为%s, 阈值为%s'],
-        'bytes_out': [threshold.bytes_out, u'网络' u'上传速度超过阈值, 当前值为%s, 阈值为%s'],
+        'cpu_usage': [threshold.cpu_used, u'CPU', u'cpu使用率超过阈值, 当前值为%f, 阈值为%f'],
+        'mem_usage': [threshold.mem_used, u'内存',  u'内存使用率过阈值, 当前值为%f, 阈值为%f'],
+        'disk_usage': [threshold.disk_used, u'硬盘' u'硬盘使用超过阈值, 当前值为%f, 阈值为%f'],
+        'bytes_in': [threshold.bytes_in, u'网络' u'下载速度超过阈值, 当前值为%f, 阈值为%f'],
+        'bytes_out': [threshold.bytes_out, u'网络' u'上传速度超过阈值, 当前值为%f, 阈值为%f'],
     }
 
-    if type in threshold_dict:
-        threshold_info = threshold_dict[type]
+    if metric_type in threshold_dict:
+        threshold_info = threshold_dict[metric_type]
 
         if threshold_info[0] != 0 and value > threshold_info[0]:
             alarm_info[mac_address]['alarm_queue'].append({

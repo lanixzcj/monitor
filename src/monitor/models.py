@@ -2,6 +2,9 @@ from __future__ import unicode_literals
 
 from django.db import models
 from rest_framework import serializers
+from datetime import datetime
+import time
+from django.utils.timezone import now
 
 
 class Host(models.Model):
@@ -56,7 +59,7 @@ class IpPacket(models.Model):
 
 
 class ProcessInfo(models.Model):
-    time = models.DateTimeField()
+    time = models.DateTimeField(default=now)
     host = models.ForeignKey(Host, on_delete=models.CASCADE)
     command = models.CharField(max_length=64)
     state = models.CharField(max_length=10)

@@ -144,12 +144,13 @@ def save_process_packet(host, metric):
 
     value = metric[u'value']
 
-    # time = value[u'time'] if u'time' in value else None
-    # time = string.atof(time)
-    # time = datetime.datetime.fromtimestamp(time, tz=timezone('Asia/Shanghai'))
+    time = value[u'time'] if u'time' in value else None
+    time = string.atof(time)
+    time = datetime.datetime.fromtimestamp(time, tz=timezone('Asia/Shanghai'))
 
     for process_info in value:
         process = ProcessInfo.objects.create(host=db_host,
+                                             time=time,
                                              command=process_info[u'command'],
                                              process_id=process_info[u'pid'],
                                              state=process_info[u'state'],

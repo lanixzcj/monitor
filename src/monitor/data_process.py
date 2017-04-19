@@ -8,6 +8,7 @@ from django.core.cache import cache
 from models import Host, HostThreshold, IpPacket, DeviceInfo, ProcessInfo
 from django.core.exceptions import ObjectDoesNotExist
 from pytz import timezone
+from django.utils.encoding import iri_to_uri
 
 
 def process_json(data, client_address):
@@ -29,7 +30,7 @@ def process_json(data, client_address):
                 if key == 'bytes_out' or key == 'bytes_in':
                     judge(host, key, string.atof(value['value']))
                 if value['is_in_rrd']:
-                    metrics_save_into_rrd(host, key, value)
+                    metrics_save_into_rrd(host, key, value['value'])
                 if key == 'net_pack':
                     save_ip_packet(host, value)
                 elif key == 'mem_info':
@@ -89,11 +90,11 @@ def hostinfo_save_into_db(host, ip):
 
 
 # 监控数据存入rrd
-def metrics_save_into_rrd(host, name, metric):
+def metrics_save_into_rrd(host, name, value):
     hostname = host['hostname'] if 'hostname' in host else None
     localtime = host['localtime'] if 'localtime' in host else None
 
-    rrd_helper.write_to_rrd(str(hostname), str(name), str(metric['value']), 1, 'GAUGE',
+    rrd_helper.write_to_rrd(str(hostname), str(name), str(value), 1, 'GAUGE',
                             '20', str(localtime))
 
     try:
@@ -104,13 +105,13 @@ def metrics_save_into_rrd(host, name, metric):
         return
 
     if name == 'disk_total':
-        deviceinfo.disk_total = metric['value']
+        deviceinfo.disk_total = value
         deviceinfo.save()
     elif name == 'disk_free':
-        deviceinfo.disk_free = metric['value']
+        deviceinfo.disk_free = value
         deviceinfo.save()
     elif name == 'mem_total':
-        deviceinfo.mem_total = metric['value']
+        deviceinfo.mem_total = value
         deviceinfo.save()
 
 
@@ -144,19 +145,18 @@ def save_process_packet(host, metric):
 
     value = metric[u'value']
 
-    time = value[u'time'] if u'time' in value else None
-    time = string.atof(time)
-    time = datetime.datetime.fromtimestamp(time, tz=timezone('Asia/Shanghai'))
-
     for process_info in value:
+        process_time = process_info[u'time'] if u'time' in process_info else None
+        process_time = string.atof(process_time)
+        process_time = datetime.datetime.fromtimestamp(process_time, tz=timezone('Asia/Shanghai'))
         process = ProcessInfo.objects.create(host=db_host,
-                                             time=time,
+                                             time=process_time,
                                              command=process_info[u'command'],
                                              process_id=process_info[u'pid'],
                                              state=process_info[u'state'],
                                              cpu_used=process_info[u'cpu_usage'],
                                              mem_used=process_info[u'mem_usage'],
-                                             boottime=process_info[u'lauch_time'],
+                                             boottime=process_info[u'lauch_time'].encode('unicode_escape'),
                                              runtime=process_info[u'running_time'])
         process.save()
 
@@ -222,9 +222,9 @@ def judge(host, metric_type, value):
     threshold_dict = {
         'cpu_usage': [threshold.cpu_used, u'CPU', u'cpu使用率超过阈值, 当前值为%f, 阈值为%f'],
         'mem_usage': [threshold.mem_used, u'内存',  u'内存使用率过阈值, 当前值为%f, 阈值为%f'],
-        'disk_usage': [threshold.disk_used, u'硬盘' u'硬盘使用超过阈值, 当前值为%f, 阈值为%f'],
-        'bytes_in': [threshold.bytes_in, u'网络' u'下载速度超过阈值, 当前值为%f, 阈值为%f'],
-        'bytes_out': [threshold.bytes_out, u'网络' u'上传速度超过阈值, 当前值为%f, 阈值为%f'],
+        'disk_usage': [threshold.disk_used, u'硬盘', u'硬盘使用超过阈值, 当前值为%f, 阈值为%f'],
+        'bytes_in': [threshold.bytes_in, u'网络', u'下载速度超过阈值, 当前值为%f, 阈值为%f'],
+        'bytes_out': [threshold.bytes_out, u'网络', u'上传速度超过阈值, 当前值为%f, 阈值为%f'],
     }
 
     if metric_type in threshold_dict:

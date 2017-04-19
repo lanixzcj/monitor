@@ -13,7 +13,6 @@ const PATHS = {
 };
 
 const VENDOR = [
-    'babel-polyfill',
     'history',
     'react',
     'react-dom',
@@ -31,7 +30,7 @@ const common = {
     context: basePath,
     entry: {
         vendor: VENDOR,
-        app: PATHS.app
+        app: ['babel-polyfill',PATHS.app]
     },
     output: {
         filename: '[name].[hash].js',

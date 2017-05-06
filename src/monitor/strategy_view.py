@@ -140,7 +140,10 @@ def file(request, host):
                                                  permission=permission)
             file_rule.save()
 
-            return JSONResponse(get_file_rules(request, host), status=status.HTTP_201_CREATED)
+            file_rule = get_file_rules(request, host)
+            send_safe_strategy.delay(host_info.ip, settings.CLIENT_PORT, file=file_rule)
+
+            return JSONResponse(file_rule, status=status.HTTP_201_CREATED)
         except ObjectDoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -153,7 +156,11 @@ def file(request, host):
                 file_rules = FileRules.objects.filter(host__exact=host_info,
                                                            id=id)
                 file_rules.delete()
-            return JSONResponse(get_file_rules(request, host), status=status.HTTP_200_OK)
+
+            file_rule = get_file_rules(request, host)
+            send_safe_strategy.delay(host_info.ip, settings.CLIENT_PORT, file=file_rule)
+
+            return JSONResponse(file_rule, status=status.HTTP_200_OK)
         except ObjectDoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 

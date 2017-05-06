@@ -7,8 +7,8 @@ import StrategyTable from '../../components/StrategyTable'
 
 
 const fileHeaders = [
-    {field: 'file', name: '文件名'},
-    {field: 'permission', name: '权限'},
+    {field: 'file', name: '文件名', options: {pattern: /^\/.+[^\/]$/}},
+    {field: 'permission', name: '权限', options: {pattern: /^[0-7]{3}$/}},
 ];
 
 

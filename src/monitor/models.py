@@ -63,7 +63,6 @@ class ProcessInfo(models.Model):
     mem_used = models.FloatField(default=0)
     cpu_used = models.FloatField(default=0)
     process_id = models.IntegerField()
-    user = models.CharField(max_length=30)
     boottime = models.CharField(max_length=30)
     runtime = models.CharField(max_length=30)
 
@@ -75,9 +74,7 @@ class FileInfo(models.Model):
     time = models.DateTimeField()
     host = models.ForeignKey(Host, on_delete=models.CASCADE)
     file_name = models.CharField(max_length=100)
-    user = models.CharField(max_length=30)
     operate_type = models.CharField(max_length=30)
-    modify_size = models.FloatField(default=0)
 
     def __unicode__(self):
         return self.file_name
@@ -116,14 +113,14 @@ class IpPacketSerializer(serializers.ModelSerializer):
 class ProcessSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProcessInfo
-        fields = ('id', 'time', 'host', 'command', 'process_id', 'user', 'boottime',
+        fields = ('id', 'time', 'host', 'command', 'process_id', 'boottime',
                   'runtime', 'state', 'cpu_used', 'mem_used')
 
 
 class FileSerializer(serializers.ModelSerializer):
     class Meta:
         model = FileInfo
-        fields = ('id', 'time', 'host', 'file_name', 'user', 'operate_type', 'modify_size')
+        fields = ('id', 'time', 'host', 'file_name', 'operate_type')
 
 
 class MediaSerializer(serializers.ModelSerializer):

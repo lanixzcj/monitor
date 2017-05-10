@@ -67,23 +67,23 @@ const defaultStyles = {
 export default class Drawer extends Component {
     constructor(props) {
         super(props);
+
     }
 
-    state = {
-        collapsed: true,
-    };
+
     overClick = () => {
         if (this.props.drawer.open) {
             this.props.drawerActions.hideDrawer();
         }
     };
 
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.drawer.host != this.props.drawer.host) {
-            this.props.monitorActions.loadAllMonitors(nextProps.drawer.host,
-                this.content.getWrappedInstance().state.time);
-        }
-    }
+    // componentWillReceiveProps(nextProps) {
+    //     if (this.props.drawer.open) {
+    //         this.props.monitorActions.loadAllMonitors(nextProps.drawer.host,
+    //             this.state.time);
+    //     }
+    // }
+
 
     render() {
         const overlayStyle = {...defaultStyles.overlay};
@@ -102,7 +102,8 @@ export default class Drawer extends Component {
                     collapsedWidth={0}
                     style={defaultStyles.sidebar}
                 >
-                    <SidebarContent ref={(ref) => this.content = ref} host={this.props.drawer.host}/>
+                    {!this.props.drawer.open ? <div></div> :
+                        <SidebarContent ref={(ref) => this.content = ref} host={this.props.drawer.host}/>}
                 </Sider>
                 <div style={overlayStyle} onClick={this.overClick}></div>
             </div>

@@ -31,7 +31,7 @@ class MyStreamRequestHandler(StreamRequestHandler):
                 break
 
 
-# 监听县城
+# 监听线程
 @shared_task
 def server_thread():
     addr = '', 8650
@@ -90,9 +90,9 @@ def scanning_host():
                     # unsafe_hosts[mac_address]['hostname'] = arp_poison.get_hostname(unsafe_hosts[mac_address]['ip'])
                     # arp poison
                     # TODO:用一个用例测试
-                    if unsafe_hosts[mac_address]['ip'] == '192.168.3.109':
-                        arp_poison.poison_target(arp_poison.gateway_ip, gateway_mac,
-                                             unsafe_hosts[mac_address]['ip'], mac_address)
+                    # if unsafe_hosts[mac_address]['ip'] == '192.168.3.109':
+                    #     arp_poison.poison_target(arp_poison.gateway_ip, gateway_mac,
+                    #                          unsafe_hosts[mac_address]['ip'], mac_address)
 
             # print unsafe_hosts
 

@@ -5,7 +5,7 @@ import rrd_helper
 import datetime
 import time
 from django.core.cache import cache
-from models import Host, HostThreshold, IpPacket, DeviceInfo, ProcessInfo
+from models import Host, HostThreshold, IpPacket, DeviceInfo, ProcessInfo, FileInfo
 from django.core.exceptions import ObjectDoesNotExist
 from pytz import timezone
 from django.utils.encoding import iri_to_uri
@@ -41,6 +41,9 @@ def process_json(data, client_address):
                     save_process_packet(host, value)
                 elif key == 'cpu_info':
                     save_cpu_packet(host, value)
+                elif key == 'file_ops_log':
+                    print 'recv file'
+                    save_file_packet(host, value)
 
 
 # 记录在线主机列表
@@ -196,8 +199,25 @@ def save_disk_packet(host, metric):
         metrics_save_into_rrd(host, key, value)
 
 
-def judge(host, metric_type, value):
+# 保存file信息
+def save_file_packet(host, metric):
+    hostname = host['hostname'] if 'hostname' in host else None
+    db_host = Host.objects.get(hostname=hostname)
 
+    value = metric[u'value']
+
+    for file_info in value:
+        file_time = file_info[u'time'] if u'time' in file_info else None
+        file_time = string.atof(file_time)
+        file_time = datetime.datetime.fromtimestamp(file_time, tz=timezone('Asia/Shanghai'))
+        file = FileInfo.objects.create(host=db_host,
+                                             time=file_time,
+                                             file_name=file_info[u'file'],
+                                             operate_type=file_info[u'operat'])
+        file.save()
+
+
+def judge(host, metric_type, value):
     hostname = host['hostname'] if 'hostname' in host else None
     try:
         host_info = Host.objects.get(hostname=hostname)

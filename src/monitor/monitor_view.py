@@ -1,3 +1,5 @@
+import string
+
 from django.http import HttpResponse
 import time
 import datetime
@@ -23,41 +25,55 @@ class_dict = {
 }
 
 
-def get_monitor_json(type, host, start):
+def get_monitor_json(type, host, start, results, page):
     try:
-        data = class_dict[type][0].objects.filter(host__hostname=host,
+        count = class_dict[type][0].objects.filter(host__hostname=host,
                                                 time__gt=datetime.datetime.fromtimestamp(
                                                                   time.time() - start[0],
-                                                                  tz=timezone('Asia/Shanghai')))
+                                                                  tz=timezone('Asia/Shanghai'))).count()
+        data = class_dict[type][0].objects.filter(host__hostname=host,
+                            time__gt=datetime.datetime.fromtimestamp(
+                                  time.time() - start[0],
+                                  tz=timezone('Asia/Shanghai')))[(page - 1) * results:page * results]
         serializer = class_dict[type][1](data, many=True)
-        return serializer.data
+        return [serializer.data, count]
     except ObjectDoesNotExist:
         return []
 
 
 def ip_packet(request, host, start):
+    results = string.atof(request.GET.get('results', 10))
+    page = string.atof(request.GET.get('page', 1))
     if request.method == 'GET':
-        return JSONResponse(get_monitor_json('ip_packet', host, start))
+        return JSONResponse(get_monitor_json('ip_packet', host, start, results, page))
 
 
 def fileinfo(request, host, start):
+    results = string.atof(request.GET.get('results', 10))
+    page = string.atof(request.GET.get('page', 1))
     if request.method == 'GET':
-        return JSONResponse(get_monitor_json('fileinfo', host, start))
+        return JSONResponse(get_monitor_json('fileinfo', host, start, results, page))
 
 
 def processinfo(request, host, start):
+    results = string.atof(request.GET.get('results', 10))
+    page = string.atof(request.GET.get('page', 1))
     if request.method == 'GET':
-        return JSONResponse(get_monitor_json('processinfo', host, start))
+        return JSONResponse(get_monitor_json('processinfo', host, start, results, page))
 
 
 def mediainfo(request, host, start):
+    results = string.atof(request.GET.get('results', 10))
+    page = string.atof(request.GET.get('page', 1))
     if request.method == 'GET':
-        return JSONResponse(get_monitor_json('mediainfo', host, start))
+        return JSONResponse(get_monitor_json('mediainfo', host, start, results, page))
 
 
 def warninginfo(request, host, start):
+    results = string.atof(request.GET.get('results', 10))
+    page = string.atof(request.GET.get('page', 1))
     if request.method == 'GET':
-        return JSONResponse(get_monitor_json('warninginfo', host, start))
+        return JSONResponse(get_monitor_json('warninginfo', host, start, results, page))
 
 
 def get_deviceinfo(request, host):
@@ -81,13 +97,14 @@ def deviceinfo(request, host, start):
 
 
 def all(request, host, start):
-    print host
+    results = string.atof(request.GET.get('results', 10))
+    page = string.atof(request.GET.get('page', 1))
     all = {
-        'ip_packet': get_monitor_json('ip_packet', host, start),
-        'mediainfo': get_monitor_json('mediainfo', host, start),
-        'processinfo': get_monitor_json('processinfo', host, start),
-        'fileinfo': get_monitor_json('fileinfo', host, start),
-        'warninginfo': get_monitor_json('warninginfo', host, start),
+        'ip_packet': get_monitor_json('ip_packet', host, start, results, page),
+        'mediainfo': get_monitor_json('mediainfo', host, start, results, page),
+        'processinfo': get_monitor_json('processinfo', host, start, results, page),
+        'fileinfo': get_monitor_json('fileinfo', host, start, results, page),
+        'warninginfo': get_monitor_json('warninginfo', host, start, results, page),
         'deviceinfo': get_deviceinfo(request, host),
     }
 

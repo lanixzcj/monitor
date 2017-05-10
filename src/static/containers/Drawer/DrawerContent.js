@@ -9,7 +9,7 @@ import MonTable from '../../components/MonitorTable'
 import DeviceMonitor from './DeviceMonitor'
 import DataMiningResult from './DataMiningResult'
 import * as monitorActions from '../../actions/monitorData';
-import { Button, Radio, Tabs } from 'antd';
+import { Button, Radio, Tabs, Spin } from 'antd';
 const ButtonGroup = Button.Group;
 const TabPane = Tabs.TabPane;
 
@@ -58,9 +58,7 @@ const ipHeaders = [
 const fileHeaders = [
     {field: 'time', name: '时间'},
     {field: 'file_name', name: '文件名', sorter: (a, b) => a.filename - b.filename},
-    {field: 'user', name: '用户'},
     {field: 'operate_type', name: '操作类型'},
-    {field: 'modify_size', name: '修改大小(KB)'},
 ];
 
 const mediaHeaders = [
@@ -74,7 +72,6 @@ const mediaHeaders = [
 const processHeaders = [
     {field: 'time', name: '时间'},
     {field: 'process_id', name: '进程id'},
-    {field: 'user', name: '用户'},
     {field: 'boottime', name: '启动时间'},
     {field: 'runtime', name: '运行时间'},
     {field: 'cpu_used', name: 'CPU使用'},
@@ -123,9 +120,6 @@ export default class SidebarContent extends Component {
     //     }
     // }
 
-    shouldComponentUpdate(nextProps) {
-        return !(nextProps.monitor.data == null);
-    }
     //
     // componentWillUpdate() {
     //     Perf.start();
@@ -135,6 +129,11 @@ export default class SidebarContent extends Component {
     //     Perf.stop();
     //     // Perf.printWasted();
     // }
+
+    componentWillMount() {
+        this.props.monitorActions.loadAllMonitors(this.props.host,
+            this.state.time);
+    }
 
     render() {
         const title = this.props.host;
@@ -146,8 +145,13 @@ export default class SidebarContent extends Component {
             search: true,
             exportCSV: true,
         };
+
+        const host = {
+            host: this.props.host,
+            time: this.state.time,
+        };
         return (
-            <div >
+            <Spin spinning={this.props.monitor.isLoading}>
                 <div style={styles.header}>{title}</div>
                 <div style={styles.content}>
                     <Radio.Group onChange={ (e) => {
@@ -157,37 +161,37 @@ export default class SidebarContent extends Component {
                         {renderButtons(values)}
                     </Radio.Group>
                     {this.props.monitor.data == null ? <div></div> :
-                    <Tabs defaultActiveKey="1" id="uncontrolled-tab-example">
-                        <TabPane key="1" tab="设备信息">
-                            <DeviceMonitor  host={this.props.host} time={this.state.time}
-                                            data={this.props.monitor.data.deviceinfo} {...this.props.monActions}/>
-                        </TabPane>
-                        <TabPane key="2" tab="进程">
-                            <MonTable options={options}  data={this.props.monitor.data.processinfo} {...this.props.monActions}
-                                      headers={ processHeaders} isLoading={this.props.monitor.isLoading}/>
-                        </TabPane>
-                        <TabPane key="3" tab="文件">
-                            <MonTable options={options}  data={this.props.monitor.data.fileinfo} {...this.props.monActions}
-                                      headers={ fileHeaders} isLoading={this.props.monitor.isLoading}/>
-                        </TabPane>
-                        <TabPane key="4" tab="移动介质">
-                            <MonTable options={options}  data={this.props.monitor.data.mediainfo} {...this.props.monActions}
-                                      headers={ mediaHeaders} isLoading={this.props.monitor.isLoading}/>
-                        </TabPane>
-                        <TabPane key="5" tab="IP包">
-                            <MonTable options={options}  data={this.props.monitor.data.ip_packet} {...this.props.monActions}
-                                      headers={ ipHeaders} isLoading={this.props.monitor.isLoading}/>
-                        </TabPane>
-                        <TabPane key="6" tab="预警历史">
-                            <MonTable options={options}  data={this.props.monitor.data.warninginfo} {...this.props.monActions}
-                                      headers={ warningHeaders} isLoading={this.props.monitor.isLoading}/>
-                        </TabPane>
-                        <TabPane key="7" tab="监控数据挖掘">
-                            <DataMiningResult/>
-                        </TabPane>
-                    </Tabs>}
+                        <Tabs defaultActiveKey="1" id="uncontrolled-tab-example">
+                            <TabPane key="1" tab="设备信息">
+                                <DeviceMonitor  host={this.props.host} time={this.state.time}
+                                                data={this.props.monitor.data.deviceinfo} {...this.props.monActions}/>
+                            </TabPane>
+                            <TabPane key="2" tab="进程">
+                                <MonTable options={options}  data={this.props.monitor.data.processinfo} {...this.props.monActions} host={host}
+                                          headers={ processHeaders} isLoading={this.props.monitor.isLoading} name="processinfo"/>
+                            </TabPane>
+                            <TabPane key="3" tab="文件">
+                                <MonTable options={options}  data={this.props.monitor.data.fileinfo} {...this.props.monActions} host={host}
+                                          headers={ fileHeaders} isLoading={this.props.monitor.isLoading} name="fileinfo"/>
+                            </TabPane>
+                            {/*<TabPane key="4" tab="移动介质">*/}
+                                {/*<MonTable options={options}  data={this.props.monitor.data.mediainfo} {...this.props.monActions} host={host}*/}
+                                          {/*headers={ mediaHeaders} isLoading={this.props.monitor.isLoading} name="mediainfo"/>*/}
+                            {/*</TabPane>*/}
+                            <TabPane key="5" tab="IP包">
+                                <MonTable options={options}  data={this.props.monitor.data.ip_packet} {...this.props.monActions} host={host}
+                                          headers={ ipHeaders} isLoading={this.props.monitor.isLoading} name="ip_packet"/>
+                            </TabPane>
+                            <TabPane key="6" tab="预警历史">
+                                <MonTable options={options}  data={this.props.monitor.data.warninginfo} {...this.props.monActions} host={host}
+                                          headers={ warningHeaders} isLoading={this.props.monitor.isLoading} name="warninginfo"/>
+                            </TabPane>
+                            <TabPane key="7" tab="监控数据挖掘">
+                                <DataMiningResult/>
+                            </TabPane>
+                        </Tabs>}
                 </div>
-            </div>
+            </Spin>
         );
     }
 }

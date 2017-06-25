@@ -187,7 +187,7 @@ export default class SidebarContent extends Component {
                                           headers={ warningHeaders} isLoading={this.props.monitor.isLoading} name="warninginfo"/>
                             </TabPane>
                             <TabPane key="7" tab="监控数据挖掘">
-                                <DataMiningResult/>
+                                <DataMiningResult host={host}/>
                             </TabPane>
                         </Tabs>}
                 </div>

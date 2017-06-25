@@ -7,6 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from models import *
 from rest_framework.renderers import JSONRenderer
 from pytz import timezone
+import pymysql
 
 
 class JSONResponse(HttpResponse):
@@ -94,6 +95,56 @@ def get_deviceinfo(request, host):
 def deviceinfo(request, host, start):
     if request.method == 'GET':
         return JSONResponse(get_deviceinfo(request, host))
+
+
+def warning_mining_info(request, host, start):
+    conn = pymysql.connect(host='localhost', db='supervision', user='root', passwd='root', port=3306, charset='utf8')
+
+    type = request.GET.get('type', 1)
+    keys = ['id', 'userid', 'time', 'description', 'rank', 'species']
+    result = {}
+    try:
+        with conn.cursor() as cursor:
+            sql = 'select id, userid, time, description, rank, species from warning_information_result ' \
+                  'where type = %s'
+            cursor.execute(sql, type)
+            association = cursor.fetchall()
+            result['association'] = [dict(zip(keys, a)) for a in association]
+
+            sql = 'select id, userid, time, description, rank, species from warning_information_generules ' \
+                  'where fit > 0'
+            cursor.execute(sql)
+            frequent = cursor.fetchall()
+            result['frequent'] = [dict(zip(keys, f)) for f in frequent]
+    finally:
+        conn.close()
+
+    return JSONResponse(result)
+
+
+def process_res_info(request, host, start):
+    conn = pymysql.connect(host='localhost', db='supervision', user='root', passwd='root', port=3306, charset='utf8')
+
+    type = request.GET.get('type', 1)
+    keys = ['id', 'user', 'time', 'process_name', 'resource_name', 'warning_rank']
+    result = {}
+    try:
+        with conn.cursor() as cursor:
+            sql = 'select id, user, time, process_name, resource_name, warning_rank from ' \
+                  'data_process_resource_warning_result where type = %s'
+            cursor.execute(sql, type)
+            association = cursor.fetchall()
+            result['association'] = [dict(zip(keys, a)) for a in association]
+
+            sql = 'select id, user, time, process_name, resource_name, warning_rank from ' \
+                  'data_process_resource_warning_generules where fit > 0'
+            cursor.execute(sql)
+            frequent = cursor.fetchall()
+            result['frequent'] = [dict(zip(keys, f)) for f in frequent]
+    finally:
+        conn.close()
+
+    return JSONResponse(result)
 
 
 def all(request, host, start):

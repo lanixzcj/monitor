@@ -42,7 +42,7 @@ export default class MonTable extends Component {
     };
 
     render() {
-        let data = this.props.data ? this.props.data : [];
+        let data = this.props.data ? this.props.data[0] : [];
 
         return (
             <div>

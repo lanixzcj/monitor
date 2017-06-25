@@ -67,7 +67,7 @@ class ProcessInfo(models.Model):
     runtime = models.CharField(max_length=30)
 
     def __unicode__(self):
-        return self.user
+        return self.command
 
 
 class FileInfo(models.Model):

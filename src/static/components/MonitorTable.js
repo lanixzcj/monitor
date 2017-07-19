@@ -5,6 +5,9 @@ import { Table, Icon, Input, Row, Col, Button } from 'antd';
 const Search = Input.Search;
 const { Column, ColumnGroup } = Table;
 import exportCSVUtil from '../utils/csv_export';
+import fetch from 'isomorphic-fetch';
+import { SERVER_URL } from '../utils/config';
+import { checkHttpStatus, parseJSON } from '../utils';
 
 function renderColHeader(columns, search) {
     return columns.map((column, i) => {
@@ -32,8 +35,25 @@ export default class MonTable extends Component {
     constructor(props) {
         super(props);
 
+        let data = props.data ? props.data[0] : [];
+        let num = props.data ? props.data[1] : 0;
         this.state = {
-            searchText: null
+            data: data,
+            searchText: null,
+            pagination: {current: 1, total: num},
+            isLoading: props.isLoading
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        let data = nextProps.data ? nextProps.data[0] : [];
+        let num = nextProps.data ? nextProps.data[1] : 0;
+        const pager = { ...this.state.pagination };
+        pager.total = num;
+        this.state = {
+            isLoading: nextProps.isLoading,
+            data: data,
+            pagination: pager
         }
     }
 
@@ -41,9 +61,40 @@ export default class MonTable extends Component {
         this.setState({searchText: value});
     };
 
-    render() {
-        let data = this.props.data ? this.props.data[0] : [];
+    handleTableChange = (pagination, filters, sorter) => {
+        this.getData(pagination);
+    };
 
+    getData = (pagination)=> {
+        const pager = { ...this.state.pagination };
+        pager.current = pagination.current;
+
+        this.setState({
+            isLoading: true,
+        });
+        fetch(`${SERVER_URL}/api/v1/monitor/monitor/${this.props.name}/` +
+            `${this.props.host.host}?r=${this.props.host.time}&page=${pagination.current}`, {
+        }).then(checkHttpStatus)
+            .then(parseJSON)
+            .then((response) => {
+                pager.total = response[1];
+                this.setState({
+                    isLoading: false,
+                    data: response[0],
+                    pagination: pager,
+                })
+            })
+            .catch(() => {
+                pager.total = 0;
+                this.setState({
+                    isLoading: false,
+                    data: [],
+                    pagination: pager,
+                })
+            });
+    };
+
+    render() {
         return (
             <div>
                 <Row>
@@ -62,7 +113,9 @@ export default class MonTable extends Component {
                     </Col>
                 </Row>
 
-                <Table ref={ref => this.table = ref} dataSource={data} loading={this.props.isLoading} rowKey="id">
+                <Table ref={ref => this.table = ref} pagination={this.state.pagination}
+                       dataSource={this.state.data} loading={this.state.isLoading}
+                       rowKey="id" onChange={this.handleTableChange}>
                     {renderColHeader(this.props.headers, this.state.searchText)}
                 </Table>
             </div>

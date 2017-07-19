@@ -83,7 +83,7 @@ const processHeaders = [
 const warningHeaders = [
     {field: 'time', name: '时间'},
     {field: 'warning_type', name: '预警类别'},
-    {field: 'warning_content', name: '预警内容(KB)'},
+    {field: 'warning_content', name: '预警内容'},
     {field: 'warning_level', name: '预警等级'},
 ];
 

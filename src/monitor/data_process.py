@@ -5,7 +5,7 @@ import rrd_helper
 import datetime
 import time
 from django.core.cache import cache
-from models import Host, HostThreshold, IpPacket, DeviceInfo, ProcessInfo, FileInfo
+from models import Host, HostThreshold, IpPacket, DeviceInfo, ProcessInfo, FileInfo, WarningHistory
 from django.core.exceptions import ObjectDoesNotExist
 from pytz import timezone
 from django.utils.encoding import iri_to_uri
@@ -251,6 +251,13 @@ def judge(host, metric_type, value):
         threshold_info = threshold_dict[metric_type]
 
         if threshold_info[0] != 0 and value > threshold_info[0]:
+            # warning = WarningHistory.objects.create(host=host_info,
+            #                              time=datetime.datetime.now(tz=timezone('Asia/Shanghai')),
+            #                              warning_type=u's'.encode('utf-8'),
+            #                              warning_content=u'd'.encode('utf-8'),
+            #                              warning_level=u"s".encode('utf-8'))
+            # warning.save()
+
             alarm_info[mac_address]['alarm_queue'].append({
                 'time': time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
                 'type': threshold_info[1].encode("utf-8"),

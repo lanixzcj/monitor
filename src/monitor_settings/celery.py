@@ -25,7 +25,7 @@ app.conf.beat_schedule = {
     },
     'scan_thread': {
         'task': 'monitor.tasks.scanning_host',
-        'schedule': 20.0,
+        'schedule': 120.0,
         'args': ()
     },
     #'send_email_thread': {
@@ -45,6 +45,7 @@ app.conf.beat_schedule = {
 def on_celery_start(sender, **kwargs):
     app.send_task(name='monitor.tasks.server_thread')
     cache.delete('hosts')
+    app.send_task(name='monitor.tasks.scanning_host')
     pass
 
 

@@ -105,7 +105,9 @@ def scanning_host():
                         #                          unsafe_hosts[mac_address], mac_address)
 
             cache.set('last_unsafe_hosts', unsafe_hosts)
-            time.sleep(5)
+
+            break
+            # time.sleep(5)
 
 
 @shared_task

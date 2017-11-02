@@ -8,7 +8,7 @@ PAGE_CACHE_SECONDS = 1
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'monitor_',
+        'NAME': 'monitor',
         'STORAGE_ENGINE': 'MyISAM / INNODB / ETC',
         'USER': 'root',
         'PASSWORD': 'root',

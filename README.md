@@ -15,7 +15,7 @@
     ```
 
 3. rrdtool  <br>
-    ubuntu14.04源中`rrdtool`是1.4.7版本,默认的api不是线程安全的,所以用源码安装1.6.0版本
+    ubuntu14.04源中`rrdtool`是1.4.7版本,默认的api不是线程安全的,所以用源码安装1.6.0版本,如果是16.04以后的源则只需要第一步即可
     * 先安装`rrdtool`开发包,里面包含了源码安装所需要的依赖包
         ```sh
         sudo apt-get install librrd-dev
@@ -53,7 +53,6 @@
         在`.bashrc`后再入
         ```sh
         export WORKON_HOME=$HOME/.virtualenvs
-        export PROJECT_HOME=$HOME/workspace
         source /usr/local/bin/virtualenvwrapper.sh
         ```
 
@@ -84,13 +83,15 @@
 ## django
 
 1. 创建数据库与表  <br>
-    先在mysql中创建`monitor`数据库,再通过`django`同步表,工作目录为与`manage.py`同级
+    默认配置的mysql用户名密码均为`root`。先在mysql中创建`monitor`数据库,再通过`django`同步表,工作目录为与`manage.py`同级
     ``` sh
+    # mysql shell
     create database monitor;
+    create database supervision;
 
-
+    # shell
     python manage.py makemigrations
-    python manage.py makemigrations data_process
+    python manage.py makemigrations monitor
     python manage.py migrate
     ```
 
@@ -108,7 +109,7 @@
     需要使用`scapy`的时候需要`sudo`权限
     
     ``` sh
-    celery -A monitor worker -B -l info
+    celery -A monitor_settings worker -B -l info
     ```
 
 

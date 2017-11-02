@@ -80,6 +80,25 @@
 5. 服务器  <br>
     可以先用`django`的测试服务器进行开发
 
+## react
+
+1. 首先安装node
+1. 全局安装`webpack`
+    ``` sh
+    npm install -g webpack
+    ```
+1. 安装依赖模块
+    ``` sh
+    npm install
+    ```
+1. 在`src/static/utils/config.js`中配置服务端地址
+1. 编译
+    ``` sh
+    npm run prod # 编译
+    npm run dev # 编译并启用热替换
+    npm start # 编译并开启开发用服务端
+    ```
+
 ## django
 
 1. 创建数据库与表  <br>
@@ -91,8 +110,10 @@
 
     # shell
     python manage.py makemigrations
+    python manage.py makemigrations accounts
     python manage.py makemigrations monitor
     python manage.py migrate
+    python manage.py createsuperuser
     ```
 
 2. 开启开发用测试服务器
@@ -112,8 +133,13 @@
     celery -A monitor_settings worker -B -l info
     ```
 
+## 启动/停止
 
-
+1. 可以直接通过项目中的脚本启动和停止程序
+    ``` sh
+    ./startup.sh # 启动log在src中
+    ./stop.sh
+    ```
 
 
 

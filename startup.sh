@@ -1,7 +1,7 @@
 #!/bin/bash
 source `which virtualenvwrapper.sh`
 workon react
-cd /home/lan/WebstormProjects/monitor
+#cd /home/lan/WebstormProjects/monitor
 #npm run prod
 cd src
 python manage.py runserver 0.0.0.0:8000 > django.log  2>&1 &

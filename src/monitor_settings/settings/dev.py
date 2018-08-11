@@ -23,29 +23,29 @@ DATABASES = {
                 'collation_connection=utf8_bin'
         }
     },
-    'supervision': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'supervision',
-        'STORAGE_ENGINE': 'MyISAM / INNODB / ETC',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-        'OPTIONS': {
-            'sql_mode': 'TRADITIONAL',
-            'charset': 'utf8',
-            'init_command': 'SET '
-                # 'storage_engine=INNODB,'
-                'character_set_connection=utf8,'
-                'collation_connection=utf8_bin'
-        }
-    }
+    #'supervision': {
+    #    'ENGINE': 'django.db.backends.mysql',
+    #    'NAME': 'supervision',
+    #    'STORAGE_ENGINE': 'MyISAM / INNODB / ETC',
+    #    'USER': 'root',
+    #    'PASSWORD': 'root',
+    #    'HOST': '127.0.0.1',
+     #   'PORT': '3306',
+     #   'OPTIONS': {
+     #       'sql_mode': 'TRADITIONAL',
+     #       'charset': 'utf8',
+     #       'init_command': 'SET '
+     #           # 'storage_engine=INNODB,'
+     #           'character_set_connection=utf8,'
+     #           'collation_connection=utf8_bin'
+      #  }
+    #}
 }
 
-DATABASE_ROUTERS = ['monitor_settings.database_router.DatabaseAppsRouter']
-DATABASE_APPS_MAPPING = {
-    'data_mining': 'supervision',
-}
+#DATABASE_ROUTERS = ['monitor_settings.database_router.DatabaseAppsRouter']
+#DATABASE_APPS_MAPPING = {
+#    'data_mining': 'supervision',
+#}
 
 REST_FRAMEWORK['EXCEPTION_HANDLER'] = 'django_rest_logger.handlers.rest_exception_handler'  # NOQA (ignore all errors on this line)
 

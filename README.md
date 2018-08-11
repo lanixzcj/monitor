@@ -1,4 +1,10 @@
-## 环境搭建 && 依赖
+## 使用Docker部署
+
+1. 安装docker docker-compose
+1. docker-compose build
+1. docker-compose up
+
+## 不使用Docker部署
 
 以ubuntu14.04为例
 

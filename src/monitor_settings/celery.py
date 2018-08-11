@@ -33,11 +33,11 @@ app.conf.beat_schedule = {
     #    'schedule': 300.0,
     #    'args': ()
     #},
-    'data_mining_thread': {
-        'task': 'data_mining.tasks.data_mining',
-        'schedule': crontab(minute=0, hour=0),
-        'args': ()
-    },
+    #'data_mining_thread': {
+    #    'task': 'data_mining.tasks.data_mining',
+    #    'schedule': crontab(minute=0, hour=0),
+    #    'args': ()
+    #},
 }
 
 

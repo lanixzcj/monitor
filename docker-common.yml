@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+    nginx:
+        restart: always
+        image: nginx:1.11.6-alpine
+    mysql:
+        restart: always
+        image: mysql:5.7
+        expose:
+            - 3306:3306
+        volumes:
+          - ./docker/mysql/:/docker-entrypoint-initdb.d
+    django:
+        restart: always
+        build:
+            context: .
+            dockerfile: ./docker/django/Dockerfile
+        volumes:
+            - .:/django
+    web:
+        restart: always
+        build:
+            context: .
+            dockerfile: ./docker/web/Dockerfile
+        volumes:
+            - .:/django

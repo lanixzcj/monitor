@@ -43,7 +43,7 @@ app.conf.beat_schedule = {
 
 @app.on_after_configure.connect
 def on_celery_start(sender, **kwargs):
-    app.send_task(name='monitor.tasks.server_thread')
+    #app.send_task(name='monitor.tasks.server_thread')
     cache.delete('hosts')
     app.send_task(name='monitor.tasks.scanning_host')
     pass

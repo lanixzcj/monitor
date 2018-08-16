@@ -3,7 +3,7 @@
 
 import os
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))  # remove /sswmain/settings to get base folder
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'ajsdgas7&*kosdsa21[]jaksdhlka-;kmcv8l$#diepsm8&ah^'
@@ -128,7 +128,7 @@ BYTES_IN = 2000
 BYTES_OUT = 500
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-RRD_DIR = os.path.join(BASE_DIR, 'rrd')
+RRD_DIR = os.path.join(os.path.join(os.path.dirname(BASE_DIR), 'services'), 'rrd')
 
 # MIDDLEWARE
 

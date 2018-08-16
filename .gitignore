@@ -3,8 +3,10 @@ celerybeat-schedule
 *.pyc
 migrations/
 .idea/
+.mvn/
 rrd
 node_modules
 *.log
 build
 static_dist
+target/

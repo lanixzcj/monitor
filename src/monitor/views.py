@@ -77,7 +77,6 @@ def host_list():
         host = dict(dict(mac_address=item[0]), **item[1])
         hosts_list.append(host)
 
-    print time.time() - start, 'ss'
     return hosts_list
 
 

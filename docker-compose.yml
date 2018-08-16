@@ -37,7 +37,6 @@ services:
             - .:/django
         entrypoint:
             - /django-entrypoint.sh
-        tty: true
         network_mode: "host"
         expose:
             - 8000
@@ -53,7 +52,24 @@ services:
             - /django/node_modules
         entrypoint:
             - /web-entrypoint.sh
-        tty: true
+    zookeeper:
+        image: zookeeper
+        restart: always
+        hostname: zoo
+        ports:
+          - 2181:2181
+        network_mode: "host"
+    dubbo:
+        restart: always
+        build:
+            context: .
+            dockerfile: ./docker/dubbo/Dockerfile
+        volumes:
+            - .:/django
+        network_mode: "host"
+        entrypoint:
+            - /dubbo-entrypoint.sh
+        
 
      
     

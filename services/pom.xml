@@ -17,6 +17,10 @@
         <module>alert</module>
         <module>monitor</module>
         <module>tsdb</module>
+        <module>webapi</module>
+        <module>monitorData</module>
+        <module>strategy</module>
+        <module>redis</module>
     </modules>
     <packaging>pom</packaging>
     <properties>

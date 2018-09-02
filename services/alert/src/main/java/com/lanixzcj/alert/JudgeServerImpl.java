@@ -3,14 +3,10 @@ package com.lanixzcj.alert;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.lanixzcj.alert.mapper.ThresholdMapper;
 import com.lanixzcj.alert.model.Alert;
-import com.lanixzcj.alert.model.Hostinfo;
-import com.lanixzcj.alert.model.Threshold;
-import com.lanixzcj.api.IJudgeService;
+import com.lanixzcj.api.entry.strategy.Threshold;
+import com.lanixzcj.api.serviceapi.IJudgeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 @Service(version = "1.0.0")

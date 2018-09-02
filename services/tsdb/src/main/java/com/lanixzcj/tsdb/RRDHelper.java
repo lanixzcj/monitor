@@ -52,19 +52,19 @@ public class RRDHelper {
     }
 
     public static byte[] graph(String hostname, String metricName, String timerange, String size) {
-//        Pair<Integer, String> timerangePair = Constants.timeRangeMap.get(timerange);
-//        Pair<Integer, Integer> sizePair = Constants.graphSizeMap.get(size);
-//        try {
-//            RrdGraphDef graphDef = new RrdGraphDef();
-//            graphDef.setStartTime(-timerangePair.getKey());
-//            graphDef.setEndTime(new Date().getTime());
-//            graphDef.setWidth(sizePair.getKey());
-//            graphDef.setHeight(sizePair.getKey());
-//            RrdGraph graph = new RrdGraph(graphDef);
-//            byte[] graphBytes = graph.getRrdGraphInfo().getBytes();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        Pair<Integer, String> timerangePair = Constants.timeRangeMap.get(timerange);
+        Pair<Integer, Integer> sizePair = Constants.graphSizeMap.get(size);
+        try {
+            RrdGraphDef graphDef = new RrdGraphDef();
+            graphDef.setStartTime(-timerangePair.getKey());
+            graphDef.setEndTime(new Date().getTime());
+            graphDef.setWidth(sizePair.getKey());
+            graphDef.setHeight(sizePair.getKey());
+            RrdGraph graph = new RrdGraph(graphDef);
+            byte[] graphBytes = graph.getRrdGraphInfo().getBytes();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 

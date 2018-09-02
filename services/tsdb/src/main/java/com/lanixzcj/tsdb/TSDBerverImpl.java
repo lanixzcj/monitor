@@ -1,7 +1,7 @@
 package com.lanixzcj.tsdb;
 
 import com.alibaba.dubbo.config.annotation.Service;
-import com.lanixzcj.api.ITSDBService;
+import com.lanixzcj.api.serviceapi.ITSDBService;
 
 import java.io.File;
 

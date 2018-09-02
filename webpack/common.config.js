@@ -8,8 +8,8 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const TARGET = process.env.npm_lifecycle_event;
 
 const PATHS = {
-    app: path.join(__dirname, '../src/static'),
-    build: path.join(__dirname, '../src/static_dist')
+    app: path.join(__dirname, '../static'),
+    build: path.join(__dirname, '../services/webapi/src/main/resources/templates')
 };
 
 const VENDOR = [
@@ -24,7 +24,7 @@ const VENDOR = [
     'react-router-redux',
 ];
 
-const basePath = path.resolve(__dirname, '../src/static/');
+const basePath = path.resolve(__dirname, '../static/');
 
 const common = {
     context: basePath,
@@ -35,7 +35,7 @@ const common = {
     output: {
         filename: '[name].[hash].js',
         path: PATHS.build,
-        publicPath: '/static'
+        publicPath: '/'
     },
     plugins: [
         // extract all common modules to vendor so we can load multiple apps in one page
@@ -55,7 +55,7 @@ const common = {
                     autoprefixer({ browsers: ['last 2 versions'] })
                 ],
                 sassLoader: {
-                    data: `@import "${__dirname}/../src/static/styles/config/_variables.scss";`
+                    data: `@import "${__dirname}/../static/styles/config/_variables.scss";`
                 }
             }
         }),
@@ -68,7 +68,7 @@ const common = {
             }
         }),
         new HtmlWebpackPlugin({
-            template: path.join(__dirname, '../src/static/index.html'),
+            template: path.join(__dirname, '../static/index.html'),
             hash: false,
             filename: 'index.html',
             inject: 'body'

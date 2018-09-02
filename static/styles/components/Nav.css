@@ -1,0 +1,31 @@
+.pullRight {
+    line-height: 46px;
+    float: right;
+    margin-left: 20px;
+}
+
+.pullLeft {
+    line-height: 46px;
+    float: left;
+    margin-left: 20px;
+}
+
+.logo {
+    font-size: 16px;
+}
+
+.setting, .setting:hover {
+    text-decoration: none;
+    color: rgba(0, 0, 0, 0.65);
+}
+
+.setting:hover {
+    color: #108ee9;
+}
+
+.setting-menu a, .setting-menu a:hover {
+    clear: both;
+    font-size: 12px;
+    font-weight: normal;
+    text-decoration: none;
+}

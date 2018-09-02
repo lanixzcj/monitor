@@ -1,0 +1,9 @@
+.my-dropdown-content, .react-bs-container-body {
+    overflow: inherit !important;
+}
+
+tbody.ant-table-tbody>tr>td, tbody.ant-table-tbody>tr>th,
+thead.ant-table-thead>tr>td, thead.ant-table-thead>tr>th {
+    vertical-align: middle;
+    text-align: center;
+}

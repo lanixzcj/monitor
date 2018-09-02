@@ -4,7 +4,7 @@
 1. docker-compose build
 1. docker-compose up
 
-## 不使用Docker部署
+## 环境搭建与部署（deprecated）
 
 以ubuntu14.04为例
 
